@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+*.pt
+*.pth
+outputs/
+data/*.csv
+data/*.parquet
+data/*.pcap
+data/*.pcapng
+

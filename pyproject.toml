@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flowconx"
+version = "0.1.0"
+description = "Context-aware flow embeddings for adaptive AI based network traffic classification"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "torch>=2.2",
+  "scikit-learn>=1.4",
+  "matplotlib>=3.8",
+  "umap-learn>=0.5",
+  "tqdm>=4.66",
+]
+
+[project.scripts]
+flowconx-train = "flowconx.train:main"
+flowconx-eval = "flowconx.eval_cli:main"
+flowconx-baseline = "flowconx.baselines:main"
+
+[tool.setuptools.packages.find]
+include = ["flowconx*"]
+

@@ -1,5 +1,3 @@
-"""NumPy baselines for FlowCon-X experiments."""
-
 from __future__ import annotations
 
 import argparse
@@ -14,7 +12,6 @@ from .synthetic import generate_synthetic_dataframe
 
 
 def handcrafted_embedding(record: FlowRecord) -> np.ndarray:
-    """Convert a flow to a compact handcrafted embedding."""
     pkt = record.packet_seq
     net = record.network_series
     pkt_valid = pkt[np.abs(pkt).sum(axis=1) > 0]

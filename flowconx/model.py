@@ -1,5 +1,3 @@
-"""FlowCon-X neural encoder."""
-
 from __future__ import annotations
 
 from typing import Dict, Optional, Tuple
@@ -12,7 +10,6 @@ from .config import APP_EMB_DIM, FLOW_EMB_DIM, NET_EMB_DIM, NET_FEAT_DIM, PKT_FE
 
 
 class GradientReverseFn(torch.autograd.Function):
-    """Gradient reversal for adversarial condition disentanglement."""
 
     @staticmethod
     def forward(ctx, x: torch.Tensor, scale: float) -> torch.Tensor:
@@ -29,7 +26,6 @@ def gradient_reverse(x: torch.Tensor, scale: float = 1.0) -> torch.Tensor:
 
 
 class TemporalConvBlock(nn.Module):
-    """Depthwise temporal convolution plus pointwise mixing."""
 
     def __init__(self, hidden_dim: int, kernel_size: int = 5, dropout: float = 0.1) -> None:
         super().__init__()
@@ -52,7 +48,6 @@ class TemporalConvBlock(nn.Module):
 
 
 class AttentionPooling(nn.Module):
-    """Masked attention pooling over a token sequence."""
 
     def __init__(self, hidden_dim: int) -> None:
         super().__init__()
@@ -67,7 +62,6 @@ class AttentionPooling(nn.Module):
 
 
 class ApplicationIdentityEncoder(nn.Module):
-    """Packet sequence encoder for service identity."""
 
     def __init__(
         self,
@@ -115,7 +109,6 @@ class ApplicationIdentityEncoder(nn.Module):
 
 
 class NetworkConditionEncoder(nn.Module):
-    """Network condition encoder over RTT, jitter, loss, and throughput windows."""
 
     def __init__(
         self,
@@ -146,7 +139,6 @@ class NetworkConditionEncoder(nn.Module):
 
 
 class ContextFusion(nn.Module):
-    """Cross-attention from packet tokens into network-condition tokens."""
 
     def __init__(
         self,
@@ -188,7 +180,6 @@ class ContextFusion(nn.Module):
 
 
 class ConditionAdversary(nn.Module):
-    """Predicts network condition from z_app through gradient reversal."""
 
     def __init__(self, emb_dim: int = APP_EMB_DIM, n_conditions: int = 5, hidden_dim: int = 128) -> None:
         super().__init__()
@@ -203,7 +194,6 @@ class ConditionAdversary(nn.Module):
 
 
 class FlowConX(nn.Module):
-    """Full context-aware flow embedding model."""
 
     def __init__(
         self,

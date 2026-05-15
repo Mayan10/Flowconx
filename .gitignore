@@ -1,4 +1,6 @@
 .venv/
+venv/
+.DS_Store
 __pycache__/
 *.pyc
 *.pt
@@ -8,4 +10,3 @@ data/*.csv
 data/*.parquet
 data/*.pcap
 data/*.pcapng
-

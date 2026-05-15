@@ -1,5 +1,3 @@
-"""Memory and prototype banks for adaptive FlowCon-X learning."""
-
 from __future__ import annotations
 
 from collections import defaultdict, deque
@@ -10,7 +8,6 @@ import torch.nn.functional as F
 
 
 class EmbeddingMemoryBank:
-    """Class-balanced queue used as extra contrastive examples."""
 
     def __init__(self, max_per_class: int = 512) -> None:
         self.max_per_class = max_per_class
@@ -40,7 +37,6 @@ class EmbeddingMemoryBank:
 
 
 class PrototypeBank:
-    """Trust-gated exponential moving average service prototypes."""
 
     def __init__(self, n_classes: int, emb_dim: int, momentum: float = 0.95, high_confidence: float = 0.75) -> None:
         self.n_classes = n_classes

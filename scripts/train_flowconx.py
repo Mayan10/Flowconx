@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Wrapper for python -m flowconx.train."""
-
 import sys
 from pathlib import Path
 

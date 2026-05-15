@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Wrapper for python -m flowconx.compass."""
-
 import sys
 from pathlib import Path
 
@@ -10,4 +8,3 @@ from flowconx.compass import main
 
 if __name__ == "__main__":
     main()
-

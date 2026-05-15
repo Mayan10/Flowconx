@@ -1,5 +1,3 @@
-"""Evaluation entry point for a trained FlowCon-X checkpoint."""
-
 from __future__ import annotations
 
 import argparse

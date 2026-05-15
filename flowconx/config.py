@@ -1,5 +1,3 @@
-"""Shared configuration and label taxonomy for FlowCon-X."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -106,7 +104,6 @@ CONDITION_LABELS = [
 
 
 def normalize_label(value: object) -> str:
-    """Normalize an app, service, or dataset label into a stable token."""
     text = str(value or "unknown").strip().lower()
     text = text.replace("/", "_").replace("-", "_").replace(" ", "_")
     text = text.replace("__", "_")
@@ -114,7 +111,6 @@ def normalize_label(value: object) -> str:
 
 
 def infer_service(app_or_label: object) -> str:
-    """Map an app or raw dataset label to a service class."""
     token = normalize_label(app_or_label)
     if token in SERVICE_LABELS:
         return token
@@ -128,7 +124,6 @@ def infer_service(app_or_label: object) -> str:
 
 @dataclass
 class FlowConXConfig:
-    """Runtime shape configuration."""
 
     max_packets: int = MAX_PACKETS
     net_timesteps: int = NET_TIMESTEPS
@@ -147,4 +142,3 @@ class FlowConXConfig:
     @property
     def condition_to_id(self) -> Dict[str, int]:
         return {name: idx for idx, name in enumerate(self.conditions)}
-

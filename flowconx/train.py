@@ -1,5 +1,3 @@
-"""Training entry point for FlowCon-X."""
-
 from __future__ import annotations
 
 import argparse

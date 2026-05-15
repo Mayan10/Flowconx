@@ -1,5 +1,3 @@
-"""Feature extraction helpers for flow-level CSV rows."""
-
 from __future__ import annotations
 
 import hashlib
@@ -115,7 +113,6 @@ def packet_sequence_from_row(
     max_packets: int = MAX_PACKETS,
     rng: Optional[np.random.Generator] = None,
 ) -> np.ndarray:
-    """Build a packet sequence from true packet series or aggregate flow columns."""
     if rng is None:
         rng = np.random.default_rng(stable_seed(row_text(row, ["app", "label", "service"]) or "flow"))
 
@@ -185,7 +182,6 @@ def network_series_from_row(
     timesteps: int = NET_TIMESTEPS,
     rng: Optional[np.random.Generator] = None,
 ) -> np.ndarray:
-    """Build a network condition series from explicit or proxy columns."""
     if rng is None:
         rng = np.random.default_rng(stable_seed(row_text(row, ["app", "label", "service"]) or "net"))
 
@@ -243,7 +239,6 @@ def augment_network_condition(
     net_series: np.ndarray,
     rng: np.random.Generator,
 ) -> Tuple[np.ndarray, np.ndarray, str]:
-    """Create a same-service counterfactual with changed network condition."""
     pkt_aug = np.array(pkt_seq, copy=True)
     net_aug = np.array(net_series, copy=True)
     rtt_scale = float(rng.choice([0.7, 1.0, 1.8, 3.2]))
@@ -259,4 +254,3 @@ def augment_network_condition(
     approx_jitter = float(np.expm1(net_aug[:, 1].mean() * 6.0))
     approx_loss = float(net_aug[:, 2].mean())
     return pkt_aug.astype(np.float32), net_aug.astype(np.float32), infer_condition(approx_rtt, approx_jitter, approx_loss)
-

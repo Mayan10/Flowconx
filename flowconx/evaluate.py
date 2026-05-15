@@ -1,5 +1,3 @@
-"""Evaluation utilities for FlowCon-X KPIs."""
-
 from __future__ import annotations
 
 import time
@@ -145,7 +143,6 @@ def leave_one_app_out_generalization(
     app_labels: np.ndarray,
     service_labels: np.ndarray,
 ) -> Dict[str, float]:
-    """Assign each held-out app to a service prototype built from other apps."""
     preds = []
     targets = []
     skipped = 0
@@ -190,7 +187,6 @@ def cist_score(
     max_records: int = 256,
     seed: int = 99,
 ) -> float:
-    """Context Invariance Stress Test score on z_app."""
     rng = np.random.default_rng(seed)
     base_records = list(records[:max_records])
     augmented: List[FlowRecord] = []

@@ -1,5 +1,3 @@
-"""Dataset loading utilities for FlowCon-X."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -27,13 +25,12 @@ try:
 except ImportError:
     torch = None
 
-    class Dataset:  # type: ignore[no-redef]
+    class Dataset:
         pass
 
 
 @dataclass
 class FlowRecord:
-    """A single flow represented as model-ready arrays plus labels."""
 
     packet_seq: np.ndarray
     network_series: np.ndarray
@@ -60,7 +57,6 @@ def load_csv_records(
     source: Optional[str] = None,
     limit: Optional[int] = None,
 ) -> List[FlowRecord]:
-    """Load a generic flow CSV into FlowRecord objects."""
     path = Path(csv_path)
     df = pd.read_csv(path)
     return records_from_dataframe(
@@ -83,7 +79,6 @@ def records_from_dataframe(
     limit: Optional[int] = None,
     seed_prefix: str = "dataframe",
 ) -> List[FlowRecord]:
-    """Convert an in-memory dataframe into FlowRecord objects."""
     if limit:
         df = df.head(limit)
     if label_col is None:
@@ -137,7 +132,6 @@ def build_label_maps(records: Sequence[FlowRecord], config: Optional[FlowConXCon
 
 
 class FlowDataset(Dataset):
-    """PyTorch dataset with optional counterfactual network augmentation."""
 
     def __init__(
         self,
@@ -196,7 +190,6 @@ def split_records(
     seed: int = 42,
     stratify_by: str = "service",
 ) -> Tuple[List[FlowRecord], List[FlowRecord]]:
-    """Small stratified split without requiring scikit-learn."""
     rng = np.random.default_rng(seed)
     groups: Dict[str, List[FlowRecord]] = {}
     for record in records:

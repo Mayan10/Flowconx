@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Generate a synthetic FlowCon-X CSV for pipeline testing."""
-
 from __future__ import annotations
 
 import argparse

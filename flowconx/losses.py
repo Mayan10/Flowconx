@@ -1,5 +1,3 @@
-"""Training losses for FlowCon-X."""
-
 from __future__ import annotations
 
 from typing import Dict, Optional, Tuple
@@ -10,7 +8,6 @@ import torch.nn.functional as F
 
 
 class SupervisedContrastiveLoss(nn.Module):
-    """Supervised contrastive loss with optional cross-batch memory."""
 
     def __init__(self, temperature: float = 0.07) -> None:
         super().__init__()
@@ -48,7 +45,6 @@ class SupervisedContrastiveLoss(nn.Module):
 
 
 class CrossCovarianceDisentanglement(nn.Module):
-    """Penalize shared linear information between z_app and z_net."""
 
     def forward(self, z_app: torch.Tensor, z_net: torch.Tensor) -> torch.Tensor:
         z_app = z_app - z_app.mean(dim=0, keepdim=True)
@@ -59,7 +55,6 @@ class CrossCovarianceDisentanglement(nn.Module):
 
 
 class PrototypeAlignmentLoss(nn.Module):
-    """Learned service prototypes for semantic geometry."""
 
     def __init__(self, n_classes: int, emb_dim: int, temperature: float = 0.07) -> None:
         super().__init__()
@@ -78,7 +73,6 @@ class PrototypeAlignmentLoss(nn.Module):
 
 
 class FlowConXLoss(nn.Module):
-    """Multi-objective loss for context-aware flow embeddings."""
 
     def __init__(
         self,

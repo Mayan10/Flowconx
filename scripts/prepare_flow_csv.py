@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""Prepare real traffic CSV files for FlowCon-X training.
-
-This script converts packet-level, aggregate-flow, and common dataset-specific
-CSV files into the canonical FlowCon-X CSV schema.
-"""
-
 from __future__ import annotations
 
 import argparse

@@ -595,6 +595,46 @@ python scripts/train_flowconx.py \
   --device mps
 ```
 
+KPI-ready training uses the same real processed CSV, but turns on an extra pairwise service margin. This is the run to use when the ordinary model already has strong accuracy but the inter-service cosine is still above the Samsung target.
+
+```bash
+python scripts/train_flowconx.py \
+  --csv data/processed/all_real_train_balanced.csv \
+  --app-col app \
+  --service-col service \
+  --epochs 20 \
+  --batch-size 64 \
+  --augment-count 0 \
+  --output-dir outputs/flowconx_kpi_margin \
+  --device mps \
+  --temperature 0.05 \
+  --lambda-app 0.20 \
+  --lambda-proto 0.05 \
+  --lambda-pair 4.0 \
+  --pair-negative-margin 0.15 \
+  --pair-positive-target 0.75
+```
+
+Use this interpretation after the run:
+
+```text
+service_similarity.intra       target: above 0.70
+service_similarity.inter       target: below 0.30
+classification.knn_accuracy    target: above 0.90
+leave_one_app_out.leave_one_app_accuracy target: above 0.85
+latency.mean_ms                target: below 100
+```
+
+If inter-service cosine is still too high, keep the dataset fixed and run one more pass with `--lambda-pair 6.0` and `--pair-negative-margin 0.10`. If accuracy drops below 90 percent, move `--lambda-app` back to `0.30` and use `--lambda-pair 3.0`.
+
+Generate a judge-facing KPI table after training:
+
+```bash
+python scripts/kpi_report.py \
+  --metrics outputs/flowconx_kpi_margin/metrics.json \
+  --output outputs/flowconx_kpi_margin/kpi_report.md
+```
+
 The important flag is:
 
 ```text

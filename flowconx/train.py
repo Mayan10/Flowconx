@@ -43,6 +43,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda", "mps"])
     parser.add_argument("--memory-per-class", type=int, default=512)
+    parser.add_argument("--temperature", type=float, default=0.07, help="SupCon and prototype temperature.")
+    parser.add_argument("--lambda-app", type=float, default=0.35, help="Weight for app-level SupCon loss.")
+    parser.add_argument("--lambda-proto", type=float, default=0.10, help="Weight for service prototype alignment loss.")
+    parser.add_argument("--lambda-dis", type=float, default=0.25, help="Weight for app/network disentanglement loss.")
+    parser.add_argument("--lambda-adv", type=float, default=0.15, help="Weight for network-condition adversary loss.")
+    parser.add_argument("--lambda-pair", type=float, default=0.0, help="Weight for pairwise service margin loss.")
+    parser.add_argument("--pair-negative-margin", type=float, default=0.20, help="Maximum target cosine for different service labels.")
+    parser.add_argument("--pair-positive-target", type=float, default=0.75, help="Minimum target cosine for matching service labels.")
     return parser.parse_args()
 
 
@@ -155,6 +163,14 @@ def main() -> None:
         n_services=len(label_maps["service"]),
         n_apps=len(label_maps["app"]),
         n_conditions=len(label_maps["condition"]),
+        temperature=args.temperature,
+        lambda_app=args.lambda_app,
+        lambda_proto=args.lambda_proto,
+        lambda_dis=args.lambda_dis,
+        lambda_adv=args.lambda_adv,
+        lambda_pair=args.lambda_pair,
+        pair_negative_margin=args.pair_negative_margin,
+        pair_positive_target=args.pair_positive_target,
     ).to(device)
     optimizer = torch.optim.AdamW(
         list(model.parameters()) + list(loss_fn.parameters()),
@@ -181,7 +197,8 @@ def main() -> None:
             f"app={info['app_supcon']:.4f} "
             f"proto={info['prototype']:.4f} "
             f"dis={info['disentangle']:.5f} "
-            f"adv={info['condition_adv']:.4f}"
+            f"adv={info['condition_adv']:.4f} "
+            f"pair={info['pair_margin']:.4f}"
         )
 
     train_emb = extract_embeddings(model, train_loader, device)

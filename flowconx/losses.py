@@ -54,6 +54,31 @@ class CrossCovarianceDisentanglement(nn.Module):
         return cov.pow(2).mean()
 
 
+class PairwiseEmbeddingMarginLoss(nn.Module):
+
+    def __init__(self, negative_margin: float = 0.20, positive_target: float = 0.75) -> None:
+        super().__init__()
+        self.negative_margin = negative_margin
+        self.positive_target = positive_target
+
+    def forward(self, embeddings: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        embeddings = F.normalize(embeddings, dim=-1)
+        sim = torch.matmul(embeddings, embeddings.T)
+        self_mask = torch.eye(sim.shape[0], dtype=torch.bool, device=sim.device)
+        same = labels[:, None].eq(labels[None, :]) & ~self_mask
+        different = ~labels[:, None].eq(labels[None, :])
+
+        pos_loss = embeddings.sum() * 0.0
+        if torch.any(same):
+            pos_loss = F.relu(self.positive_target - sim[same]).pow(2).mean()
+
+        neg_loss = embeddings.sum() * 0.0
+        if torch.any(different):
+            neg_loss = F.relu(sim[different] - self.negative_margin).pow(2).mean()
+
+        return pos_loss + neg_loss
+
+
 class PrototypeAlignmentLoss(nn.Module):
 
     def __init__(self, n_classes: int, emb_dim: int, temperature: float = 0.07) -> None:
@@ -85,16 +110,21 @@ class FlowConXLoss(nn.Module):
         lambda_proto: float = 0.10,
         lambda_dis: float = 0.25,
         lambda_adv: float = 0.15,
+        lambda_pair: float = 0.0,
+        pair_negative_margin: float = 0.20,
+        pair_positive_target: float = 0.75,
     ) -> None:
         super().__init__()
         self.service_supcon = SupervisedContrastiveLoss(temperature)
         self.app_supcon = SupervisedContrastiveLoss(temperature)
         self.prototype = PrototypeAlignmentLoss(n_services, emb_dim, temperature)
         self.disentangle = CrossCovarianceDisentanglement()
+        self.pair_margin = PairwiseEmbeddingMarginLoss(pair_negative_margin, pair_positive_target)
         self.lambda_app = lambda_app
         self.lambda_proto = lambda_proto
         self.lambda_dis = lambda_dis
         self.lambda_adv = lambda_adv
+        self.lambda_pair = lambda_pair
         self.n_apps = n_apps
         self.n_conditions = n_conditions
 
@@ -119,6 +149,7 @@ class FlowConXLoss(nn.Module):
         adv_loss = z_app.sum() * 0.0
         if condition_labels is not None and self.n_conditions > 1:
             adv_loss = F.cross_entropy(outputs["condition_logits"], condition_labels)
+        pair_loss = self.pair_margin(z_app, service_labels)
 
         total = (
             service_loss
@@ -126,6 +157,7 @@ class FlowConXLoss(nn.Module):
             + self.lambda_proto * proto_loss
             + self.lambda_dis * dis_loss
             + self.lambda_adv * adv_loss
+            + self.lambda_pair * pair_loss
         )
         return total, {
             "total": float(total.detach().cpu()),
@@ -134,5 +166,5 @@ class FlowConXLoss(nn.Module):
             "prototype": float(proto_loss.detach().cpu()),
             "disentangle": float(dis_loss.detach().cpu()),
             "condition_adv": float(adv_loss.detach().cpu()),
+            "pair_margin": float(pair_loss.detach().cpu()),
         }
-

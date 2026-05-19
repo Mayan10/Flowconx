@@ -90,6 +90,8 @@ def records_from_dataframe(
         app = normalize_label(raw_app)
         if service_col and service_col in row_dict:
             service = normalize_label(row_dict[service_col])
+            if service == "unknown":
+                service = infer_service(app)
         else:
             service = infer_service(app)
 

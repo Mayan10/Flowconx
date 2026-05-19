@@ -24,16 +24,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--top-k", type=int, default=4)
     parser.add_argument("--limit", type=int, default=20)
     parser.add_argument("--delay", type=float, default=0.0)
-    parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda"])
+    parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda", "mps"])
     return parser.parse_args()
 
 
 def select_device(choice: str) -> torch.device:
     if choice == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA was requested but is not available.")
         return torch.device("cuda")
+    if choice == "mps":
+        if not torch.backends.mps.is_available():
+            raise RuntimeError("MPS was requested but is not available.")
+        return torch.device("mps")
     if choice == "cpu":
         return torch.device("cpu")
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
 
 
 def id_to_name(mapping: Dict[str, int]) -> Dict[int, str]:

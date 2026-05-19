@@ -41,17 +41,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--augment-count", type=int, default=0, help="Optional counterfactual network augmentation per real flow. Default is 0 for real-data-only training.")
     parser.add_argument("--flows-per-app", type=int, default=80, help="Synthetic flows per app.")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda"])
+    parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda", "mps"])
     parser.add_argument("--memory-per-class", type=int, default=512)
     return parser.parse_args()
 
 
 def select_device(choice: str) -> torch.device:
     if choice == "cuda":
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA was requested but is not available.")
         return torch.device("cuda")
+    if choice == "mps":
+        if not torch.backends.mps.is_available():
+            raise RuntimeError("MPS was requested but is not available.")
+        return torch.device("mps")
     if choice == "cpu":
         return torch.device("cpu")
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
 
 
 def load_records_from_args(args: argparse.Namespace):

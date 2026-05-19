@@ -225,6 +225,8 @@ def benchmark_latency(model, device: torch.device, runs: int = 100) -> Dict[str,
         _ = model.encode(packet_seq, network_series, packet_mask)
         if device.type == "cuda":
             torch.cuda.synchronize()
+        elif device.type == "mps":
+            torch.mps.synchronize()
         latencies.append((time.perf_counter() - start) * 1000.0)
     values = np.asarray(latencies)
     return {

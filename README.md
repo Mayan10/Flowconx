@@ -581,6 +581,20 @@ python scripts/train_flowconx.py \
   --output-dir outputs/flowconx_real
 ```
 
+On Apple Silicon, use MPS when PyTorch exposes it:
+
+```bash
+python scripts/train_flowconx.py \
+  --csv data/processed/all_real_flows.csv \
+  --app-col app \
+  --service-col service \
+  --epochs 20 \
+  --batch-size 64 \
+  --augment-count 0 \
+  --output-dir outputs/flowconx_real_mps \
+  --device mps
+```
+
 The important flag is:
 
 ```text
@@ -653,4 +667,3 @@ Do not use this result in the final Samsung KPI table.
 - CICIoT2023 is not the main app-classification dataset. Use it for IoT and security robustness.
 - MAWI is useful for domain shift, but labels are weak unless enriched.
 - Final numbers should be reported on real datasets only.
-

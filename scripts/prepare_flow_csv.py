@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import ast
 import glob
+import re
 import sys
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
@@ -126,10 +127,22 @@ def resolve_inputs(input_path: str, limit: Optional[int] = None) -> List[Path]:
     return files
 
 
-def read_table(path: Path) -> pd.DataFrame:
+def read_table(path: Path, nrows: Optional[int] = None) -> pd.DataFrame:
     if path.suffix.lower() == ".parquet":
-        return pd.read_parquet(path)
-    return pd.read_csv(path)
+        df = pd.read_parquet(path)
+        return df.head(nrows) if nrows else df
+    df = pd.read_csv(path, nrows=nrows)
+    if len(df.columns) <= 2:
+        sample = " ".join(str(col) for col in df.columns)
+        if len(df) > 0:
+            sample += " " + " ".join(str(value) for value in df.iloc[0].tolist())
+        if "\t" in sample:
+            df = pd.read_csv(path, sep="\t", header=None, nrows=nrows)
+            if df.shape[1] == 4:
+                df.columns = ["Time", "Source", "Destination", "Length"]
+            elif df.shape[1] == 5:
+                df.columns = ["Time", "Source", "Destination", "Protocol", "Length"]
+    return df
 
 
 def clean_file_label(path: Path) -> str:
@@ -140,6 +153,22 @@ def clean_file_label(path: Path) -> str:
     parts = [part for part in stem.split() if not part.isdigit()]
     label = "_".join(parts[:3]) if parts else path.stem
     return normalize_label(label)
+
+
+def clean_path_app(path: Path) -> str:
+    parts = [part for part in path.parts if part not in {"data", "raw", "processed", "interim"}]
+    known = [
+        "YouTube_Live", "YouTube", "Netflix", "Amazon_Prime", "PrimeVideo",
+        "Zoom", "MS_Teams", "Google_Meet", "Roblox", "Zepeto",
+        "Battleground", "Teamfight_Tactics", "GeForce_Now", "KT_GameBox",
+        "Fortnite", "Forza Horizon 5", "Mortal Kombat 11",
+        "beat_saber", "rec_room", "half-life", "vr_chat", "google_earth",
+    ]
+    joined = "/".join(parts).lower()
+    for name in known:
+        if name.lower() in joined:
+            return normalize_label(name)
+    return clean_file_label(path)
 
 
 def get_col(df: pd.DataFrame, preferred: Optional[str], candidates: Sequence[str]) -> Optional[str]:
@@ -156,15 +185,28 @@ def safe_numeric(series: pd.Series, default: float = 0.0) -> np.ndarray:
     return pd.to_numeric(series, errors="coerce").fillna(default).to_numpy(dtype=np.float64)
 
 
+def safe_time(series: pd.Series) -> np.ndarray:
+    numeric = pd.to_numeric(series, errors="coerce")
+    if numeric.notna().sum() >= max(1, len(series) // 2):
+        values = numeric.ffill().fillna(0.0).to_numpy(dtype=np.float64)
+        return values - float(np.nanmin(values))
+    cleaned = series.astype(str).str.replace(r"[^\x00-\x7F]+", "", regex=True).str.strip()
+    parsed = pd.to_datetime(cleaned, errors="coerce")
+    if parsed.notna().sum() == 0:
+        return np.arange(len(series), dtype=np.float64)
+    seconds = (parsed - parsed.min()).dt.total_seconds()
+    return seconds.ffill().fillna(0.0).to_numpy(dtype=np.float64)
+
+
 def series_text(values: Sequence[float], precision: int = 4) -> str:
     return ";".join(f"{float(value):.{precision}f}" for value in values)
 
 
 def protocol_to_number(value: object) -> int:
     text = str(value).strip().lower()
-    if text in {"17", "udp", "quic", "rtp"}:
+    if text in {"17", "udp", "quic", "rtp", "dns"} or text.startswith("quic"):
         return 17
-    if text in {"6", "tcp", "tls", "ssl", "http", "https"}:
+    if text in {"6", "tcp", "tls", "ssl", "http", "https"} or text.startswith("tls") or text.startswith("tcp") or text.startswith("http"):
         return 6
     try:
         return int(float(text))
@@ -189,6 +231,37 @@ def direction_from_values(values: Sequence[object]) -> np.ndarray:
     return np.asarray(dirs, dtype=np.int64)
 
 
+def direction_from_addresses(df: pd.DataFrame) -> Optional[np.ndarray]:
+    src_col = get_col(df, None, ["Source", "src", "SrcIP", "ip.src"])
+    dst_col = get_col(df, None, ["Destination", "dst", "DstIP", "ip.dst"])
+    if src_col is None or dst_col is None:
+        return None
+
+    def is_private(value: object) -> bool:
+        text = str(value)
+        return (
+            text.startswith("10.")
+            or text.startswith("192.168.")
+            or text.startswith("172.16.")
+            or text.startswith("172.17.")
+            or text.startswith("172.18.")
+            or text.startswith("172.19.")
+            or text.startswith("172.2")
+            or text.startswith("172.30.")
+            or text.startswith("172.31.")
+        )
+
+    dirs = []
+    for src, dst in zip(df[src_col].tolist(), df[dst_col].tolist()):
+        if is_private(src) and not is_private(dst):
+            dirs.append(1)
+        elif is_private(dst) and not is_private(src):
+            dirs.append(-1)
+        else:
+            dirs.append(1)
+    return np.asarray(dirs, dtype=np.int64)
+
+
 def app_for_file(df: pd.DataFrame, path: Path, args: argparse.Namespace, preset: Dict[str, object]) -> str:
     app_col = args.app_col or preset.get("app_col")
     label_col = args.label_col or preset.get("label_col")
@@ -205,7 +278,7 @@ def app_for_file(df: pd.DataFrame, path: Path, args: argparse.Namespace, preset:
             value = df[col].dropna().astype(str)
             if len(value):
                 return normalize_label(value.iloc[0])
-    return clean_file_label(path)
+    return clean_path_app(path)
 
 
 def service_for_app(app: str, df: pd.DataFrame, args: argparse.Namespace, preset: Dict[str, object]) -> str:
@@ -285,7 +358,7 @@ def prepare_packet_file(path: Path, df: pd.DataFrame, args: argparse.Namespace, 
 
     app = app_for_file(df, path, args, preset)
     service = service_for_app(app, df, args, preset)
-    times = safe_numeric(df[time_col])
+    times = safe_time(df[time_col])
     if length_col:
         lengths = safe_numeric(df[length_col])
     else:
@@ -298,7 +371,9 @@ def prepare_packet_file(path: Path, df: pd.DataFrame, args: argparse.Namespace, 
     if direction_col:
         dirs = direction_from_values(df[direction_col].tolist())
     else:
-        dirs = np.ones(len(df), dtype=np.int64)
+        dirs = direction_from_addresses(df)
+        if dirs is None:
+            dirs = np.ones(len(df), dtype=np.int64)
     protocols = safe_numeric(df[protocol_col].map(protocol_to_number)) if protocol_col else np.full(len(df), int(preset.get("protocol_value", 0)))
     rtts = safe_numeric(df[rtt_col]) if rtt_col else np.zeros(len(df))
     jitters = safe_numeric(df[jitter_col]) if jitter_col else np.zeros(len(df))
@@ -334,11 +409,11 @@ def prepare_aggregate_file(path: Path, df: pd.DataFrame, args: argparse.Namespac
     app = app_for_file(df, path, args, preset)
     service = service_for_app(app, df, args, preset)
     rows: List[Dict[str, object]] = []
-    length_col = get_col(df, args.length_col or preset.get("length_col"), ["packet length mean", "packet_length", "length", "ps", "avg pkt size", "average packet size"])
-    iat_col = get_col(df, args.iat_col or preset.get("iat_col"), ["flow iat mean", "iat", "ipi", "inter_packet_time"])
-    protocol_col = get_col(df, args.protocol_col or preset.get("protocol_col"), ["protocol", "proto"])
-    rtt_col = get_col(df, args.rtt_col, ["rtt", "rtt_ms", "latency", "latency_ms", "flow iat mean"])
-    jitter_col = get_col(df, args.jitter_col, ["jitter", "jitter_ms", "flow iat std"])
+    length_col = get_col(df, args.length_col or preset.get("length_col"), ["packet length mean", "packet_length", "length", "ps", "avg pkt size", "average packet size", "avg", "tot size"])
+    iat_col = get_col(df, args.iat_col or preset.get("iat_col"), ["flow iat mean", "iat", "ipi", "inter_packet_time", "artt"])
+    protocol_col = get_col(df, args.protocol_col or preset.get("protocol_col"), ["protocol", "proto", "protocol type"])
+    rtt_col = get_col(df, args.rtt_col, ["rtt", "rtt_ms", "latency", "latency_ms", "flow iat mean", "artt", "iat"])
+    jitter_col = get_col(df, args.jitter_col, ["jitter", "jitter_ms", "flow iat std", "std"])
     loss_col = get_col(df, args.loss_col, ["loss", "loss_rate", "packet_loss"])
     service_col = get_col(df, args.service_col or preset.get("service_col"), ["service", "category", "service_category"])
     app_col = get_col(df, args.app_col or preset.get("app_col"), ["app", "application", "label", "traffic_type"])
@@ -400,9 +475,7 @@ def main() -> None:
     files = resolve_inputs(args.input, args.limit_files)
     all_rows: List[Dict[str, object]] = []
     for path in files:
-        df = read_table(path)
-        if args.limit_rows_per_file:
-            df = df.head(args.limit_rows_per_file)
+        df = read_table(path, nrows=args.limit_rows_per_file)
         if mode == "packet":
             rows = prepare_packet_file(path, df, args, preset)
         elif mode == "cesnet_quic":

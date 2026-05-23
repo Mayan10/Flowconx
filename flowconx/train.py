@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from .config import FlowConXConfig
-from .datasets import FlowDataset, build_label_maps, load_csv_records, records_from_dataframe, split_records
+from .datasets import FlowDataset, build_label_maps, load_csv_records, split_records
 from .evaluate import (
     benchmark_latency,
     cist_score,
@@ -22,13 +22,11 @@ from .evaluate import (
 from .losses import FlowConXLoss
 from .memory import EmbeddingMemoryBank, PrototypeBank
 from .model import FlowConX
-from .synthetic import generate_synthetic_dataframe
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train FlowCon-X.")
-    parser.add_argument("--csv", type=str, default=None, help="Path to a real flow CSV for training.")
-    parser.add_argument("--synthetic", action="store_true", help="Use generated synthetic data. For smoke tests only.")
+    parser.add_argument("--csv", type=str, required=True, help="Path to a real flow CSV for training.")
     parser.add_argument("--label-col", type=str, default=None, help="Column containing app or service labels.")
     parser.add_argument("--app-col", type=str, default=None, help="Optional app label column.")
     parser.add_argument("--service-col", type=str, default=None, help="Optional service label column.")
@@ -39,7 +37,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--augment-count", type=int, default=0, help="Optional counterfactual network augmentation per real flow. Default is 0 for real-data-only training.")
-    parser.add_argument("--flows-per-app", type=int, default=80, help="Synthetic flows per app.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", type=str, default="auto", choices=["auto", "cpu", "cuda", "mps"])
     parser.add_argument("--memory-per-class", type=int, default=512)
@@ -49,8 +46,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lambda-dis", type=float, default=0.25, help="Weight for app/network disentanglement loss.")
     parser.add_argument("--lambda-adv", type=float, default=0.15, help="Weight for network-condition adversary loss.")
     parser.add_argument("--lambda-pair", type=float, default=0.0, help="Weight for pairwise service margin loss.")
+    parser.add_argument("--lambda-flow-service", type=float, default=0.0, help="Weight for service SupCon loss on fused z_flow embeddings.")
+    parser.add_argument("--lambda-flow-pair", type=float, default=0.0, help="Weight for pairwise service margin loss on fused z_flow embeddings.")
     parser.add_argument("--pair-negative-margin", type=float, default=0.20, help="Maximum target cosine for different service labels.")
     parser.add_argument("--pair-positive-target", type=float, default=0.75, help="Minimum target cosine for matching service labels.")
+    parser.add_argument("--eval-max-train", type=int, default=None, help="Optional stratified cap for train embeddings used by heavy eval metrics.")
+    parser.add_argument("--eval-max-test", type=int, default=None, help="Optional stratified cap for test embeddings used by heavy eval metrics.")
+    parser.add_argument("--resume-checkpoint", type=str, default=None, help="Optional checkpoint to continue training from.")
     return parser.parse_args()
 
 
@@ -73,21 +75,13 @@ def select_device(choice: str) -> torch.device:
 
 
 def load_records_from_args(args: argparse.Namespace):
-    if args.csv:
-        return load_csv_records(
-            args.csv,
-            label_col=args.label_col,
-            app_col=args.app_col,
-            service_col=args.service_col,
-            limit=args.limit,
-        )
-    if args.synthetic:
-        df = generate_synthetic_dataframe(flows_per_app=args.flows_per_app, include_xr=True, seed=args.seed)
-        synthetic_path = Path(args.output_dir) / "synthetic_flows.csv"
-        synthetic_path.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(synthetic_path, index=False)
-        return records_from_dataframe(df, label_col="app", app_col="app", service_col="service", source="synthetic", limit=args.limit)
-    raise ValueError("Real training data is required. Pass --csv path/to/real_flows.csv, or use --synthetic only for smoke tests.")
+    return load_csv_records(
+        args.csv,
+        label_col=args.label_col,
+        app_col=args.app_col,
+        service_col=args.service_col,
+        limit=args.limit,
+    )
 
 
 def average_logs(logs: List[Dict[str, float]]) -> Dict[str, float]:
@@ -95,6 +89,31 @@ def average_logs(logs: List[Dict[str, float]]) -> Dict[str, float]:
         return {}
     keys = logs[0].keys()
     return {key: sum(item[key] for item in logs) / len(logs) for key in keys}
+
+
+def capped_embeddings(embeddings: Dict[str, object], label_key: str, limit: Optional[int], seed: int) -> Dict[str, object]:
+    if limit is None:
+        return embeddings
+    labels = embeddings[label_key]
+    if len(labels) <= limit:
+        return embeddings
+    import numpy as np
+
+    rng = np.random.default_rng(seed)
+    selected = []
+    unique = np.unique(labels)
+    per_label = max(1, limit // max(len(unique), 1))
+    for label in unique:
+        idx = np.flatnonzero(labels == label)
+        take = min(len(idx), per_label)
+        selected.extend(rng.choice(idx, size=take, replace=False).tolist())
+    if len(selected) < limit:
+        remaining = np.setdiff1d(np.arange(len(labels)), np.asarray(selected), assume_unique=False)
+        extra = min(len(remaining), limit - len(selected))
+        if extra > 0:
+            selected.extend(rng.choice(remaining, size=extra, replace=False).tolist())
+    selected_arr = np.asarray(sorted(selected[:limit]))
+    return {key: value[selected_arr] for key, value in embeddings.items()}
 
 
 def train_one_epoch(
@@ -169,9 +188,17 @@ def main() -> None:
         lambda_dis=args.lambda_dis,
         lambda_adv=args.lambda_adv,
         lambda_pair=args.lambda_pair,
+        lambda_flow_service=args.lambda_flow_service,
+        lambda_flow_pair=args.lambda_flow_pair,
         pair_negative_margin=args.pair_negative_margin,
         pair_positive_target=args.pair_positive_target,
     ).to(device)
+    if args.resume_checkpoint:
+        checkpoint = torch.load(args.resume_checkpoint, map_location=device)
+        model.load_state_dict(checkpoint["model"])
+        if "loss" in checkpoint:
+            loss_fn.load_state_dict(checkpoint["loss"], strict=False)
+        print(f"Resumed weights from {args.resume_checkpoint}")
     optimizer = torch.optim.AdamW(
         list(model.parameters()) + list(loss_fn.parameters()),
         lr=args.lr,
@@ -194,31 +221,47 @@ def main() -> None:
             "Epoch "
             f"{epoch:03d} total={info['total']:.4f} "
             f"service={info['service_supcon']:.4f} "
+            f"flow_service={info['flow_service_supcon']:.4f} "
             f"app={info['app_supcon']:.4f} "
             f"proto={info['prototype']:.4f} "
             f"dis={info['disentangle']:.5f} "
             f"adv={info['condition_adv']:.4f} "
-            f"pair={info['pair_margin']:.4f}"
+            f"pair={info['pair_margin']:.4f} "
+            f"flow_pair={info['flow_pair_margin']:.4f}"
         )
+
+    torch.save(
+        {
+            "model": model.state_dict(),
+            "loss": loss_fn.state_dict(),
+            "label_maps": label_maps,
+            "args": vars(args),
+            "prototype_bank": prototype_bank.state_dict(),
+        },
+        output_dir / "flowconx_checkpoint.pt",
+    )
+    (output_dir / "history.json").write_text(json.dumps(history, indent=2), encoding="utf-8")
 
     train_emb = extract_embeddings(model, train_loader, device)
     test_emb = extract_embeddings(model, test_loader, device)
-    service_sim = embedding_similarity(test_emb["z_app"], test_emb["service"])
-    app_sim = embedding_similarity(test_emb["z_flow"], test_emb["app"])
+    train_eval = capped_embeddings(train_emb, "service", args.eval_max_train, args.seed + 101)
+    test_eval = capped_embeddings(test_emb, "service", args.eval_max_test, args.seed + 202)
+    service_sim = embedding_similarity(test_eval["z_app"], test_eval["service"])
+    app_sim = embedding_similarity(test_eval["z_flow"], test_eval["app"])
     clf = closed_set_classification(
-        train_emb["z_flow"],
-        train_emb["service"],
-        test_emb["z_flow"],
-        test_emb["service"],
+        train_eval["z_flow"],
+        train_eval["service"],
+        test_eval["z_flow"],
+        test_eval["service"],
         k=5,
     )
     proto = prototype_generalization(
-        train_emb["z_app"],
-        train_emb["service"],
-        test_emb["z_app"],
-        test_emb["service"],
+        train_eval["z_app"],
+        train_eval["service"],
+        test_eval["z_app"],
+        test_eval["service"],
     )
-    loo_app = leave_one_app_out_generalization(test_emb["z_app"], test_emb["app"], test_emb["service"])
+    loo_app = leave_one_app_out_generalization(test_eval["z_app"], test_eval["app"], test_eval["service"])
     cist = cist_score(model, test_records, label_maps, device)
     latency = benchmark_latency(model, device)
 
@@ -231,20 +274,13 @@ def main() -> None:
         "cist_score": cist,
         "latency": latency,
         "label_maps": label_maps,
+        "eval_caps": {
+            "train_embeddings": len(train_eval["service"]),
+            "test_embeddings": len(test_eval["service"]),
+        },
     }
 
-    torch.save(
-        {
-            "model": model.state_dict(),
-            "loss": loss_fn.state_dict(),
-            "label_maps": label_maps,
-            "args": vars(args),
-            "prototype_bank": prototype_bank.state_dict(),
-        },
-        output_dir / "flowconx_checkpoint.pt",
-    )
     (output_dir / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
-    (output_dir / "history.json").write_text(json.dumps(history, indent=2), encoding="utf-8")
 
     print("KPI summary:")
     print(f"  Service intra cosine: {service_sim['intra']:.4f}")

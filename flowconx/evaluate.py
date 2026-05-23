@@ -104,9 +104,12 @@ def closed_set_classification(
         "knn_macro_f1": macro_f1(preds, test_labels),
     }
     try:
-        from sklearn.svm import SVC
+        from sklearn.svm import LinearSVC, SVC
 
-        svm = SVC(kernel="rbf", C=10, gamma="scale")
+        if len(train_embeddings) > 10000:
+            svm = LinearSVC(C=1.0, dual=False, max_iter=5000)
+        else:
+            svm = SVC(kernel="rbf", C=10, gamma="scale")
         svm.fit(train_embeddings, train_labels)
         svm_preds = svm.predict(test_embeddings)
         results["svm_accuracy"] = accuracy(svm_preds, test_labels)

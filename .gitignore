@@ -3,9 +3,14 @@ venv/
 .DS_Store
 __pycache__/
 *.pyc
-*.pt
 *.pth
-outputs/
+outputs/*
+!outputs/flowconx_final_labeled_kpi_pass/
+!outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt
+!outputs/flowconx_final_labeled_kpi_pass/history.json
+!outputs/flowconx_final_labeled_kpi_pass/metrics.json
+!outputs/flowconx_final_labeled_kpi_pass/kpi_report.md
+data/raw/
 data/*.csv
 data/*.parquet
 data/*.pcap

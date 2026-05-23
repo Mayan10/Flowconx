@@ -111,6 +111,8 @@ class FlowConXLoss(nn.Module):
         lambda_dis: float = 0.25,
         lambda_adv: float = 0.15,
         lambda_pair: float = 0.0,
+        lambda_flow_service: float = 0.0,
+        lambda_flow_pair: float = 0.0,
         pair_negative_margin: float = 0.20,
         pair_positive_target: float = 0.75,
     ) -> None:
@@ -125,6 +127,8 @@ class FlowConXLoss(nn.Module):
         self.lambda_dis = lambda_dis
         self.lambda_adv = lambda_adv
         self.lambda_pair = lambda_pair
+        self.lambda_flow_service = lambda_flow_service
+        self.lambda_flow_pair = lambda_flow_pair
         self.n_apps = n_apps
         self.n_conditions = n_conditions
 
@@ -141,6 +145,7 @@ class FlowConXLoss(nn.Module):
         z_net = outputs["z_net"]
 
         service_loss = self.service_supcon(z_app, service_labels, memory=memory)
+        flow_service_loss = self.service_supcon(z_flow, service_labels)
         app_loss = z_app.sum() * 0.0
         if app_labels is not None and self.n_apps > 1:
             app_loss = self.app_supcon(z_flow, app_labels)
@@ -150,21 +155,26 @@ class FlowConXLoss(nn.Module):
         if condition_labels is not None and self.n_conditions > 1:
             adv_loss = F.cross_entropy(outputs["condition_logits"], condition_labels)
         pair_loss = self.pair_margin(z_app, service_labels)
+        flow_pair_loss = self.pair_margin(z_flow, service_labels)
 
         total = (
             service_loss
+            + self.lambda_flow_service * flow_service_loss
             + self.lambda_app * app_loss
             + self.lambda_proto * proto_loss
             + self.lambda_dis * dis_loss
             + self.lambda_adv * adv_loss
             + self.lambda_pair * pair_loss
+            + self.lambda_flow_pair * flow_pair_loss
         )
         return total, {
             "total": float(total.detach().cpu()),
             "service_supcon": float(service_loss.detach().cpu()),
+            "flow_service_supcon": float(flow_service_loss.detach().cpu()),
             "app_supcon": float(app_loss.detach().cpu()),
             "prototype": float(proto_loss.detach().cpu()),
             "disentangle": float(dis_loss.detach().cpu()),
             "condition_adv": float(adv_loss.detach().cpu()),
             "pair_margin": float(pair_loss.detach().cpu()),
+            "flow_pair_margin": float(flow_pair_loss.detach().cpu()),
         }

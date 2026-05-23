@@ -21,8 +21,6 @@ dependencies = [
 [project.scripts]
 flowconx-train = "flowconx.train:main"
 flowconx-eval = "flowconx.eval_cli:main"
-flowconx-baseline = "flowconx.baselines:main"
 
 [tool.setuptools.packages.find]
 include = ["flowconx*"]
-

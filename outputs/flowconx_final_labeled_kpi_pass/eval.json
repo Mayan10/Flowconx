@@ -1,0 +1,32 @@
+{
+  "service_similarity": {
+    "intra": 0.8403075453833407,
+    "inter": 0.2796017428931862
+  },
+  "app_similarity": {
+    "intra": 0.9280306841906799,
+    "inter": 0.4242091842665359
+  },
+  "classification": {
+    "knn_accuracy": 0.9035408490902604,
+    "knn_macro_f1": 0.9008868592675708,
+    "svm_accuracy": 0.9054584373885123,
+    "svm_macro_f1": 0.7541656005191744
+  },
+  "prototype_generalization": {
+    "prototype_accuracy": 0.901489475561898,
+    "prototype_macro_f1": 0.7951568754723142
+  },
+  "leave_one_app_out": {
+    "leave_one_app_accuracy": 0.8990367463432037,
+    "leave_one_app_macro_f1": 0.771276159876694,
+    "leave_one_app_skipped": 0.0
+  },
+  "cist_score": 0.6408798694610596,
+  "latency": {
+    "mean_ms": 28.56474676002108,
+    "p50_ms": 28.56168749713106,
+    "p95_ms": 28.775322597357444,
+    "p99_ms": 28.8812934224552
+  }
+}

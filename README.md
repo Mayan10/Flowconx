@@ -1,6 +1,30 @@
 # FlowCon-X
 
+[![CI](https://github.com/Mayan10/Flowconx/actions/workflows/ci.yml/badge.svg)](https://github.com/Mayan10/Flowconx/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/pytorch-2.2%2B-ee4c2c)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Status](https://img.shields.io/badge/status-research%20prototype-yellow)](#limitations)
+
 FlowCon-X is a context-aware neural encoder for network flow representation learning. It turns packet timing, packet size, directionality, protocol metadata, and network condition signals into compact embeddings that can be used for traffic classification without reading packet payloads.
+
+## Contents
+
+- [What Makes It Different](#what-makes-it-different)
+- [Architecture](#architecture)
+- [Training Objective](#training-objective)
+- [Memory And Prototypes](#memory-and-prototypes)
+- [Data Pipeline](#data-pipeline)
+- [Final Processed Files](#final-processed-files)
+- [Repository Layout](#repository-layout)
+- [Setup](#setup)
+- [Training](#training)
+- [Evaluation](#evaluation)
+- [Results](#results)
+- [Design Tradeoffs](#design-tradeoffs)
+- [Limitations](#limitations)
+- [Why This Shape Works](#why-this-shape-works)
+- [License](#license)
 
 The main idea is simple, but the implementation is fairly careful:
 
@@ -359,15 +383,19 @@ scripts/
   prepare_mawi_pcap.py
   train_flowconx.py
   evaluate_flowconx.py
+  kpi_report.py
 
 data/processed/
   flowconx_final_labeled_train.csv
   flowconx_mawi_robustness_background.csv
 
 outputs/
-  flowconx_checkpoint.pt
-  history.json
-  metrics.json
+  flowconx_final_labeled_kpi_pass/
+    flowconx_checkpoint.pt
+    history.json
+    metrics.json
+    eval.json
+    kpi_report.md
 ```
 
 ## Setup
@@ -455,11 +483,11 @@ Standalone evaluation:
 
 ```bash
 python scripts/evaluate_flowconx.py \
-  --checkpoint outputs/flowconx_final_stage2/flowconx_checkpoint.pt \
+  --checkpoint outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt \
   --csv data/processed/flowconx_final_labeled_train.csv \
   --app-col app \
   --service-col service \
-  --output outputs/flowconx_final_stage2/eval.json \
+  --output outputs/flowconx_final_labeled_kpi_pass/eval.json \
   --device mps
 ```
 
@@ -468,13 +496,19 @@ python scripts/evaluate_flowconx.py \
 Current checkpoint:
 
 ```text
-outputs/flowconx_final_stage2/flowconx_checkpoint.pt
+outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt
 ```
 
 Current metrics file:
 
 ```text
-outputs/flowconx_final_stage2/metrics.json
+outputs/flowconx_final_labeled_kpi_pass/metrics.json
+```
+
+Full KPI pass/fail table:
+
+```text
+outputs/flowconx_final_labeled_kpi_pass/kpi_report.md
 ```
 
 The final metrics saved in the repository are:
@@ -540,3 +574,7 @@ The useful trick is not one module by itself. It is the agreement between archit
 6. The final classifier embedding is trained with the same geometry that the evaluation uses.
 
 That is why the project can classify encrypted traffic from metadata only while still producing interpretable embedding metrics.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

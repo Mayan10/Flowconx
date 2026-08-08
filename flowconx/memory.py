@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict, deque
-from typing import Deque, Dict, Iterable, Optional, Tuple
+from typing import Deque, Dict, Tuple
 
 import torch
 import torch.nn.functional as F

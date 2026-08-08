@@ -5,8 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "flowconx"
 version = "0.1.0"
-description = "Context-aware flow embeddings for adaptive AI based network traffic classification"
+description = "Context-aware neural encoder for encrypted network traffic classification without deep packet inspection"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.26",

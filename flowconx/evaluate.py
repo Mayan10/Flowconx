@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence
 
 import numpy as np
 import torch

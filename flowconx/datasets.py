@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,6 @@ import pandas as pd
 from .config import FlowConXConfig, infer_service, normalize_label
 from .features import (
     augment_network_condition,
-    condition_to_index,
     infer_condition,
     network_series_from_row,
     packet_sequence_from_row,

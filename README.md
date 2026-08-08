@@ -8,8 +8,36 @@
 
 FlowCon-X is a context-aware neural encoder for network flow representation learning. It turns packet timing, packet size, directionality, protocol metadata, and network condition signals into compact embeddings that can be used for traffic classification without reading packet payloads.
 
+## Quick Start
+
+```bash
+git clone https://github.com/Mayan10/Flowconx.git
+cd Flowconx
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+python scripts/evaluate_flowconx.py \
+  --checkpoint outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt \
+  --csv data/processed/flowconx_final_labeled_train.csv \
+  --app-col app \
+  --service-col service \
+  --output /tmp/flowconx_eval.json
+```
+
+That reruns evaluation against the checkpoint already included in this repository. Results at a glance:
+
+| Metric | Value |
+| --- | ---: |
+| Training data | 112,000+ labeled flows, 6 service classes, 2 public datasets |
+| SVM / k-NN service accuracy | 90.44% / 90.09% |
+| Mean inference latency | 13.65 ms per flow |
+| KPI targets cleared | 7 / 7 |
+
+See [Results](#results) for the full metrics table and [Usage](#usage) for a minimal inference example.
+
 ## Contents
 
+- [Quick Start](#quick-start)
 - [What Makes It Different](#what-makes-it-different)
 - [Architecture](#architecture)
 - [Training Objective](#training-objective)
@@ -18,6 +46,7 @@ FlowCon-X is a context-aware neural encoder for network flow representation lear
 - [Final Processed Files](#final-processed-files)
 - [Repository Layout](#repository-layout)
 - [Setup](#setup)
+- [Usage](#usage)
 - [Training](#training)
 - [Evaluation](#evaluation)
 - [Results](#results)
@@ -413,6 +442,49 @@ On Apple Silicon, verify that PyTorch can use MPS:
 ```bash
 python -c "import torch; print(torch.backends.mps.is_available())"
 ```
+
+The CI badge above covers `ruff` linting plus a compile and import check on Python 3.10 and 3.11. There is no automated test suite yet.
+
+## Usage
+
+Load the shipped checkpoint and encode a flow directly in Python. `packet_sequence_from_row` and `network_series_from_row` build the same tensors used during training, from a row that follows the [canonical CSV schema](#data-pipeline):
+
+```python
+import torch
+
+from flowconx.model import FlowConX
+from flowconx.features import network_series_from_row, packet_sequence_from_row
+
+checkpoint = torch.load(
+    "outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt",
+    map_location="cpu",
+)
+label_maps = checkpoint["label_maps"]
+
+model = FlowConX(n_conditions=len(label_maps["condition"]))
+model.load_state_dict(checkpoint["model"])
+model.eval()
+
+row = {
+    "packet_lengths": "1200;1200;64;1400;90",
+    "iat_values": "0;12;3;45;2",
+    "directions": "1;1;-1;1;-1",
+    "rtt_ms": 28.0,
+    "jitter_ms": 4.0,
+    "loss_rate": 0.0,
+    "protocol": 17,
+}
+
+packet_seq = torch.tensor(packet_sequence_from_row(row)).unsqueeze(0)
+network_series = torch.tensor(network_series_from_row(row)).unsqueeze(0)
+
+with torch.no_grad():
+    embedding = model.encode(packet_seq, network_series)
+
+print(embedding.shape)  # torch.Size([1, 256])
+```
+
+`embedding` is the normalized 256-dimensional `z_flow` vector used for the k-NN, SVM, and prototype classifiers reported in [Results](#results).
 
 ## Training
 

@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install ruff
-        run: pip install ruff
+        run: pip install ruff==0.9.9
       - name: Run ruff
         run: ruff check flowconx scripts
 

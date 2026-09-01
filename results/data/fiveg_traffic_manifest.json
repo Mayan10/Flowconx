@@ -1,0 +1,1472 @@
+{
+  "origin": "5g_traffic",
+  "output": "data/processed/fiveg_traffic.csv",
+  "n_rows": 164348,
+  "n_captures": 75,
+  "config": {
+    "archive": "data/raw/Archive.zip",
+    "max_packets": 128,
+    "min_packets": 8,
+    "idle_timeout_s": 10.0,
+    "active_timeout_s": 10.0,
+    "max_rows_per_capture": null,
+    "max_flows_per_capture": 6000,
+    "seed": 42,
+    "capture_glob": "5G_Traffic_Datasets/"
+  },
+  "archive_sha256": "22595f8325dead4f8fd94645393ad4d2307a0e753e6d5d6b94b49bb611ecaf91",
+  "service_counts": {
+    "live_streaming": 36462,
+    "stored_streaming": 29531,
+    "video_conferencing": 28341,
+    "metaverse": 26818,
+    "online_game": 25118,
+    "game_streaming": 18078
+  },
+  "app_counts": {
+    "zepeto": 20818,
+    "amazon_prime": 20576,
+    "battleground": 18856,
+    "naver_now": 18568,
+    "ms_teams": 11868,
+    "zoom": 10473,
+    "youtube_live": 9900,
+    "kt_gamebox": 9260,
+    "geforce_now": 8818,
+    "afreecatv": 7994,
+    "teamfight_tactics": 6262,
+    "roblox": 6000,
+    "google_meet": 6000,
+    "youtube": 5346,
+    "netflix": 3609
+  },
+  "capture_stats": [
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_1.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 3957337,
+      "rows_skipped": 0,
+      "flows_emitted": 704,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 3979.509,
+      "top_layers": {
+        "UDP": 3953607,
+        "TCP": 1811,
+        "TLSv1.2": 1811,
+        "RTCP": 107,
+        "Pathport": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_2.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 4655361,
+      "rows_skipped": 0,
+      "flows_emitted": 743,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 3835.481,
+      "top_layers": {
+        "UDP": 4650531,
+        "TCP": 2363,
+        "TLSv1.2": 2358,
+        "RTCP": 106,
+        "THRIFT": 1,
+        "DCP-PFT": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_3.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 6071144,
+      "rows_skipped": 0,
+      "flows_emitted": 955,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4797.526,
+      "top_layers": {
+        "UDP": 6065982,
+        "TCP": 2534,
+        "TLSv1.2": 2497,
+        "RTCP": 129,
+        "CLTP": 1,
+        "THRIFT": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_4.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 10844269,
+      "rows_skipped": 0,
+      "flows_emitted": 1387,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 6950.685,
+      "top_layers": {
+        "UDP": 10837169,
+        "TCP": 3488,
+        "TLSv1.2": 3484,
+        "RTCP": 124,
+        "Pathport": 2,
+        "DCP-PFT": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_5.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 8328420,
+      "rows_skipped": 0,
+      "flows_emitted": 1194,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 5987.648,
+      "top_layers": {
+        "UDP": 8322187,
+        "TLSv1.2": 3052,
+        "TCP": 3049,
+        "RTCP": 127,
+        "CLTP": 3,
+        "THRIFT": 2
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_6.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 5827876,
+      "rows_skipped": 0,
+      "flows_emitted": 823,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4124.509,
+      "top_layers": {
+        "UDP": 5823526,
+        "TLSv1.2": 2139,
+        "TCP": 2127,
+        "RTCP": 80,
+        "THRIFT": 4
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_7.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 6810130,
+      "rows_skipped": 0,
+      "flows_emitted": 890,
+      "flows_too_short": 1,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4468.868,
+      "top_layers": {
+        "UDP": 6805497,
+        "TLSv1.2": 2280,
+        "TCP": 2273,
+        "RTCP": 78,
+        "CLTP": 1,
+        "THRIFT": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_8.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 3313973,
+      "rows_skipped": 0,
+      "flows_emitted": 436,
+      "flows_too_short": 1,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2184.11,
+      "top_layers": {
+        "UDP": 3311683,
+        "TLSv1.2": 1125,
+        "TCP": 1115,
+        "RTCP": 47,
+        "THRIFT": 2,
+        "DCP-PFT": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_9.csv",
+      "app": "geforce_now",
+      "service": "game_streaming",
+      "rows_read": 13038364,
+      "rows_skipped": 0,
+      "flows_emitted": 1686,
+      "flows_too_short": 0,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 8445.562,
+      "top_layers": {
+        "UDP": 13029691,
+        "TLSv1.2": 4266,
+        "TCP": 4265,
+        "RTCP": 138,
+        "THRIFT": 2,
+        "CLTP": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_1.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 1512728,
+      "rows_skipped": 17,
+      "flows_emitted": 438,
+      "flows_too_short": 115,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2280.353,
+      "top_layers": {
+        "UDP": 1334541,
+        "TCP": 176521,
+        "TLSv1": 1210,
+        "TLSv1.3": 399,
+        "THRIFT": 34,
+        "TLSv1.2": 13
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_10.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 4057072,
+      "rows_skipped": 17,
+      "flows_emitted": 1031,
+      "flows_too_short": 176,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4950.933,
+      "top_layers": {
+        "UDP": 3608621,
+        "TCP": 445289,
+        "TLSv1": 2240,
+        "TLSv1.3": 833,
+        "THRIFT": 57,
+        "TLSv1.2": 12
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_2.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 10368102,
+      "rows_skipped": 17,
+      "flows_emitted": 2366,
+      "flows_too_short": 365,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 10922.319,
+      "top_layers": {
+        "UDP": 9641739,
+        "TCP": 715011,
+        "TLSv1": 5192,
+        "R-GOOSE": 4084,
+        "TLSv1.3": 1764,
+        "THRIFT": 250
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_3.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 1367093,
+      "rows_skipped": 17,
+      "flows_emitted": 350,
+      "flows_too_short": 57,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 1652.898,
+      "top_layers": {
+        "UDP": 1269684,
+        "TCP": 96321,
+        "TLSv1": 781,
+        "TLSv1.3": 284,
+        "TLSv1.2": 12,
+        "DNS": 10
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_4.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 2742084,
+      "rows_skipped": 17,
+      "flows_emitted": 646,
+      "flows_too_short": 99,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2984.588,
+      "top_layers": {
+        "UDP": 2510554,
+        "TCP": 229587,
+        "TLSv1": 1357,
+        "TLSv1.3": 497,
+        "THRIFT": 57,
+        "TLSv1.2": 13
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_5.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 2651792,
+      "rows_skipped": 17,
+      "flows_emitted": 601,
+      "flows_too_short": 163,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 3241.02,
+      "top_layers": {
+        "UDP": 2410155,
+        "TCP": 218389,
+        "SSLv2": 21342,
+        "TLSv1": 1227,
+        "TLSv1.3": 541,
+        "THRIFT": 116
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_6.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 2473320,
+      "rows_skipped": 18,
+      "flows_emitted": 602,
+      "flows_too_short": 137,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2769.972,
+      "top_layers": {
+        "UDP": 2271818,
+        "TCP": 199393,
+        "TLSv1": 1546,
+        "TLSv1.3": 457,
+        "THRIFT": 83,
+        "TLSv1.2": 13
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_7.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 5989365,
+      "rows_skipped": 17,
+      "flows_emitted": 1492,
+      "flows_too_short": 405,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 8123.695,
+      "top_layers": {
+        "UDP": 5516863,
+        "TCP": 463825,
+        "TLSv1": 3659,
+        "R-GOOSE": 3558,
+        "TLSv1.3": 1326,
+        "THRIFT": 90
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_8.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 4785757,
+      "rows_skipped": 17,
+      "flows_emitted": 1187,
+      "flows_too_short": 272,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 5471.617,
+      "top_layers": {
+        "UDP": 4416358,
+        "TCP": 365265,
+        "TLSv1": 2955,
+        "TLSv1.3": 899,
+        "THRIFT": 254,
+        "TLSv1.2": 11
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_9.csv",
+      "app": "kt_gamebox",
+      "service": "game_streaming",
+      "rows_read": 2148733,
+      "rows_skipped": 19,
+      "flows_emitted": 547,
+      "flows_too_short": 164,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 3425.246,
+      "top_layers": {
+        "UDP": 1959132,
+        "TCP": 187713,
+        "TLSv1": 1191,
+        "TLSv1.3": 597,
+        "THRIFT": 67,
+        "TLSv1.2": 20
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/AfreecaTV/AfreecaTV_1.csv",
+      "app": "afreecatv",
+      "service": "live_streaming",
+      "rows_read": 7317938,
+      "rows_skipped": 5,
+      "flows_emitted": 2742,
+      "flows_too_short": 1423,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 34085.289,
+      "top_layers": {
+        "TCP": 7317683,
+        "TLSv1.2": 118,
+        "TLSv1.3": 100,
+        "HTTP": 30,
+        "THRIFT": 7
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/AfreecaTV/AfreecaTV_2.csv",
+      "app": "afreecatv",
+      "service": "live_streaming",
+      "rows_read": 14172278,
+      "rows_skipped": 5,
+      "flows_emitted": 5252,
+      "flows_too_short": 1854,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 48253.859,
+      "top_layers": {
+        "TCP": 14171977,
+        "TLSv1.2": 131,
+        "TLSv1.3": 107,
+        "HTTP": 60,
+        "H1": 1,
+        "DCERPC": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/Naver_NOW/Naver_NOW_1.csv",
+      "app": "naver_now",
+      "service": "live_streaming",
+      "rows_read": 5980751,
+      "rows_skipped": 6,
+      "flows_emitted": 2824,
+      "flows_too_short": 125,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 11607.259,
+      "top_layers": {
+        "TCP": 3474593,
+        "TLSv1.3": 2475693,
+        "TLSv1.2": 25043,
+        "HTTP": 3446,
+        "HTTP/JSON": 1712,
+        "TLSv1": 264
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/Naver_NOW/Naver_NOW_2.csv",
+      "app": "naver_now",
+      "service": "live_streaming",
+      "rows_read": 6900749,
+      "rows_skipped": 5,
+      "flows_emitted": 3744,
+      "flows_too_short": 42,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 15294.285,
+      "top_layers": {
+        "TCP": 5122214,
+        "TLSv1.3": 1710549,
+        "TLSv1.2": 59626,
+        "HTTP": 5428,
+        "HTTP/JSON": 2703,
+        "TLSv1": 228
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/Naver_NOW/Naver_NOW_3.csv",
+      "app": "naver_now",
+      "service": "live_streaming",
+      "rows_read": 23621591,
+      "rows_skipped": 7,
+      "flows_emitted": 15071,
+      "flows_too_short": 78,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 58812.374,
+      "top_layers": {
+        "TCP": 18191865,
+        "TLSv1.3": 5171251,
+        "TLSv1.2": 247317,
+        "HTTP": 7428,
+        "HTTP/JSON": 3701,
+        "TLSv1": 25
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/Naver_NOW/Naver_NOW_4.csv",
+      "app": "naver_now",
+      "service": "live_streaming",
+      "rows_read": 31878668,
+      "rows_skipped": 7,
+      "flows_emitted": 18198,
+      "flows_too_short": 62,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 65988.197,
+      "top_layers": {
+        "TCP": 27581505,
+        "TLSv1.3": 3965811,
+        "TLSv1.2": 292801,
+        "HTTP": 25700,
+        "HTTP/JSON": 12847,
+        "SSLv2": 3
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/YouTube_Live/YouTube_Live_1.csv",
+      "app": "youtube_live",
+      "service": "live_streaming",
+      "rows_read": 914413,
+      "rows_skipped": 0,
+      "flows_emitted": 1245,
+      "flows_too_short": 1525,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 12806.006,
+      "top_layers": {
+        "GQUIC": 914413
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/YouTube_Live/YouTube_Live_2.csv",
+      "app": "youtube_live",
+      "service": "live_streaming",
+      "rows_read": 517790,
+      "rows_skipped": 0,
+      "flows_emitted": 1091,
+      "flows_too_short": 1266,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 10757.867,
+      "top_layers": {
+        "GQUIC": 517790
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/YouTube_Live/YouTube_Live_3.csv",
+      "app": "youtube_live",
+      "service": "live_streaming",
+      "rows_read": 2963031,
+      "rows_skipped": 0,
+      "flows_emitted": 4162,
+      "flows_too_short": 5088,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 42713.969,
+      "top_layers": {
+        "GQUIC": 2963031
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/YouTube_Live/YouTube_Live_4.csv",
+      "app": "youtube_live",
+      "service": "live_streaming",
+      "rows_read": 1193369,
+      "rows_skipped": 332,
+      "flows_emitted": 2186,
+      "flows_too_short": 1013,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 8088.985,
+      "top_layers": {
+        "UDP": 946457,
+        "QUIC": 244351,
+        "TCP": 1147,
+        "TLSv1.3": 703,
+        "DNS": 324,
+        "R-GOOSE": 147
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Live_Streaming/YouTube_Live/YouTube_Live_5.csv",
+      "app": "youtube_live",
+      "service": "live_streaming",
+      "rows_read": 674585,
+      "rows_skipped": 204,
+      "flows_emitted": 1216,
+      "flows_too_short": 544,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4785.986,
+      "top_layers": {
+        "UDP": 606515,
+        "QUIC": 64974,
+        "TCP": 1352,
+        "TLSv1.3": 1227,
+        "DNS": 196,
+        "R-GOOSE": 156
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Roblox/Roblox_1.csv",
+      "app": "roblox",
+      "service": "metaverse",
+      "rows_read": 928378,
+      "rows_skipped": 0,
+      "flows_emitted": 8916,
+      "flows_too_short": 5,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 90250.126,
+      "top_layers": {
+        "RakNet": 928378
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_1.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 159537,
+      "rows_skipped": 303,
+      "flows_emitted": 740,
+      "flows_too_short": 119,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 3063.883,
+      "top_layers": {
+        "TCP": 119340,
+        "TLSv1.2": 37829,
+        "TLSv1.3": 2064,
+        "DNS": 296,
+        "HTTP/JSON": 8
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_10.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 232409,
+      "rows_skipped": 515,
+      "flows_emitted": 4010,
+      "flows_too_short": 146,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 18860.034,
+      "top_layers": {
+        "TCP": 196473,
+        "TLSv1.2": 34457,
+        "TLSv1.3": 969,
+        "DNS": 508,
+        "HTTP/JSON": 2
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_2.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 33090,
+      "rows_skipped": 187,
+      "flows_emitted": 482,
+      "flows_too_short": 90,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 5211.65,
+      "top_layers": {
+        "TCP": 26825,
+        "TLSv1.2": 5943,
+        "DNS": 180,
+        "TLSv1.3": 138,
+        "HTTP/JSON": 4
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_3.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 110304,
+      "rows_skipped": 219,
+      "flows_emitted": 1427,
+      "flows_too_short": 98,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 6570.168,
+      "top_layers": {
+        "TCP": 98073,
+        "TLSv1.2": 11643,
+        "TLSv1.3": 374,
+        "DNS": 212,
+        "HTTP/JSON": 2
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_4.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 44030,
+      "rows_skipped": 325,
+      "flows_emitted": 881,
+      "flows_too_short": 67,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4086.498,
+      "top_layers": {
+        "TCP": 30683,
+        "UDP": 7620,
+        "TLSv1.2": 5044,
+        "TLSv1.3": 357,
+        "DNS": 318,
+        "HTTP/JSON": 4
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_5.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 141376,
+      "rows_skipped": 1173,
+      "flows_emitted": 5202,
+      "flows_too_short": 102,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 18132.623,
+      "top_layers": {
+        "TCP": 85651,
+        "UDP": 47053,
+        "TLSv1.2": 7443,
+        "DNS": 1166,
+        "TLSv1.3": 42,
+        "HTTP/JSON": 4
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_6.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 175484,
+      "rows_skipped": 781,
+      "flows_emitted": 2408,
+      "flows_too_short": 123,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 7332.602,
+      "top_layers": {
+        "TCP": 134711,
+        "UDP": 20234,
+        "TLSv1.2": 18966,
+        "TLSv1.3": 787,
+        "DNS": 773,
+        "TLSv1": 5
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_7.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 8349,
+      "rows_skipped": 36,
+      "flows_emitted": 43,
+      "flows_too_short": 5,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 87.818,
+      "top_layers": {
+        "TCP": 5758,
+        "TLSv1.2": 2198,
+        "TLSv1.3": 361,
+        "DNS": 30,
+        "HTTP/JSON": 2
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_8.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 53740,
+      "rows_skipped": 133,
+      "flows_emitted": 1007,
+      "flows_too_short": 54,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4721.902,
+      "top_layers": {
+        "TCP": 44314,
+        "TLSv1.2": 8988,
+        "TLSv1.3": 310,
+        "DNS": 126,
+        "HTTP/JSON": 2
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Metaverse/Zepeto/Zepeto_9.csv",
+      "app": "zepeto",
+      "service": "metaverse",
+      "rows_read": 172008,
+      "rows_skipped": 1256,
+      "flows_emitted": 4618,
+      "flows_too_short": 107,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 14654.812,
+      "top_layers": {
+        "TCP": 110674,
+        "UDP": 40303,
+        "TLSv1.2": 19403,
+        "DNS": 1249,
+        "TLSv1.3": 360,
+        "KINK": 4
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_1.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 403783,
+      "rows_skipped": 539,
+      "flows_emitted": 2060,
+      "flows_too_short": 2041,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 6591.747,
+      "top_layers": {
+        "UDP": 390089,
+        "TCP": 6171,
+        "DB-LSP": 4521,
+        "TLSv1.2": 981,
+        "SSL": 822,
+        "DNS": 532
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_2.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 538224,
+      "rows_skipped": 605,
+      "flows_emitted": 2795,
+      "flows_too_short": 2858,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 8965.378,
+      "top_layers": {
+        "UDP": 516023,
+        "TCP": 10337,
+        "DB-LSP": 6500,
+        "TLSv1.2": 2908,
+        "SSL": 1127,
+        "DNS": 598
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_3.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 286949,
+      "rows_skipped": 396,
+      "flows_emitted": 1600,
+      "flows_too_short": 1636,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 5006.284,
+      "top_layers": {
+        "UDP": 274362,
+        "TCP": 5839,
+        "DB-LSP": 4605,
+        "TLSv1.2": 694,
+        "SSL": 646,
+        "DNS": 392
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_4.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 564075,
+      "rows_skipped": 761,
+      "flows_emitted": 3534,
+      "flows_too_short": 2975,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 10768.626,
+      "top_layers": {
+        "UDP": 539680,
+        "TCP": 11456,
+        "DB-LSP": 8387,
+        "TLSv1.2": 1818,
+        "SSL": 1301,
+        "DNS": 754
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_5.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 485649,
+      "rows_skipped": 547,
+      "flows_emitted": 2251,
+      "flows_too_short": 2074,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 6839.051,
+      "top_layers": {
+        "UDP": 411035,
+        "TCP": 65688,
+        "DB-LSP": 5334,
+        "TLSv1.2": 1324,
+        "SSL": 859,
+        "DNS": 534
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_6.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 308848,
+      "rows_skipped": 403,
+      "flows_emitted": 1941,
+      "flows_too_short": 1520,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 5030.757,
+      "top_layers": {
+        "UDP": 250856,
+        "QUIC": 46303,
+        "TCP": 5887,
+        "DB-LSP": 3668,
+        "TLSv1.2": 687,
+        "SSL": 657
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_7.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 290325,
+      "rows_skipped": 350,
+      "flows_emitted": 1578,
+      "flows_too_short": 1502,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4925.811,
+      "top_layers": {
+        "UDP": 279153,
+        "TCP": 5282,
+        "DB-LSP": 3959,
+        "SSL": 608,
+        "TLSv1.2": 562,
+        "DNS": 342
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_8.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 290257,
+      "rows_skipped": 372,
+      "flows_emitted": 1539,
+      "flows_too_short": 1498,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4816.103,
+      "top_layers": {
+        "UDP": 279958,
+        "TCP": 4687,
+        "DB-LSP": 3267,
+        "TLSv1.2": 793,
+        "SSL": 591,
+        "DNS": 368
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Battleground/Battleground_9.csv",
+      "app": "battleground",
+      "service": "online_game",
+      "rows_read": 294194,
+      "rows_skipped": 312,
+      "flows_emitted": 1558,
+      "flows_too_short": 1488,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4823.611,
+      "top_layers": {
+        "UDP": 284517,
+        "TCP": 4573,
+        "DB-LSP": 3319,
+        "SSL": 655,
+        "TLSv1.2": 457,
+        "DNS": 305
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_1.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 141479,
+      "rows_skipped": 254,
+      "flows_emitted": 340,
+      "flows_too_short": 218,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2720.133,
+      "top_layers": {
+        "UDP": 139148,
+        "TCP": 1199,
+        "TLSv1.2": 440,
+        "TLSv1.3": 392,
+        "DNS": 247,
+        "RTCP": 44
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_2.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 113054,
+      "rows_skipped": 203,
+      "flows_emitted": 276,
+      "flows_too_short": 179,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2157.107,
+      "top_layers": {
+        "UDP": 111155,
+        "TCP": 970,
+        "TLSv1.2": 376,
+        "TLSv1.3": 281,
+        "DNS": 196,
+        "WireGuard": 49
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_3.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 289618,
+      "rows_skipped": 665,
+      "flows_emitted": 819,
+      "flows_too_short": 547,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 6390.092,
+      "top_layers": {
+        "UDP": 282089,
+        "TCP": 4038,
+        "TLSv1.3": 1460,
+        "TLSv1.2": 1287,
+        "DNS": 659,
+        "RTCP": 59
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_4.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 101403,
+      "rows_skipped": 215,
+      "flows_emitted": 294,
+      "flows_too_short": 209,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2285.75,
+      "top_layers": {
+        "UDP": 99331,
+        "TCP": 1083,
+        "TLSv1.2": 433,
+        "TLSv1.3": 324,
+        "DNS": 208,
+        "RTCP": 15
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_5.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 405687,
+      "rows_skipped": 989,
+      "flows_emitted": 1266,
+      "flows_too_short": 858,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 10600.058,
+      "top_layers": {
+        "UDP": 395668,
+        "TCP": 5265,
+        "TLSv1.3": 1956,
+        "TLSv1.2": 1646,
+        "DNS": 982,
+        "RTCP": 95
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_6.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 97818,
+      "rows_skipped": 215,
+      "flows_emitted": 309,
+      "flows_too_short": 180,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 2465.524,
+      "top_layers": {
+        "UDP": 95848,
+        "TCP": 1004,
+        "TLSv1.2": 406,
+        "TLSv1.3": 332,
+        "DNS": 208,
+        "RTCP": 16
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_7.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 499291,
+      "rows_skipped": 1017,
+      "flows_emitted": 1435,
+      "flows_too_short": 878,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 11348.302,
+      "top_layers": {
+        "UDP": 488347,
+        "TCP": 5802,
+        "TLSv1.3": 1999,
+        "TLSv1.2": 1960,
+        "DNS": 1009,
+        "RTCP": 142
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_8.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 332613,
+      "rows_skipped": 714,
+      "flows_emitted": 898,
+      "flows_too_short": 579,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 6891.21,
+      "top_layers": {
+        "UDP": 324785,
+        "TCP": 4170,
+        "TLSv1.3": 1514,
+        "TLSv1.2": 1258,
+        "DNS": 708,
+        "RTCP": 156
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Online_Game/Teamfight_Tactics/Teamfight_Tactics_9.csv",
+      "app": "teamfight_tactics",
+      "service": "online_game",
+      "rows_read": 236506,
+      "rows_skipped": 541,
+      "flows_emitted": 625,
+      "flows_too_short": 392,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 4757.203,
+      "top_layers": {
+        "UDP": 230805,
+        "TCP": 2913,
+        "TLSv1.3": 1218,
+        "TLSv1.2": 842,
+        "DNS": 534,
+        "RTCP": 179
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_1.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 1609480,
+      "rows_skipped": 7,
+      "flows_emitted": 1881,
+      "flows_too_short": 338,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 37702.914,
+      "top_layers": {
+        "unknown": 1609480
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_2.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 1680892,
+      "rows_skipped": 7,
+      "flows_emitted": 1753,
+      "flows_too_short": 374,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 14423.518,
+      "top_layers": {
+        "unknown": 1680892
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_3.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 2898489,
+      "rows_skipped": 7,
+      "flows_emitted": 3368,
+      "flows_too_short": 547,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 21792.426,
+      "top_layers": {
+        "unknown": 2898489
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_4.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 1310336,
+      "rows_skipped": 8,
+      "flows_emitted": 1334,
+      "flows_too_short": 248,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 9659.393,
+      "top_layers": {
+        "unknown": 1310336
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_5.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 2562773,
+      "rows_skipped": 7,
+      "flows_emitted": 2812,
+      "flows_too_short": 462,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 16808.628,
+      "top_layers": {
+        "unknown": 2562773
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_6.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 2243640,
+      "rows_skipped": 7,
+      "flows_emitted": 2809,
+      "flows_too_short": 549,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 34826.016,
+      "top_layers": {
+        "unknown": 2243640
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_7.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 2200521,
+      "rows_skipped": 7,
+      "flows_emitted": 3088,
+      "flows_too_short": 465,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 17402.918,
+      "top_layers": {
+        "unknown": 2200521
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Amazon_Prime/Amazon_Prime_8.csv",
+      "app": "amazon_prime",
+      "service": "stored_streaming",
+      "rows_read": 3197970,
+      "rows_skipped": 7,
+      "flows_emitted": 3531,
+      "flows_too_short": 512,
+      "truncated": false,
+      "row_format": "wireshark_tsv_no_header",
+      "span_seconds": 24652.465,
+      "top_layers": {
+        "unknown": 3197970
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/Netflix/Netflix_1.csv",
+      "app": "netflix",
+      "service": "stored_streaming",
+      "rows_read": 4290778,
+      "rows_skipped": 7,
+      "flows_emitted": 3609,
+      "flows_too_short": 191,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 88980.122,
+      "top_layers": {
+        "TCP": 3942556,
+        "TLSv1.3": 348222
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Stored_Streaming/YouTube/YouTube_1.csv",
+      "app": "youtube",
+      "service": "stored_streaming",
+      "rows_read": 10486843,
+      "rows_skipped": 0,
+      "flows_emitted": 5346,
+      "flows_too_short": 34,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 82778.812,
+      "top_layers": {
+        "QUIC": 10382555,
+        "TCP": 96795,
+        "TLSv1.3": 7492,
+        "TLSv1": 1
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Video_Conferencing/Google_Meet/Google_Meet_1.csv",
+      "app": "google_meet",
+      "service": "video_conferencing",
+      "rows_read": 27168965,
+      "rows_skipped": 0,
+      "flows_emitted": 16877,
+      "flows_too_short": 56,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 86123.268,
+      "top_layers": {
+        "TCP": 26856927,
+        "STUN": 243207,
+        "UDP": 67536,
+        "TLSv1": 606,
+        "SSLv2": 289,
+        "RTCP": 255
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Video_Conferencing/MS_Teams/MS_Teams_1.csv",
+      "app": "ms_teams",
+      "service": "video_conferencing",
+      "rows_read": 11620089,
+      "rows_skipped": 186,
+      "flows_emitted": 5868,
+      "flows_too_short": 121,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 29276.994,
+      "top_layers": {
+        "UDP": 11486877,
+        "RTCP": 67593,
+        "STUN": 64607,
+        "CLASSIC-STUN": 826,
+        "DNS": 186
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Video_Conferencing/MS_Teams/MS_Teams_2.csv",
+      "app": "ms_teams",
+      "service": "video_conferencing",
+      "rows_read": 23465952,
+      "rows_skipped": 440,
+      "flows_emitted": 7292,
+      "flows_too_short": 302,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 72564.914,
+      "top_layers": {
+        "UDP": 23020612,
+        "RTCP": 248080,
+        "STUN": 196582,
+        "DNS": 440,
+        "CLASSIC-STUN": 238
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Video_Conferencing/Zoom/Zoom_1.csv",
+      "app": "zoom",
+      "service": "video_conferencing",
+      "rows_read": 6095138,
+      "rows_skipped": 2533,
+      "flows_emitted": 2115,
+      "flows_too_short": 1,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 21144.332,
+      "top_layers": {
+        "UDP": 6091223,
+        "DNS": 2533,
+        "WireGuard": 1376,
+        "CLASSIC-STUN": 6
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Video_Conferencing/Zoom/Zoom_2.csv",
+      "app": "zoom",
+      "service": "video_conferencing",
+      "rows_read": 5810990,
+      "rows_skipped": 2830,
+      "flows_emitted": 2358,
+      "flows_too_short": 1,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 23580.809,
+      "top_layers": {
+        "UDP": 5806716,
+        "DNS": 2830,
+        "WireGuard": 1440,
+        "CLASSIC-STUN": 4
+      }
+    },
+    {
+      "capture_id": "5G_Traffic_Datasets/Video_Conferencing/Zoom/Zoom_3.csv",
+      "app": "zoom",
+      "service": "video_conferencing",
+      "rows_read": 18658856,
+      "rows_skipped": 5908,
+      "flows_emitted": 9433,
+      "flows_too_short": 1,
+      "truncated": false,
+      "row_format": "wireshark_csv",
+      "span_seconds": 94373.02,
+      "top_layers": {
+        "UDP": 18651752,
+        "DNS": 5908,
+        "WireGuard": 1160,
+        "DCERPC": 36
+      }
+    }
+  ],
+  "wall_clock_seconds": 928.4,
+  "environment": {
+    "git_commit": "375bbf7914a8d87ec4e1a58d7071b29f5d282322",
+    "python": "3.13.15",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "library_versions": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3"
+    }
+  }
+}

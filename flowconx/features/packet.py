@@ -34,8 +34,8 @@ PACKET_FEATURE_NAMES: List[str] = [
     "log_iat",            # log1p(inter-arrival ms) / 10
     "direction",          # +1 client->server, -1 server->client
     "signed_size",        # size_norm * direction
-    "byte_progress",      # cumulative bytes / total bytes in the observed window
-    "time_progress",      # cumulative time / total observed time
+    "log_cum_bytes",      # log1p(bytes seen so far) / 16   -- causal
+    "log_cum_time",       # log1p(ms elapsed so far) / 12   -- causal
     "size_delta",         # (size - previous size) / 1500
     "burst_position",     # index within the current same-direction run / 16
 ]
@@ -129,13 +129,15 @@ def build_packet_features(
     out[:, 2] = directions
     out[:, 3] = size_norm * directions
 
-    cumulative_bytes = np.cumsum(lengths)
-    total_bytes = max(float(cumulative_bytes[-1]), 1.0)
-    out[:, 4] = cumulative_bytes / total_bytes
-
-    cumulative_time = np.cumsum(iats)
-    total_time = max(float(cumulative_time[-1]), 1e-6)
-    out[:, 5] = cumulative_time / total_time
+    # Causal by construction. An earlier version normalised these by the
+    # window total, which means the value at packet 1 depended on packets the
+    # classifier had not seen yet -- harmless for full-flow scoring, but it
+    # silently inflated the early-classification curve, which is precisely the
+    # claim that has to hold. Normalising by a fixed constant instead makes
+    # truncating the sequence exactly equal to observing fewer packets, and
+    # tests/test_features.py asserts that equality.
+    out[:, 4] = _safe_log(np.cumsum(lengths)) / 16.0
+    out[:, 5] = _safe_log(np.cumsum(iats)) / 12.0
 
     out[1:, 6] = np.diff(size_norm)
 

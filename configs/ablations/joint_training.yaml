@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_joint_training
+description: Single-stage joint training instead of two-stage.
+train:
+  schedule: joint

@@ -1,0 +1,4 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_full
+description: The full model. The reference row of the ablation table.

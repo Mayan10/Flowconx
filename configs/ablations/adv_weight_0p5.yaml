@@ -1,0 +1,7 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_adv_weight_0p5
+description: Adversarial weight 0.5. The sweep the invariance/accuracy trade-off curve
+  is drawn from.
+loss:
+  lambda_adversarial: 0.5

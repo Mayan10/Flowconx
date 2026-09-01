@@ -1,0 +1,14 @@
+defaults: [fiveg_main.yaml]
+name: flowconx_open_set
+description: >
+  Three applications held out of training entirely, including out of
+  validation, and treated as unknown at test time. Held-out apps span three
+  different service classes so that rejection cannot be solved by rejecting
+  one class.
+data:
+  unknown_apps: [netflix, kt_gamebox, google_meet]
+eval:
+  open_set: true
+  few_shot: true
+  early_classification: false
+  robustness: false

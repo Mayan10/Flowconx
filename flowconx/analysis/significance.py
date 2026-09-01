@@ -253,3 +253,164 @@ def paired_seed_comparison(
     a = [a_scores[s] for s in shared]
     b = [b_scores[s] for s in shared]
     return wilcoxon_across_seeds(a, b), cohens_d(a, b), shared
+
+
+# --------------------------------------------------------------------------
+# CLI: build results/significance.json, which the table generator reads
+# --------------------------------------------------------------------------
+
+# Which experiments form one correction family. Holm-Bonferroni is applied
+# within a family, so a family has to be a set of comparisons that were
+# planned together -- not every comparison in the repository.
+FAMILIES: Dict[str, Dict[str, object]] = {
+    "component_ablations": {
+        "reference": "ablation_full",
+        "members": [
+            "ablation_no_flow_metric",
+            "ablation_no_dual_encoder",
+            "ablation_fusion_concat",
+            "ablation_fusion_gated_sum",
+            "ablation_fusion_late",
+            "ablation_no_adversarial",
+            "ablation_no_disentangle",
+            "ablation_no_prototype",
+            "ablation_contrastive_only",
+            "ablation_margin_only",
+            "ablation_joint_training",
+            "ablation_capacity_matched_small",
+        ],
+    },
+    "embedding_choice": {
+        "reference": "ablation_full",
+        "members": ["ablation_classify_z_app", "ablation_classify_z_network", "ablation_classify_z_concat"],
+    },
+    "against_baselines": {
+        "reference": "flowconx_main",
+        "members": [
+            "baseline_deeppacket_cnn",
+            "baseline_fsnet",
+            "baseline_lstm_attention",
+            "baseline_mlp_stats",
+        ],
+    },
+}
+
+
+def _head_for(experiment: str) -> str:
+    """Baselines report under 'softmax'; the model reports under 'prototype'."""
+    return "softmax" if experiment.startswith("baseline_") else "prototype"
+
+
+def build_significance(
+    results_root: str | Path,
+    datasets: Sequence[str],
+    splits: Sequence[str],
+    alpha: float = 0.05,
+    metric: str = "macro_f1",
+) -> Dict[str, object]:
+    """Every planned comparison, tested and corrected within its family."""
+    out: Dict[str, object] = {
+        "metric": metric,
+        "alpha": alpha,
+        "correction": "holm_bonferroni",
+        "test": "wilcoxon_signed_rank_across_seeds",
+        "families": [],
+        "skipped": [],
+    }
+    for family_name, definition in FAMILIES.items():
+        reference_name = str(definition["reference"])
+        for dataset in datasets:
+            for split in splits:
+                reference = load_seed_scores(
+                    results_root, reference_name, dataset, split, _head_for(reference_name), metric
+                )
+                if len(reference) < 2:
+                    out["skipped"].append(
+                        {
+                            "family": family_name,
+                            "dataset": dataset,
+                            "split": split,
+                            "reason": f"reference {reference_name} has {len(reference)} seed(s)",
+                        }
+                    )
+                    continue
+                comparisons: List[Tuple[str, TestResult]] = []
+                metadata: List[Dict[str, object]] = []
+                for member in definition["members"]:  # type: ignore[union-attr]
+                    scores = load_seed_scores(results_root, member, dataset, split, _head_for(member), metric)
+                    paired = paired_seed_comparison(reference, scores)
+                    if paired is None:
+                        out["skipped"].append(
+                            {
+                                "family": family_name,
+                                "dataset": dataset,
+                                "split": split,
+                                "experiment": member,
+                                "reason": f"{len(scores)} seed(s) shared with the reference",
+                            }
+                        )
+                        continue
+                    result, effect, shared = paired
+                    comparisons.append((member, result))
+                    metadata.append(
+                        {
+                            "experiment": member,
+                            "dataset": dataset,
+                            "split": split,
+                            "reference": reference_name,
+                            "cohens_d": effect,
+                            "shared_seeds": shared,
+                            "reference_mean": float(np.mean([reference[s] for s in shared])),
+                            "member_mean": float(np.mean([scores[s] for s in shared])),
+                        }
+                    )
+                if not comparisons:
+                    continue
+                family = compare_family(comparisons, alpha=alpha, family_name=f"{family_name}/{dataset}/{split}")
+                for entry, extra in zip(family["comparisons"], metadata):  # type: ignore[index]
+                    entry.update(extra)
+                out["families"].append(family)
+    return out
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Build results/significance.json.")
+    parser.add_argument("--results", default="results")
+    parser.add_argument("--out", default="results/significance.json")
+    parser.add_argument("--datasets", nargs="*", default=["cesnet_quic22", "fiveg_traffic"])
+    parser.add_argument("--splits", nargs="*", default=["session_disjoint", "temporal", "random_flow"])
+    parser.add_argument("--alpha", type=float, default=0.05)
+    parser.add_argument("--metric", default="macro_f1")
+    args = parser.parse_args(argv)
+
+    payload = build_significance(args.results, args.datasets, args.splits, args.alpha, args.metric)
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    tested = sum(len(f["comparisons"]) for f in payload["families"])
+    significant = sum(
+        1 for f in payload["families"] for c in f["comparisons"] if c["correction"]["significant"]
+    )
+    print(f"{tested} comparisons tested, {significant} significant after Holm-Bonferroni at alpha={args.alpha}")
+    for family in payload["families"]:
+        print(f"\n{family['family']}")
+        for comparison in family["comparisons"]:
+            marker = "*" if comparison["correction"]["significant"] else " "
+            print(
+                f"  {marker} {comparison['name']:<34} "
+                f"{comparison['member_mean']:.4f} vs {comparison['reference_mean']:.4f}  "
+                f"p={comparison['p_value']:.4g}  d={comparison['cohens_d']:.2f}"
+            )
+    if payload["skipped"]:
+        print(f"\n{len(payload['skipped'])} comparison(s) skipped for want of seeds:")
+        for entry in payload["skipped"][:10]:
+            print(f"  {entry.get('experiment', entry['family'])}: {entry['reason']}")
+    print(f"\nwrote {out}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

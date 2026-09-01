@@ -1,0 +1,19 @@
+defaults: [base.yaml]
+name: flowconx_main
+description: >
+  Headline configuration on CESNET-QUIC22. Session-disjoint splitting, so that
+  flows from one capture day never straddle train and test. The random-flow
+  contrast is a separate config, reported as a column, never as the headline.
+data:
+  dataset: cesnet_quic22
+  csv: data/processed/cesnet_quic22.csv
+  split_protocol: session_disjoint
+  max_packets: 30
+train:
+  epochs: 20
+  stage1_epochs: 10
+  early_stop_patience: 6
+eval:
+  classifier_heads: [knn, prototype, linear]
+  probes: true
+  early_classification: true

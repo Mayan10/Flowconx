@@ -1,0 +1,7 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_classify_z_concat
+description: Classify from the unfused concatenation, which is what justifies the
+  fusion design.
+model:
+  classify_from: z_concat

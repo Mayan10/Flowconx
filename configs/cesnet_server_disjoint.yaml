@@ -1,0 +1,5 @@
+defaults: [cesnet_main.yaml]
+name: flowconx_server_disjoint
+description: Test only on flows to server addresses never seen in training.
+data:
+  split_protocol: server_disjoint

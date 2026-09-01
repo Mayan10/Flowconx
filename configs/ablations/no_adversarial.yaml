@@ -1,0 +1,8 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_no_adversarial
+description: Adversarial nuisance removal deleted entirely.
+model:
+  adversarial_head: false
+loss:
+  lambda_adversarial: 0.0

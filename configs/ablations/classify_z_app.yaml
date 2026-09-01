@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_classify_z_app
+description: Classify from the sequence embedding alone.
+model:
+  classify_from: z_app

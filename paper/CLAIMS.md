@@ -1,0 +1,142 @@
+# CLAIMS
+
+Every claim we intend to make in the abstract and introduction, each mapped to
+the table, figure and significance test that supports it.
+
+**A claim with no mapped result is deleted before submission.** This file is
+the checklist that enforces that, and it is updated as results land, not
+afterwards.
+
+Status legend: **supported** (result exists and the test passed) ·
+**pending** (the run is planned but has not produced a number) ·
+**withdrawn** (the result contradicted it).
+
+---
+
+## C1 — Random flow splitting inflates encrypted-traffic results substantially
+
+> Under the split protocol standard in the literature, a 2016 statistical
+> baseline reaches macro-F1 within a few points of a modern neural model. Under
+> session-disjoint splitting on the same data, both fall sharply. The published
+> protocol is measuring memorisation of capture sessions as much as application
+> behaviour.
+
+- **Evidence:** `paper/tables/split_contrast.tex`, from
+  `results/audit/*/audit_summary.json` and `results/flowconx_*/`
+- **Test:** paired comparison across seeds, `results/significance.json`
+- **Status:** **partially supported.** The v1 corpus showed AppScanner at
+  macro-F1 0.869 under a random flow split against FlowCon-X's recorded 0.884,
+  collapsing to 0.202 under an app-disjoint split (`AUDIT.md` §8). The
+  session-disjoint and temporal legs need the regenerated corpus.
+- **Risk if it fails:** this is the measurement contribution. If the gap turns
+  out to be small on the new corpus, the paper loses its most defensible claim
+  and we should reframe around C4/C5 rather than pretend.
+
+## C2 — FlowCon-X is competitive under strict protocols, not state of the art
+
+> We do not claim to beat pre-trained byte-level transformers on curated
+> benchmarks; those are saturated above 98% and a fractional win is not a
+> contribution.
+
+- **Evidence:** `paper/tables/main_comparison_*.tex`
+- **Test:** Wilcoxon across seeds against every baseline we ran, Holm-Bonferroni
+  corrected within the `against_baselines` family
+- **Status:** **pending**
+- **Constraint:** ET-BERT, YaTC, CLE-TFE, MIETT, FlowletFormer and PacketCLIP
+  were **not run** — all six tokenise raw payload bytes, which our QUIC/TLS
+  records do not retain. See `flowconx/baselines/WHY_NOT_RUN.md`. The claim is
+  worded to be true given that gap.
+
+## C3 — Identifier shortcuts do not explain the task
+
+> Destination port, SNI, server address and server AS, each used alone, fall
+> far short of the behavioural models, so the benchmark is measuring traffic
+> analysis rather than name resolution.
+
+- **Evidence:** `paper/tables/main_comparison_*.tex`, "Identifier shortcuts" tier
+- **Test:** none needed; the comparison is against the majority-class floor
+- **Status:** **pending**
+- **Risk if it fails:** if SNI alone approaches the model, no result in the
+  paper means anything and we have to change datasets. This is checked first.
+
+## C4 — A metric-trained deployed embedding rejects unknown applications better than a softmax classifier
+
+> Held-out applications are rejected by distance to the nearest prototype with
+> higher AUROC and lower FPR@95TPR than maximum-softmax-probability,
+> energy-based or Mahalanobis rejection on the same embedding.
+
+- **Evidence:** `results/flowconx_open_set/`, OSCR curves
+- **Test:** paired across seeds
+- **Status:** **pending**
+- **Note:** this is a claim ET-BERT-class models cannot easily make, since a
+  fine-tuned softmax head has one logit per training class and no "none of
+  these". Stated as a structural argument, not as a measured win over them.
+
+## C5 — New applications enroll from a handful of labelled flows, without retraining
+
+> With the encoder frozen, a new application reaches usable accuracy from
+> k = 5–25 labelled flows and a prototype update, at a cost of k forward passes
+> against a fine-tuning run for every baseline.
+
+- **Evidence:** `paper/figures/enrollment_curve.pdf`, `paper/tables/cost.tex`
+- **Test:** enrollment curves with spread over repeated draws
+- **Status:** **pending**
+- **Both halves are required.** The accuracy curve alone is not the claim; the
+  cost asymmetry has to be measured in seconds and GPU-hours, or the claim is
+  rhetorical.
+
+## C6 — Performance degrades gracefully over time and is cheaply restored
+
+> Trained on the earliest week of CESNET-QUIC22 and evaluated week by week,
+> accuracy declines; refreshing prototypes from k labelled flows recovers most
+> of the loss without touching the encoder.
+
+- **Evidence:** `results/flowconx_temporal/*/metrics.json`, `drift` block
+- **Status:** **pending**
+
+## C7 — The model survives padding and quantisation defences better than the alternatives, at a stated overhead
+
+> Accuracy degradation is reported against the byte and packet overhead each
+> countermeasure imposes. A defence that halves accuracy by tripling bandwidth
+> is not the same result as one that does it for free.
+
+- **Evidence:** `paper/figures/robustness_overhead.pdf`
+- **Status:** **pending**
+
+## C8 — Decisions are made from few packets, fast enough to sit inline
+
+> Accuracy at packets 1, 2, 3, 5, 10 and 20, and end-to-end p50/p95/p99 latency
+> including feature construction.
+
+- **Evidence:** `paper/figures/early_classification.pdf`, `paper/tables/cost.tex`
+- **Status:** **pending**
+- **Correction to the previous draft:** the earlier "sub-15 ms" figure was a
+  forward pass on random tensors at batch size 1 on an Apple GPU, excluding all
+  feature extraction (`AUDIT.md` §5, M3). It must not be reused.
+
+## C9 — Adversarial removal reduces measurable nuisance leakage without destroying the representation
+
+> An MLP probe recovers capture session / week from `z_flow` at close to the
+> majority-class floor, while downstream task macro-F1 is retained.
+
+- **Evidence:** `paper/figures/adversarial_tradeoff.pdf`, `probes` block
+- **Status:** **pending**
+- **Scope changed since the previous draft.** The nuisance variable used to be
+  `condition`, which the audit reconstructed from two model input features with
+  agreement 1.000 — removing it was circular (`AUDIT.md` §3, L5). It is now
+  drawn from provenance the model never sees. **The claim now refers to a
+  different quantity than the earlier draft's "context invariance", and the
+  0.6409 CIST score must not be carried over.**
+
+---
+
+## Claims we are NOT making
+
+Recorded so they do not creep back in during writing:
+
+- Not: state of the art on ISCX-VPN, USTC-TFC, or any saturated benchmark.
+- Not: beating ET-BERT. We did not run it and say so.
+- Not: "context invariance" as previously defined. The metric was maximised by
+  a constant encoder.
+- Not: any claim about packet loss robustness derived from the v1 corpus, where
+  `loss_rate` was identically zero on all 112,121 rows.

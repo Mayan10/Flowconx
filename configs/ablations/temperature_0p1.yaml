@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_temperature_0p1
+description: Contrastive temperature 0.1.
+loss:
+  temperature: 0.1

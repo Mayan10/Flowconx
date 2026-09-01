@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_fusion_late
+description: 'Late fusion: the two embeddings never interact before the head.'
+model:
+  fusion: late

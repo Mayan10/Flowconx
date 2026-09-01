@@ -1,0 +1,9 @@
+defaults: [fiveg_main.yaml]
+name: flowconx_random_contrast
+description: The random-flow contrast on 5G Traffic. Reported as a column, never as a headline.
+data:
+  split_protocol: random_flow
+eval:
+  probes: false
+  early_classification: false
+  robustness: false

@@ -1,0 +1,20 @@
+defaults: [base.yaml]
+name: flowconx_main
+description: >
+  Headline configuration on 5G Traffic. One capture file is one session, and
+  every conversation segment cut from it is correlated with its neighbours, so
+  session-disjoint splitting groups on capture_id.
+data:
+  dataset: fiveg_traffic
+  csv: data/processed/fiveg_traffic.csv
+  split_protocol: session_disjoint
+  max_packets: 32
+train:
+  epochs: 20
+  stage1_epochs: 10
+  early_stop_patience: 6
+eval:
+  classifier_heads: [knn, prototype, linear]
+  probes: true
+  early_classification: true
+  robustness: true

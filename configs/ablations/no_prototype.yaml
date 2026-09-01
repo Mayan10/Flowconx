@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_no_prototype
+description: Learned prototype alignment removed.
+loss:
+  lambda_prototype: 0.0

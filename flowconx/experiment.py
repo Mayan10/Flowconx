@@ -169,16 +169,18 @@ class ExperimentConfig:
         return asdict(self)
 
     def hash(self) -> str:
-        """Stable hash of the config, excluding fields that cannot change results.
+        """Stable hash of the settings that can change a result.
 
-        ``seed`` is excluded on purpose: the point of the hash is to identify
-        the *experiment*, so that runs of the same experiment at different
-        seeds group together in ``results/``.
+        Excludes ``seed`` (runs of one experiment at different seeds must
+        group together), ``output_root`` and ``description`` (bookkeeping),
+        and ``name``. Excluding the name is deliberate: two ablation configs
+        that differ only in what they are called are the *same experiment*,
+        and the sweep runner uses a hash collision to catch exactly that
+        mistake rather than burning GPU hours running one twice.
         """
         payload = self.as_dict()
-        payload.pop("seed", None)
-        payload.pop("output_root", None)
-        payload.pop("description", None)
+        for field_name in ("seed", "output_root", "description", "name"):
+            payload.pop(field_name, None)
         return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()[:16]
 
     @property

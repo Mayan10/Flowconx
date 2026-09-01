@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_margin_0p4
+description: Negative margin 0.4.
+loss:
+  pair_negative_margin: 0.4

@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_capacity_matched_small
+description: Reduced width, so a win over a smaller ablation is not merely more parameters.
+model:
+  width_multiplier: 0.75

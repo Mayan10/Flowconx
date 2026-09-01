@@ -1,0 +1,9 @@
+defaults: [cesnet_main.yaml]
+name: flowconx_temporal
+description: >
+  Train on the earliest flows, test on the latest. CESNET-QUIC22 spans four
+  consecutive weeks, so this is a real timeline rather than a shuffle.
+data:
+  split_protocol: temporal
+eval:
+  drift: true

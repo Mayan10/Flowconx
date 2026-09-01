@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_packets_3
+description: Only the first 3 packet(s) of each flow are observed.
+data:
+  observed_packets: 3

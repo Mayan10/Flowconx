@@ -1,0 +1,10 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_no_flow_metric
+description: THE HEADLINE ABLATION. No metric objective on the deployed embedding;
+  only z_app is trained, which is the current field-standard approach. Everything
+  the open-set and few-shot claims rest on should degrade here, and if it does not,
+  the paper's central claim is wrong.
+loss:
+  lambda_flow_supcon: 0.0
+  lambda_flow_pair_margin: 0.0

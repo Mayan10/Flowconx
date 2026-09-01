@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_classify_z_network
+description: Classify from the flow-context embedding alone.
+model:
+  classify_from: z_network

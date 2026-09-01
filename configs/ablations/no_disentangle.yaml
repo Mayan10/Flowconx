@@ -1,0 +1,6 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_no_disentangle
+description: Cross-covariance disentanglement removed.
+loss:
+  lambda_disentangle: 0.0

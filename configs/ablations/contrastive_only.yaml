@@ -1,0 +1,7 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_contrastive_only
+description: Contrastive terms only; no margin term.
+loss:
+  lambda_flow_pair_margin: 0.0
+  lambda_pair_margin: 0.0

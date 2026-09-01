@@ -1,0 +1,7 @@
+defaults:
+- ../cesnet_main.yaml
+name: ablation_margin_only
+description: Margin terms only; no contrastive term.
+loss:
+  lambda_service_supcon: 0.0
+  lambda_flow_supcon: 0.0

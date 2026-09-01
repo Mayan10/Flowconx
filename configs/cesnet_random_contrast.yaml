@@ -1,0 +1,11 @@
+defaults: [cesnet_main.yaml]
+name: flowconx_random_contrast
+description: >
+  The field's usual protocol, reported only as a contrast. The gap between
+  this and flowconx_main is the measurement result: how much a random flow
+  split inflates a published-style number.
+data:
+  split_protocol: random_flow
+eval:
+  probes: false
+  early_classification: false

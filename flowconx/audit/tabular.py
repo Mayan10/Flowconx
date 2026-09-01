@@ -13,16 +13,26 @@ silently become inputs.
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
 
-# Fields that must never be handed to a model as an input feature: they
-# identify the row or its provenance rather than describing its behaviour.
+# Fields that must never be handed to the *model* as an input feature. The
+# audit probes deliberately use several of them -- that is the point of a
+# shortcut probe -- so each such family declares itself as identifier-based
+# and is excluded from this check by name.
 FORBIDDEN_INPUT_COLUMNS = frozenset(
     {"flow_id", "app", "service", "capture_id", "origin", "server_ip", "client_ip", "sni", "server_name"}
+)
+
+# Families that intentionally consume an identifier. Their whole purpose is to
+# measure how much of the task a single identifier explains; if one of these
+# scores near the full model, the benchmark is not measuring traffic analysis.
+IDENTIFIER_FAMILIES = frozenset(
+    {"protocol_only", "port_only", "sni_only", "server_ip_only", "server_asn_only", "capture_id_only"}
 )
 
 # Sequence columns in the canonical schema, stored as ';'-separated strings.
@@ -43,7 +53,6 @@ SCALAR_COLUMNS = (
     "flow duration",
     "flow bytes/s",
     "flow packets/s",
-    "protocol",
 )
 
 
@@ -134,6 +143,67 @@ def family_protocol_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple
     _ = flows
     values = pd.to_numeric(df.get("protocol", pd.Series(np.zeros(len(df)))), errors="coerce").fillna(-1.0)
     return values.to_numpy(dtype=np.float64).reshape(-1, 1), ["protocol"]
+
+
+def _hashed_column(df: pd.DataFrame, column: str, n_buckets: int = 4096) -> Tuple[np.ndarray, List[str]]:
+    """One column, hashed to integer buckets so a tree can split on it.
+
+    Hashing rather than one-hot keeps the probe cheap on a column with tens of
+    thousands of distinct values (SNI, server IP), and a tree can still
+    isolate an individual value because the hash is deterministic.
+    """
+    if column not in df.columns:
+        return np.zeros((len(df), 0)), []
+    values = df[column].astype(str).fillna("")
+    codes = values.map(lambda text: int(hashlib.sha256(text.encode("utf-8")).hexdigest()[:8], 16) % n_buckets)
+    return codes.to_numpy(dtype=np.float64).reshape(-1, 1), [f"{column}_hash"]
+
+
+def family_port_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
+    """Destination port alone. The classic shortcut every reviewer checks."""
+    _ = flows
+    values = pd.to_numeric(df.get("server_port", pd.Series([""] * len(df))), errors="coerce").fillna(-1.0)
+    return values.to_numpy(dtype=np.float64).reshape(-1, 1), ["server_port"]
+
+
+def family_sni_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
+    """SNI string alone.
+
+    If this solves the task, the dataset is a DNS lookup with extra steps and
+    no traffic-analysis result on it means anything.
+    """
+    _ = flows
+    return _hashed_column(df, "sni")
+
+
+def family_server_ip_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
+    _ = flows
+    if "server_ip" not in df.columns:
+        return np.zeros((len(df), 0)), []
+    hashed, names = _hashed_column(df, "server_ip")
+    # The /24 prefix as a second column: CDNs spread one service across many
+    # addresses in the same block, so the prefix is the stronger shortcut.
+    prefix = df["server_ip"].astype(str).str.rsplit(".", n=1).str[0]
+    prefix_codes = prefix.map(lambda t: int(hashlib.sha256(t.encode("utf-8")).hexdigest()[:8], 16) % 4096)
+    return np.column_stack([hashed[:, 0], prefix_codes.to_numpy(dtype=np.float64)]), names + ["server_prefix_hash"]
+
+
+def family_server_asn_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
+    _ = flows
+    if "dst_asn" not in df.columns:
+        return np.zeros((len(df), 0)), []
+    values = pd.to_numeric(df["dst_asn"], errors="coerce").fillna(-1.0)
+    return values.to_numpy(dtype=np.float64).reshape(-1, 1), ["dst_asn"]
+
+
+def family_capture_id_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
+    """Capture session alone. Should be useless under a session-disjoint split.
+
+    Under a random split it is a near-perfect predictor, which is the clearest
+    single demonstration of why the split protocol matters.
+    """
+    _ = flows
+    return _hashed_column(df, "capture_id")
 
 
 def family_five_stat(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
@@ -344,6 +414,11 @@ def family_condition_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tupl
 
 FEATURE_FAMILIES: Dict[str, Callable[[pd.DataFrame, Sequence[ParsedFlow]], Tuple[np.ndarray, List[str]]]] = {
     "protocol_only": family_protocol_only,
+    "port_only": family_port_only,
+    "sni_only": family_sni_only,
+    "server_ip_only": family_server_ip_only,
+    "server_asn_only": family_server_asn_only,
+    "capture_id_only": family_capture_id_only,
     "condition_only": family_condition_only,
     "five_stat": family_five_stat,
     "first10_sizes": family_first10_sizes,
@@ -357,7 +432,12 @@ FEATURE_FAMILIES: Dict[str, Callable[[pd.DataFrame, Sequence[ParsedFlow]], Tuple
 
 # Human-readable provenance for each family, used verbatim in the audit report.
 FAMILY_CITATIONS: Dict[str, str] = {
-    "protocol_only": "Single-column identifier probe (port-only analogue; our schema retains no port).",
+    "protocol_only": "Transport protocol number alone.",
+    "port_only": "Destination port alone -- the classic encrypted-traffic shortcut.",
+    "sni_only": "TLS/QUIC SNI string alone. If this wins, the task is name resolution, not traffic analysis.",
+    "server_ip_only": "Server address and /24 prefix alone.",
+    "server_asn_only": "Server autonomous system number alone.",
+    "capture_id_only": "Capture session identifier alone. Near-perfect under a random split, useless under a session-disjoint one.",
     "condition_only": "The declared nuisance variable used alone as a predictor.",
     "five_stat": "Five flow-summary statistics, the classic NetFlow-style baseline.",
     "first10_sizes": "First 10 signed packet sizes.",
@@ -379,7 +459,11 @@ def build_features(
         raise ValueError(f"Unknown feature family {family!r}. Known: {sorted(FEATURE_FAMILIES)}")
     parsed = flows if flows is not None else parse_flows(df)
     matrix, names = FEATURE_FAMILIES[family](df, parsed)
-    leaked = FORBIDDEN_INPUT_COLUMNS.intersection(names)
-    if leaked:
-        raise ValueError(f"Feature family {family!r} exposes identifier columns as inputs: {sorted(leaked)}")
+    if family not in IDENTIFIER_FAMILIES:
+        # Behavioural families must not touch an identifier. Identifier
+        # families are exempt by name, because probing an identifier is the
+        # entire point of them.
+        leaked = FORBIDDEN_INPUT_COLUMNS.intersection(names)
+        if leaked:
+            raise ValueError(f"Feature family {family!r} exposes identifier columns as inputs: {sorted(leaked)}")
     return np.nan_to_num(matrix, nan=0.0, posinf=0.0, neginf=0.0), names

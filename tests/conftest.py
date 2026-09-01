@@ -25,7 +25,7 @@ def synthetic_frame() -> pd.DataFrame:
     import numpy as np
 
     from flowconx.features import infer_condition
-    from flowconx.schema import make_flow_id
+    from flowconx.data.schema import make_flow_id
 
     rng = np.random.default_rng(1234)
     services = ["streaming", "gaming", "browsing", "conferencing"]

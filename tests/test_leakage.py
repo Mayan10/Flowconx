@@ -24,7 +24,7 @@ from flowconx.audit.splits import (
     indices_from_manifest,
 )
 from flowconx.audit.tabular import FORBIDDEN_INPUT_COLUMNS, FEATURE_FAMILIES, build_features
-from flowconx.schema import MODEL_INPUT_COLUMNS, PROVENANCE_COLUMNS
+from flowconx.data.schema import MODEL_INPUT_COLUMNS, PROVENANCE_COLUMNS
 
 STRICT_PROTOCOLS = ("session_disjoint", "server_disjoint", "app_disjoint", "origin_disjoint", "temporal")
 

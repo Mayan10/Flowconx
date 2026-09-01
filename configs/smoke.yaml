@@ -1,0 +1,18 @@
+# Tiny end-to-end run used by `make repro-small` and by the determinism test.
+# Small enough to finish in well under a minute on a laptop CPU.
+defaults: [base.yaml]
+name: smoke
+description: Minimal end-to-end run, for CI and for the determinism assertion.
+data:
+  limit: 3000
+  split_protocol: random_flow
+  min_class_count: 20
+train:
+  epochs: 2
+  batch_size: 128
+  stage1_epochs: 1
+  device: cpu
+eval:
+  bootstrap_resamples: 100
+  classifier_heads: [prototype]
+  cost: false

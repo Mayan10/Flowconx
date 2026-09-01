@@ -6,7 +6,7 @@ from typing import Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 
-from .config import MAX_PACKETS, NET_TIMESTEPS, PKT_FEAT_DIM, NET_FEAT_DIM
+from ..config import MAX_PACKETS, NET_TIMESTEPS, PKT_FEAT_DIM, NET_FEAT_DIM
 
 
 PACKET_LENGTH_ALIASES = [

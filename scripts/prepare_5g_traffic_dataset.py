@@ -16,7 +16,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from flowconx.config import infer_service, normalize_label
 from flowconx.features import infer_condition
-from flowconx.schema import CANONICAL_COLUMNS, make_flow_id
+from flowconx.data.schema import CANONICAL_COLUMNS, make_flow_id
 
 ORIGIN = "5g_traffic"
 

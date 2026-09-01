@@ -15,7 +15,7 @@ from flowconx.config import infer_service, normalize_label
 from flowconx.features import infer_condition
 
 
-from flowconx.schema import CANONICAL_COLUMNS, make_flow_id
+from flowconx.data.schema import CANONICAL_COLUMNS, make_flow_id
 
 ORIGIN = "cesnet_quic22"
 

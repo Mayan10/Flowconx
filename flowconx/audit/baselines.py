@@ -59,6 +59,14 @@ MODEL_SPECS: Dict[str, ModelSpec] = {
         params={"max_depth": 4},
         deviation="Diagnostic probe, not a published baseline.",
     ),
+    # Identifier probes. Deeper trees than the protocol probe, because a
+    # single hashed identifier column needs depth to isolate values, and an
+    # under-powered probe would understate the shortcut it is looking for.
+    "port_only": ModelSpec(name="decision_tree_d12", kind="decision_tree", params={"max_depth": 12}),
+    "sni_only": ModelSpec(name="decision_tree_d20", kind="decision_tree", params={"max_depth": 20}),
+    "server_ip_only": ModelSpec(name="decision_tree_d20", kind="decision_tree", params={"max_depth": 20}),
+    "server_asn_only": ModelSpec(name="decision_tree_d16", kind="decision_tree", params={"max_depth": 16}),
+    "capture_id_only": ModelSpec(name="decision_tree_d20", kind="decision_tree", params={"max_depth": 20}),
     "five_stat": ModelSpec(name="random_forest", kind="random_forest", params={"n_estimators": 200}),
     "first10_sizes": ModelSpec(name="gradient_boosted_trees", kind="gbt"),
     "first20_sizes": ModelSpec(name="gradient_boosted_trees", kind="gbt"),

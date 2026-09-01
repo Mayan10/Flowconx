@@ -18,12 +18,23 @@ import hashlib
 from typing import Dict, List, Sequence
 
 # Identifiers and provenance. Never model inputs.
+#
+# `server_port`, `sni`, `server_ip` and `dst_asn` are retained deliberately.
+# They are exactly the fields a reviewer will suspect of carrying the label,
+# so the audit needs them in order to *measure* how much of the task they
+# explain on their own (port-only, SNI-only and server-IP-only probes). They
+# are excluded from MODEL_INPUT_COLUMNS and tests/test_leakage.py asserts it.
 PROVENANCE_COLUMNS: List[str] = [
     "flow_id",
     "origin",
     "capture_id",
     "flow_start_ts",
+    "client_ip",
     "server_ip",
+    "server_port",
+    "sni",
+    "dst_asn",
+    "protocol",
 ]
 
 # Labels and declared nuisance variable.
@@ -33,6 +44,14 @@ LABEL_COLUMNS: List[str] = ["app", "service", "condition"]
 SEQUENCE_COLUMNS: List[str] = ["packet_lengths", "iat_values", "directions"]
 
 # Flow-level scalars.
+#
+# `protocol` is deliberately NOT here. In the previous corpus its value
+# recorded which preparer had run -- 99.9% of rows with protocol 0 were a
+# single class -- so it acted as a source-dataset marker rather than a
+# behavioural feature (AUDIT.md 3, L3). The 5G captures make this worse: eight
+# of them are a tab-separated export with no protocol column at all, so the
+# value would encode the export format. It is retained as provenance, where
+# the audit can probe it, and excluded from model inputs.
 SCALAR_COLUMNS: List[str] = [
     "rtt_ms",
     "jitter_ms",
@@ -47,7 +66,6 @@ SCALAR_COLUMNS: List[str] = [
     "flow duration",
     "flow bytes/s",
     "flow packets/s",
-    "protocol",
 ]
 
 CANONICAL_COLUMNS: List[str] = PROVENANCE_COLUMNS + LABEL_COLUMNS + SEQUENCE_COLUMNS + SCALAR_COLUMNS

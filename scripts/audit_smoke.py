@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from flowconx.audit.run_audit import main as run_audit  # noqa: E402
 from flowconx.features import infer_condition  # noqa: E402
-from flowconx.schema import CANONICAL_COLUMNS, make_flow_id  # noqa: E402
+from flowconx.data.schema import CANONICAL_COLUMNS, make_flow_id  # noqa: E402
 
 SERVICES = ["streaming", "gaming", "browsing", "conferencing"]
 ORIGINS = ["source_a", "source_b", "source_c"]

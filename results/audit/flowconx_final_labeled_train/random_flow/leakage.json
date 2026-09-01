@@ -1,0 +1,118 @@
+{
+  "checks": [
+    {
+      "check": "row_index_disjoint",
+      "status": "pass",
+      "overlaps": {}
+    },
+    {
+      "check": "flow_id_disjoint",
+      "status": "pass",
+      "n_shared": 0,
+      "n_train_values": 78469,
+      "n_test_values": 22419,
+      "examples": [],
+      "note": "flow_id was synthesized from row content because the table carries none; this check is vacuous here. The exact-duplicate probe is the load-bearing one.",
+      "vacuous": true
+    },
+    {
+      "check": "capture_id_disjoint",
+      "status": "unavailable",
+      "reason": "column 'capture_id' is not present in the table"
+    },
+    {
+      "check": "five_tuple_disjoint",
+      "status": "unavailable",
+      "reason": "column 'five_tuple' is not present in the table"
+    },
+    {
+      "check": "client_ip_disjoint",
+      "status": "unavailable",
+      "reason": "column 'client_ip' is not present in the table"
+    },
+    {
+      "check": "server_ip_disjoint",
+      "status": "unavailable",
+      "reason": "column 'server_ip' is not present in the table"
+    },
+    {
+      "check": "origin_disjoint",
+      "status": "unavailable",
+      "reason": "column 'origin' is not present in the table"
+    },
+    {
+      "check": "no_exact_duplicates_across_splits",
+      "status": "FAIL",
+      "n_test_rows_duplicated_in_train": 53,
+      "fraction_of_test": 0.002364066193853428,
+      "columns_hashed": [
+        "app",
+        "service",
+        "condition",
+        "packet_lengths",
+        "iat_values",
+        "directions",
+        "rtt_ms",
+        "jitter_ms",
+        "loss_rate",
+        "total packets",
+        "total fwd packets",
+        "total backward packets",
+        "packet length mean",
+        "packet length std",
+        "flow iat mean",
+        "flow iat std",
+        "flow duration",
+        "flow bytes/s",
+        "flow packets/s",
+        "protocol"
+      ]
+    },
+    {
+      "check": "no_near_duplicates_across_splits",
+      "status": "FAIL",
+      "threshold": 0.999,
+      "standardised": true,
+      "n_test_rows_with_near_duplicate": 1704,
+      "fraction_of_sampled_test": 0.213,
+      "max_cosine_observed": 1.0000000000000002,
+      "sampled_train_rows": 8000,
+      "sampled_test_rows": 8000
+    },
+    {
+      "check": "label_and_identifiers_excluded_from_inputs",
+      "status": "pass",
+      "declared_inputs": [
+        "packet_lengths",
+        "iat_values",
+        "directions"
+      ],
+      "forbidden_present": []
+    },
+    {
+      "check": "nuisance_not_deterministic_in_inputs",
+      "status": "FAIL",
+      "nuisance": "condition",
+      "reconstruction_agreement": 1.0,
+      "reconstructed_from": [
+        "flow iat mean",
+        "flow iat std"
+      ],
+      "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+    }
+  ],
+  "n_failed": 3,
+  "failed": [
+    "no_exact_duplicates_across_splits",
+    "no_near_duplicates_across_splits",
+    "nuisance_not_deterministic_in_inputs"
+  ],
+  "unavailable": [
+    "capture_id_disjoint",
+    "five_tuple_disjoint",
+    "client_ip_disjoint",
+    "server_ip_disjoint",
+    "origin_disjoint"
+  ],
+  "verdict": "FAIL"
+}

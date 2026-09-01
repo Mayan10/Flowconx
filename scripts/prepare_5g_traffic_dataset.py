@@ -16,30 +16,10 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from flowconx.config import infer_service, normalize_label
 from flowconx.features import infer_condition
+from flowconx.schema import CANONICAL_COLUMNS, make_flow_id
 
+ORIGIN = "5g_traffic"
 
-CANONICAL_COLUMNS = [
-    "app",
-    "service",
-    "condition",
-    "packet_lengths",
-    "iat_values",
-    "directions",
-    "rtt_ms",
-    "jitter_ms",
-    "loss_rate",
-    "total packets",
-    "total fwd packets",
-    "total backward packets",
-    "packet length mean",
-    "packet length std",
-    "flow iat mean",
-    "flow iat std",
-    "flow duration",
-    "flow bytes/s",
-    "flow packets/s",
-    "protocol",
-]
 
 
 KNOWN_APPS = {
@@ -152,6 +132,8 @@ class WindowStats:
     app: str
     service: str
     max_packets: int
+    capture_id: str = ""
+    window_id: int = 0
     first_ts: Optional[float] = None
     last_ts: Optional[float] = None
     prev_ts: Optional[float] = None
@@ -231,6 +213,14 @@ class WindowStats:
         condition = infer_condition(iat_mean, iat_std, 0.0)
         protocol = self.protocols.most_common(1)[0][0] if self.protocols else 0
         return {
+            # Provenance. One capture file is one capture session, and every
+            # 10 s window cut from it is correlated with its neighbours, so the
+            # capture_id is what session-disjoint splitting must group on.
+            "flow_id": make_flow_id(ORIGIN, self.capture_id, self.window_id),
+            "origin": ORIGIN,
+            "capture_id": self.capture_id,
+            "flow_start_ts": float(self.first_ts or 0.0),
+            "server_ip": "",
             "app": self.app,
             "service": self.service,
             "condition": condition,
@@ -265,7 +255,7 @@ def flush_completed(windows: Dict[int, WindowStats], current_window: int, writer
     return flushed
 
 
-def process_file(path: Path, writer: csv.DictWriter, args: argparse.Namespace) -> int:
+def process_file(path: Path, writer: csv.DictWriter, args: argparse.Namespace, capture_id: str) -> int:
     app = app_from_path(path)
     service = infer_service(app)
     windows: Dict[int, WindowStats] = {}
@@ -324,7 +314,13 @@ def process_file(path: Path, writer: csv.DictWriter, args: argparse.Namespace) -
             window_key = int(window_id)
             stats = windows.get(window_key)
             if stats is None:
-                stats = WindowStats(app=app, service=service, max_packets=args.max_packets)
+                stats = WindowStats(
+                    app=app,
+                    service=service,
+                    max_packets=args.max_packets,
+                    capture_id=capture_id,
+                    window_id=window_key,
+                )
                 windows[window_key] = stats
             mask = window_ids == window_key
             stats.add_batch(timestamps[mask], lengths[mask], packet_directions[mask], protocols[mask])
@@ -351,7 +347,7 @@ def main() -> None:
         writer = csv.DictWriter(handle, fieldnames=CANONICAL_COLUMNS)
         writer.writeheader()
         for idx, path in enumerate(files, start=1):
-            rows = process_file(path, writer, args)
+            rows = process_file(path, writer, args, capture_id=path.relative_to(root).as_posix())
             total += rows
             print(f"[{idx}/{len(files)}] {path}: wrote {rows} flows")
 

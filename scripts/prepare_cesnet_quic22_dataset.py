@@ -15,33 +15,17 @@ from flowconx.config import infer_service, normalize_label
 from flowconx.features import infer_condition
 
 
-CANONICAL_COLUMNS = [
-    "app",
-    "service",
-    "condition",
-    "packet_lengths",
-    "iat_values",
-    "directions",
-    "rtt_ms",
-    "jitter_ms",
-    "loss_rate",
-    "total packets",
-    "total fwd packets",
-    "total backward packets",
-    "packet length mean",
-    "packet length std",
-    "flow iat mean",
-    "flow iat std",
-    "flow duration",
-    "flow bytes/s",
-    "flow packets/s",
-    "protocol",
-]
+from flowconx.schema import CANONICAL_COLUMNS, make_flow_id
+
+ORIGIN = "cesnet_quic22"
 
 
+# TIME_FIRST is what makes temporal splitting possible; it is optional in
+# older CESNET dumps, so the reader falls back and records its absence.
 USE_COLUMNS = [
     "APP",
     "CATEGORY",
+    "TIME_FIRST",
     "DURATION",
     "BYTES",
     "BYTES_REV",
@@ -126,7 +110,20 @@ def numeric(value: object, default: float = 0.0) -> float:
     return number
 
 
-def row_to_canonical(row: pd.Series) -> Optional[Dict[str, object]]:
+def time_first_seconds(value: object) -> float:
+    """CESNET writes TIME_FIRST as an ISO timestamp; fall back to 0.0."""
+    if value is None:
+        return 0.0
+    try:
+        parsed = pd.to_datetime(value, errors="coerce", utc=True)
+    except (TypeError, ValueError):
+        return 0.0
+    if parsed is pd.NaT or pd.isna(parsed):
+        return numeric(value, 0.0)
+    return float(parsed.timestamp())
+
+
+def row_to_canonical(row: pd.Series, capture_id: str, index: int) -> Optional[Dict[str, object]]:
     parsed = parse_ppi(row.get("PPI"))
     if parsed is None:
         return None
@@ -147,6 +144,14 @@ def row_to_canonical(row: pd.Series) -> Optional[Dict[str, object]]:
     condition = infer_condition(rtt, jitter, 0.0)
     protocol = int(numeric(row.get("PROTOCOL"), 17.0))
     return {
+        # Provenance. CESNET ships one file per day, so the source file is the
+        # closest available proxy for a capture session and TIME_FIRST gives a
+        # genuine timeline for temporal splitting.
+        "flow_id": make_flow_id(ORIGIN, capture_id, index),
+        "origin": ORIGIN,
+        "capture_id": capture_id,
+        "flow_start_ts": time_first_seconds(row.get("TIME_FIRST")),
+        "server_ip": "",
         "app": app,
         "service": service,
         "condition": condition,
@@ -191,12 +196,19 @@ def main() -> None:
 
     for file_idx, path in enumerate(files, start=1):
         file_rows = 0
-        for chunk in pd.read_csv(path, usecols=USE_COLUMNS, chunksize=args.chunk_rows, compression="infer"):
+        available = [c for c in USE_COLUMNS if c in pd.read_csv(path, nrows=0, compression="infer").columns]
+        if "TIME_FIRST" not in available:
+            print(f"  note: {path.name} has no TIME_FIRST column; temporal splits will be unavailable")
+        for chunk in pd.read_csv(path, usecols=available, chunksize=args.chunk_rows, compression="infer"):
             file_rows += len(chunk)
             scanned += len(chunk)
             services = chunk["CATEGORY"].map(service_from_category)
             random_keys = rng.random(len(chunk))
-            chunk = chunk.assign(service_for_sampling=services.to_numpy(), _sample_key=random_keys)
+            chunk = chunk.assign(
+                service_for_sampling=services.to_numpy(),
+                _sample_key=random_keys,
+                _capture_id=path.name,
+            )
             for service, group in chunk.groupby("service_for_sampling"):
                 if service == "unknown":
                     continue
@@ -216,8 +228,8 @@ def main() -> None:
     selected_rows = pd.concat(selected_parts, ignore_index=True)
     selected_rows = selected_rows.sort_values("_sample_key").reset_index(drop=True)
     canonical_rows = []
-    for _, row in selected_rows.iterrows():
-        canonical = row_to_canonical(row)
+    for index, (_, row) in enumerate(selected_rows.iterrows()):
+        canonical = row_to_canonical(row, capture_id=str(row.get("_capture_id", "unknown")), index=index)
         if canonical is not None:
             canonical_rows.append(canonical)
 

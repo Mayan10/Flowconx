@@ -1,0 +1,576 @@
+{
+  "dataset": "flowconx_final_labeled_train",
+  "csv": "data/processed/flowconx_final_labeled_train.csv",
+  "n_rows": 112098,
+  "label_column": "service",
+  "classes": [
+    "browsing",
+    "bulk_transfer",
+    "conferencing",
+    "gaming",
+    "streaming"
+  ],
+  "class_handling": {
+    "mode": "drop",
+    "min_class_count": 100,
+    "label_column": "service",
+    "rare_classes": [
+      "xr_interactive"
+    ],
+    "counts_before": {
+      "streaming": 32021,
+      "gaming": 20041,
+      "conferencing": 20036,
+      "bulk_transfer": 20000,
+      "browsing": 20000,
+      "xr_interactive": 23
+    },
+    "rows_before": 112121,
+    "action": "dropped",
+    "rows_dropped": 23,
+    "counts_after": {
+      "streaming": 32021,
+      "gaming": 20041,
+      "conferencing": 20036,
+      "bulk_transfer": 20000,
+      "browsing": 20000
+    },
+    "rows_after": 112098
+  },
+  "provenance_columns_present": {
+    "flow_id": false,
+    "origin": false,
+    "capture_id": false,
+    "flow_start_ts": false,
+    "server_ip": false
+  },
+  "flow_id_synthesized": true,
+  "split_protocol_availability": {
+    "random_flow": true,
+    "session_disjoint": false,
+    "temporal": false,
+    "server_disjoint": false,
+    "app_disjoint": true,
+    "origin_disjoint": false
+  },
+  "environment": {
+    "git_commit": "090b4b92dd1c4c084ef803144a09e006567ec7ee",
+    "python": "3.13.15",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "library_versions": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3",
+      "sklearn": "1.5.2",
+      "scipy": "1.14.1",
+      "xgboost": "2.1.2",
+      "torch": "2.8.0.dev20250420"
+    }
+  },
+  "config": {
+    "csv": "data/processed/flowconx_final_labeled_train.csv",
+    "label_column": "service",
+    "protocols": [
+      "random_flow",
+      "session_disjoint",
+      "temporal",
+      "server_disjoint",
+      "app_disjoint",
+      "origin_disjoint"
+    ],
+    "families": [
+      "protocol_only",
+      "condition_only",
+      "five_stat",
+      "first10_sizes",
+      "first20_sizes",
+      "size_histogram",
+      "flow_meta",
+      "cumul",
+      "appscanner",
+      "kfp"
+    ],
+    "rare_class_mode": "drop",
+    "min_class_count": 100,
+    "seed": 42,
+    "val_fraction": 0.1,
+    "test_fraction": 0.2,
+    "limit": null,
+    "splits_dir": "splits",
+    "results_dir": "results/audit",
+    "no_bootstrap": false,
+    "near_duplicate_threshold": 0.999
+  },
+  "splits": {
+    "random_flow": {
+      "protocol": "random_flow",
+      "status": "ok",
+      "manifest": "splits/flowconx_final_labeled_train/random_flow_seed42.json.gz",
+      "checksums": {
+        "train": "db2d3e0e3e0ab458b570100aff1dc46221e1e862207da59cc60709d8f1f282f0",
+        "val": "60cf697f67920c48c6e241f75830c5e98ef25264229a938e7a98cd1e1c03cd5f",
+        "test": "1ee31daabc211fb391fa379698508e9ae2b30a929cd1d6f9f9220287c70b2ef3"
+      },
+      "sizes": {
+        "train": 78469,
+        "val": 11210,
+        "test": 22419
+      },
+      "class_counts": {
+        "train": {
+          "browsing": 14000,
+          "bulk_transfer": 14000,
+          "conferencing": 14025,
+          "gaming": 14029,
+          "streaming": 22415
+        },
+        "val": {
+          "browsing": 2000,
+          "bulk_transfer": 2000,
+          "conferencing": 2004,
+          "gaming": 2004,
+          "streaming": 3202
+        },
+        "test": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        }
+      },
+      "notes": [
+        "Stratified random split over individual flows. Reported only as a contrast column: correlated flows from the same capture session appear on both sides."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 78469,
+            "n_test_values": 22419,
+            "examples": [],
+            "note": "flow_id was synthesized from row content because the table carries none; this check is vacuous here. The exact-duplicate probe is the load-bearing one.",
+            "vacuous": true
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "unavailable",
+            "reason": "column 'capture_id' is not present in the table"
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "unavailable",
+            "reason": "column 'client_ip' is not present in the table"
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "unavailable",
+            "reason": "column 'server_ip' is not present in the table"
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "unavailable",
+            "reason": "column 'origin' is not present in the table"
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "FAIL",
+            "n_test_rows_duplicated_in_train": 53,
+            "fraction_of_test": 0.002364066193853428,
+            "columns_hashed": [
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s",
+              "protocol"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 1704,
+            "fraction_of_sampled_test": 0.213,
+            "max_cosine_observed": 1.0000000000000002,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "FAIL",
+            "nuisance": "condition",
+            "reconstruction_agreement": 1.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 3,
+        "failed": [
+          "no_exact_duplicates_across_splits",
+          "no_near_duplicates_across_splits",
+          "nuisance_not_deterministic_in_inputs"
+        ],
+        "unavailable": [
+          "capture_id_disjoint",
+          "five_tuple_disjoint",
+          "client_ip_disjoint",
+          "server_ip_disjoint",
+          "origin_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 0.17294010816198443,
+          "balanced_accuracy": 0.27251717676452214,
+          "accuracy": 0.2823497925866453,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 0.20642372140442014,
+          "balanced_accuracy": 0.29302874251497,
+          "accuracy": 0.2615192470672198,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.6413537483395568,
+          "balanced_accuracy": 0.6424977097439776,
+          "accuracy": 0.6510995138052544,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.8027729330196202,
+          "balanced_accuracy": 0.804167133168105,
+          "accuracy": 0.8093581337258575,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.8641054345068012,
+          "balanced_accuracy": 0.8650702660025464,
+          "accuracy": 0.8668094027387484,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.8250476804436687,
+          "balanced_accuracy": 0.8259430430120392,
+          "accuracy": 0.8300548641777065,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.7110684561624795,
+          "balanced_accuracy": 0.7146261526028665,
+          "accuracy": 0.7193451982693251,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.49745833470883927,
+          "balanced_accuracy": 0.5090571658364184,
+          "accuracy": 0.4993086221508542,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.8690334737195691,
+          "balanced_accuracy": 0.8705509902265016,
+          "accuracy": 0.8712252999687765,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.7738742384670683,
+          "balanced_accuracy": 0.776674315222724,
+          "accuracy": 0.778045407912931,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.08887346910453457,
+          "balanced_accuracy": 0.2,
+          "accuracy": 0.28565056425353497,
+          "status": "ok"
+        }
+      }
+    },
+    "session_disjoint": {
+      "protocol": "session_disjoint",
+      "status": "unavailable",
+      "reason": "Split protocol 'session_disjoint' groups on column 'capture_id', which this table does not carry. Available provenance columns: ['flow_id']."
+    },
+    "temporal": {
+      "protocol": "temporal",
+      "status": "unavailable",
+      "reason": "Temporal splitting needs a 'flow_start_ts' column. The current preprocessed CSV does not retain packet timestamps; regenerate it with scripts/prepare_*.py after the provenance columns are emitted."
+    },
+    "server_disjoint": {
+      "protocol": "server_disjoint",
+      "status": "unavailable",
+      "reason": "Split protocol 'server_disjoint' groups on column 'server_ip', which this table does not carry. Available provenance columns: ['flow_id']."
+    },
+    "app_disjoint": {
+      "protocol": "app_disjoint",
+      "status": "ok",
+      "manifest": "splits/flowconx_final_labeled_train/app_disjoint_seed42.json.gz",
+      "checksums": {
+        "train": "b5ea30dbcbda4fff8eadde034e23c4e675734d32fe359c752b31068a55511702",
+        "val": "08ec6fb043240dcc138abe1b3c5442bbc802f60af672c108663a104ff44f9843",
+        "test": "ac7afb09293ae7f53800b6e20e48a49bbdf12d4decd465d066b49c352077b2d8"
+      },
+      "sizes": {
+        "train": 77880,
+        "val": 11966,
+        "test": 22252
+      },
+      "class_counts": {
+        "train": {
+          "browsing": 16049,
+          "bulk_transfer": 6240,
+          "conferencing": 20020,
+          "gaming": 15760,
+          "streaming": 19811
+        },
+        "val": {
+          "streaming": 11966
+        },
+        "test": {
+          "browsing": 3951,
+          "bulk_transfer": 13760,
+          "conferencing": 16,
+          "gaming": 4281,
+          "streaming": 244
+        }
+      },
+      "notes": [
+        "Whole 'app' groups are assigned to exactly one side."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 77880,
+            "n_test_values": 22252,
+            "examples": [],
+            "note": "flow_id was synthesized from row content because the table carries none; this check is vacuous here. The exact-duplicate probe is the load-bearing one.",
+            "vacuous": true
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "unavailable",
+            "reason": "column 'capture_id' is not present in the table"
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "unavailable",
+            "reason": "column 'client_ip' is not present in the table"
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "unavailable",
+            "reason": "column 'server_ip' is not present in the table"
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "unavailable",
+            "reason": "column 'origin' is not present in the table"
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "pass",
+            "n_test_rows_duplicated_in_train": 0,
+            "fraction_of_test": 0.0,
+            "columns_hashed": [
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s",
+              "protocol"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 165,
+            "fraction_of_sampled_test": 0.020625,
+            "max_cosine_observed": 1.0000000000000002,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "FAIL",
+            "nuisance": "condition",
+            "reconstruction_agreement": 1.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 2,
+        "failed": [
+          "no_near_duplicates_across_splits",
+          "nuisance_not_deterministic_in_inputs"
+        ],
+        "unavailable": [
+          "capture_id_disjoint",
+          "five_tuple_disjoint",
+          "client_ip_disjoint",
+          "server_ip_disjoint",
+          "origin_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 0.06453849922737723,
+          "balanced_accuracy": 0.2,
+          "accuracy": 0.19238720115045838,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 0.1593030336581046,
+          "balanced_accuracy": 0.3033023496322131,
+          "accuracy": 0.35178860327161604,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.12470968399577267,
+          "balanced_accuracy": 0.3316511629386487,
+          "accuracy": 0.1579633291389538,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.2516183166273103,
+          "balanced_accuracy": 0.3428487565117891,
+          "accuracy": 0.25970699262987595,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.3109080499815035,
+          "balanced_accuracy": 0.3828321352835867,
+          "accuracy": 0.38675175265144707,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.1694162865605864,
+          "balanced_accuracy": 0.28599760975320276,
+          "accuracy": 0.22820420636347294,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.1434999245345226,
+          "balanced_accuracy": 0.3184673466945201,
+          "accuracy": 0.20843070285817006,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.1796945543960849,
+          "balanced_accuracy": 0.21482029149675325,
+          "accuracy": 0.3122415962610102,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.20176089140079556,
+          "balanced_accuracy": 0.3642724484279915,
+          "accuracy": 0.28900772964227933,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.2553950950517269,
+          "balanced_accuracy": 0.4273787539169908,
+          "accuracy": 0.32900413445982385,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.00028740793964433266,
+          "balanced_accuracy": 0.2,
+          "accuracy": 0.0007190364911019234,
+          "status": "ok"
+        }
+      }
+    },
+    "origin_disjoint": {
+      "protocol": "origin_disjoint",
+      "status": "unavailable",
+      "reason": "Split protocol 'origin_disjoint' groups on column 'origin', which this table does not carry. Available provenance columns: ['flow_id']."
+    }
+  },
+  "wall_clock_seconds": 245.9
+}

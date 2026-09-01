@@ -1,0 +1,1721 @@
+{
+  "environment": {
+    "git_commit": "090b4b92dd1c4c084ef803144a09e006567ec7ee",
+    "python": "3.13.15",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "library_versions": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3",
+      "sklearn": "1.5.2",
+      "scipy": "1.14.1",
+      "xgboost": "2.1.2",
+      "torch": "2.8.0.dev20250420"
+    }
+  },
+  "results": {
+    "protocol_only": {
+      "family": "protocol_only",
+      "status": "ok",
+      "description": "Single-column identifier probe (port-only analogue; our schema retains no port).",
+      "model": "decision_tree_d4",
+      "n_features": 1,
+      "feature_names": [
+        "protocol"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 0.01,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.2823497925866453,
+        "macro_f1": 0.17294010816198443,
+        "balanced_accuracy": 0.27251717676452214,
+        "per_class_f1": {
+          "browsing": 0.0,
+          "bulk_transfer": 0.0,
+          "conferencing": 0.0,
+          "gaming": 0.3325589113840027,
+          "streaming": 0.5321416294259196
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            4000,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4000,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4006,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            4008,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4082,
+            2322
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.17294010816198443,
+          "lo": 0.17002289988699285,
+          "hi": 0.17603736877868,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.27251717676452214,
+          "lo": 0.2701367052120881,
+          "hi": 0.2747077760983484,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "streaming",
+          "predicted": "gaming",
+          "count": 4082,
+          "rate": 0.6374141161773891
+        },
+        {
+          "true": "conferencing",
+          "predicted": "gaming",
+          "count": 4006,
+          "rate": 0.9997504367357125
+        },
+        {
+          "true": "browsing",
+          "predicted": "gaming",
+          "count": 4000,
+          "rate": 1.0
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "gaming",
+          "count": 4000,
+          "rate": 1.0
+        },
+        {
+          "true": "conferencing",
+          "predicted": "streaming",
+          "count": 1,
+          "rate": 0.0002495632642874969
+        }
+      ],
+      "deviation_from_original": "Port-only probe adapted to protocol number; the canonical CSV retains no port.",
+      "top_features": [
+        {
+          "name": "protocol",
+          "importance": 1.0
+        }
+      ]
+    },
+    "condition_only": {
+      "family": "condition_only",
+      "status": "ok",
+      "description": "The declared nuisance variable used alone as a predictor.",
+      "model": "decision_tree_d4",
+      "n_features": 1,
+      "feature_names": [
+        "condition"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 0.01,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.2615192470672198,
+        "macro_f1": 0.20642372140442014,
+        "balanced_accuracy": 0.29302874251497,
+        "per_class_f1": {
+          "browsing": 0.3361800189779043,
+          "bulk_transfer": 0.33513680630700265,
+          "conferencing": 0.0,
+          "gaming": 0.36080178173719374,
+          "streaming": 0.0
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            2480,
+            959,
+            0,
+            561,
+            0
+          ],
+          [
+            1557,
+            2168,
+            0,
+            275,
+            0
+          ],
+          [
+            2051,
+            1704,
+            0,
+            252,
+            0
+          ],
+          [
+            1583,
+            1210,
+            0,
+            1215,
+            0
+          ],
+          [
+            3083,
+            2897,
+            0,
+            424,
+            0
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.20642372140442014,
+          "lo": 0.2022494386269827,
+          "hi": 0.2101752193574618,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.29302874251497,
+          "lo": 0.2879731503618111,
+          "hi": 0.29771842471337306,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 3083,
+          "rate": 0.48141786383510304
+        },
+        {
+          "true": "streaming",
+          "predicted": "bulk_transfer",
+          "count": 2897,
+          "rate": 0.4523735165521549
+        },
+        {
+          "true": "conferencing",
+          "predicted": "browsing",
+          "count": 2051,
+          "rate": 0.5118542550536561
+        },
+        {
+          "true": "conferencing",
+          "predicted": "bulk_transfer",
+          "count": 1704,
+          "rate": 0.42525580234589466
+        },
+        {
+          "true": "gaming",
+          "predicted": "browsing",
+          "count": 1583,
+          "rate": 0.39496007984031933
+        }
+      ],
+      "deviation_from_original": "Diagnostic probe, not a published baseline.",
+      "top_features": [
+        {
+          "name": "condition",
+          "importance": 1.0
+        }
+      ]
+    },
+    "five_stat": {
+      "family": "five_stat",
+      "status": "ok",
+      "description": "Five flow-summary statistics, the classic NetFlow-style baseline.",
+      "model": "random_forest",
+      "n_features": 5,
+      "feature_names": [
+        "n_packets",
+        "n_bytes",
+        "duration_ms",
+        "mean_iat_ms",
+        "mean_pkt_len"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 4.877,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.6510995138052544,
+        "macro_f1": 0.6413537483395568,
+        "balanced_accuracy": 0.6424977097439776,
+        "per_class_f1": {
+          "browsing": 0.5078145016653856,
+          "bulk_transfer": 0.6233450746993805,
+          "conferencing": 0.6978514426028238,
+          "gaming": 0.6499559138430533,
+          "streaming": 0.7278018088871412
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            1982,
+            475,
+            348,
+            449,
+            746
+          ],
+          [
+            340,
+            2566,
+            476,
+            279,
+            339
+          ],
+          [
+            307,
+            433,
+            2842,
+            223,
+            202
+          ],
+          [
+            461,
+            344,
+            226,
+            2580,
+            397
+          ],
+          [
+            716,
+            415,
+            246,
+            400,
+            4627
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.6413537483395568,
+          "lo": 0.6351046992952434,
+          "hi": 0.6480284922519486,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.6424977097439776,
+          "lo": 0.6363869483175423,
+          "hi": 0.6491750641569728,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 746,
+          "rate": 0.1865
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 716,
+          "rate": 0.11180512179887571
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 476,
+          "rate": 0.119
+        },
+        {
+          "true": "browsing",
+          "predicted": "bulk_transfer",
+          "count": 475,
+          "rate": 0.11875
+        },
+        {
+          "true": "gaming",
+          "predicted": "browsing",
+          "count": 461,
+          "rate": 0.11501996007984032
+        }
+      ],
+      "top_features": [
+        {
+          "name": "n_bytes",
+          "importance": 0.25634808218523925
+        },
+        {
+          "name": "duration_ms",
+          "importance": 0.22915393490685637
+        },
+        {
+          "name": "mean_pkt_len",
+          "importance": 0.19966671090385232
+        },
+        {
+          "name": "mean_iat_ms",
+          "importance": 0.18753680441315965
+        },
+        {
+          "name": "n_packets",
+          "importance": 0.1272944675908924
+        }
+      ]
+    },
+    "first10_sizes": {
+      "family": "first10_sizes",
+      "status": "ok",
+      "description": "First 10 signed packet sizes.",
+      "model": "gradient_boosted_trees",
+      "n_features": 10,
+      "feature_names": [
+        "signed_size_0",
+        "signed_size_1",
+        "signed_size_2",
+        "signed_size_3",
+        "signed_size_4",
+        "signed_size_5",
+        "signed_size_6",
+        "signed_size_7",
+        "signed_size_8",
+        "signed_size_9"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 2.686,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.8093581337258575,
+        "macro_f1": 0.8027729330196202,
+        "balanced_accuracy": 0.804167133168105,
+        "per_class_f1": {
+          "browsing": 0.7242355605889015,
+          "bulk_transfer": 0.7407500947089279,
+          "conferencing": 0.7723316536875859,
+          "gaming": 0.9307870088796983,
+          "streaming": 0.8457603472329871
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            2558,
+            451,
+            279,
+            140,
+            572
+          ],
+          [
+            101,
+            2933,
+            801,
+            9,
+            156
+          ],
+          [
+            81,
+            375,
+            3372,
+            5,
+            174
+          ],
+          [
+            34,
+            7,
+            1,
+            3826,
+            140
+          ],
+          [
+            290,
+            153,
+            272,
+            233,
+            5456
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.8027729330196202,
+          "lo": 0.7969838659080284,
+          "hi": 0.8077791256998915,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.804167133168105,
+          "lo": 0.7986322501195606,
+          "hi": 0.8092081333355031,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 801,
+          "rate": 0.20025
+        },
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 572,
+          "rate": 0.143
+        },
+        {
+          "true": "browsing",
+          "predicted": "bulk_transfer",
+          "count": 451,
+          "rate": 0.11275
+        },
+        {
+          "true": "conferencing",
+          "predicted": "bulk_transfer",
+          "count": 375,
+          "rate": 0.09358622410781132
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 290,
+          "rate": 0.0452841973766396
+        }
+      ],
+      "top_features": [
+        {
+          "name": "signed_size_0",
+          "importance": 0.32399338483810425
+        },
+        {
+          "name": "signed_size_2",
+          "importance": 0.2247728407382965
+        },
+        {
+          "name": "signed_size_4",
+          "importance": 0.08005905151367188
+        },
+        {
+          "name": "signed_size_3",
+          "importance": 0.07504986226558685
+        },
+        {
+          "name": "signed_size_1",
+          "importance": 0.07105281203985214
+        },
+        {
+          "name": "signed_size_9",
+          "importance": 0.04807925969362259
+        },
+        {
+          "name": "signed_size_7",
+          "importance": 0.0468643493950367
+        },
+        {
+          "name": "signed_size_6",
+          "importance": 0.04390334710478783
+        },
+        {
+          "name": "signed_size_5",
+          "importance": 0.043751586228609085
+        },
+        {
+          "name": "signed_size_8",
+          "importance": 0.0424734391272068
+        }
+      ]
+    },
+    "first20_sizes": {
+      "family": "first20_sizes",
+      "status": "ok",
+      "description": "First 20 signed packet sizes.",
+      "model": "gradient_boosted_trees",
+      "n_features": 20,
+      "feature_names": [
+        "signed_size_0",
+        "signed_size_1",
+        "signed_size_2",
+        "signed_size_3",
+        "signed_size_4",
+        "signed_size_5",
+        "signed_size_6",
+        "signed_size_7",
+        "signed_size_8",
+        "signed_size_9",
+        "signed_size_10",
+        "signed_size_11",
+        "signed_size_12",
+        "signed_size_13",
+        "signed_size_14",
+        "signed_size_15",
+        "signed_size_16",
+        "signed_size_17",
+        "signed_size_18",
+        "signed_size_19"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 3.225,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.8668094027387484,
+        "macro_f1": 0.8641054345068012,
+        "balanced_accuracy": 0.8650702660025464,
+        "per_class_f1": {
+          "browsing": 0.7782327301545371,
+          "bulk_transfer": 0.8601300522759149,
+          "conferencing": 0.8619206880076445,
+          "gaming": 0.9419936631732878,
+          "streaming": 0.8782500389226219
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            2946,
+            194,
+            206,
+            145,
+            509
+          ],
+          [
+            150,
+            3373,
+            374,
+            9,
+            94
+          ],
+          [
+            102,
+            198,
+            3608,
+            4,
+            95
+          ],
+          [
+            36,
+            0,
+            4,
+            3865,
+            103
+          ],
+          [
+            337,
+            78,
+            173,
+            175,
+            5641
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.8641054345068012,
+          "lo": 0.8596185681595669,
+          "hi": 0.8685952135105912,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.8650702660025464,
+          "lo": 0.8607884471125798,
+          "hi": 0.8694428071845066,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 509,
+          "rate": 0.12725
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 374,
+          "rate": 0.0935
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 337,
+          "rate": 0.05262336039975016
+        },
+        {
+          "true": "browsing",
+          "predicted": "conferencing",
+          "count": 206,
+          "rate": 0.0515
+        },
+        {
+          "true": "conferencing",
+          "predicted": "bulk_transfer",
+          "count": 198,
+          "rate": 0.04941352632892438
+        }
+      ],
+      "top_features": [
+        {
+          "name": "signed_size_0",
+          "importance": 0.21377283334732056
+        },
+        {
+          "name": "signed_size_2",
+          "importance": 0.18403862416744232
+        },
+        {
+          "name": "signed_size_3",
+          "importance": 0.06420022249221802
+        },
+        {
+          "name": "signed_size_4",
+          "importance": 0.062156420201063156
+        },
+        {
+          "name": "signed_size_11",
+          "importance": 0.060469724237918854
+        },
+        {
+          "name": "signed_size_1",
+          "importance": 0.05978136137127876
+        },
+        {
+          "name": "signed_size_12",
+          "importance": 0.04073644056916237
+        },
+        {
+          "name": "signed_size_8",
+          "importance": 0.03442986309528351
+        },
+        {
+          "name": "signed_size_5",
+          "importance": 0.030783023685216904
+        },
+        {
+          "name": "signed_size_6",
+          "importance": 0.028308147564530373
+        }
+      ]
+    },
+    "size_histogram": {
+      "family": "size_histogram",
+      "status": "ok",
+      "description": "Directional packet-size histogram.",
+      "model": "gradient_boosted_trees",
+      "n_features": 24,
+      "feature_names": [
+        "fwd_bin_0",
+        "fwd_bin_1",
+        "fwd_bin_2",
+        "fwd_bin_3",
+        "fwd_bin_4",
+        "fwd_bin_5",
+        "fwd_bin_6",
+        "fwd_bin_7",
+        "fwd_bin_8",
+        "fwd_bin_9",
+        "fwd_bin_10",
+        "fwd_bin_11",
+        "bwd_bin_0",
+        "bwd_bin_1",
+        "bwd_bin_2",
+        "bwd_bin_3",
+        "bwd_bin_4",
+        "bwd_bin_5",
+        "bwd_bin_6",
+        "bwd_bin_7",
+        "bwd_bin_8",
+        "bwd_bin_9",
+        "bwd_bin_10",
+        "bwd_bin_11"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 3.248,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.8300548641777065,
+        "macro_f1": 0.8250476804436687,
+        "balanced_accuracy": 0.8259430430120392,
+        "per_class_f1": {
+          "browsing": 0.7174507658643327,
+          "bulk_transfer": 0.8100607111882047,
+          "conferencing": 0.8402136959689169,
+          "gaming": 0.906436306119966,
+          "streaming": 0.8510769230769231
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            2623,
+            316,
+            224,
+            183,
+            654
+          ],
+          [
+            155,
+            3269,
+            394,
+            43,
+            139
+          ],
+          [
+            98,
+            307,
+            3460,
+            29,
+            113
+          ],
+          [
+            72,
+            39,
+            14,
+            3725,
+            158
+          ],
+          [
+            364,
+            140,
+            137,
+            231,
+            5532
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.8250476804436687,
+          "lo": 0.8200849845622459,
+          "hi": 0.830051527106976,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.8259430430120392,
+          "lo": 0.8212680668367043,
+          "hi": 0.8307608926876959,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 654,
+          "rate": 0.1635
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 394,
+          "rate": 0.0985
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 364,
+          "rate": 0.05683947532792005
+        },
+        {
+          "true": "browsing",
+          "predicted": "bulk_transfer",
+          "count": 316,
+          "rate": 0.079
+        },
+        {
+          "true": "conferencing",
+          "predicted": "bulk_transfer",
+          "count": 307,
+          "rate": 0.07661592213626155
+        }
+      ],
+      "top_features": [
+        {
+          "name": "bwd_bin_11",
+          "importance": 0.605908215045929
+        },
+        {
+          "name": "bwd_bin_9",
+          "importance": 0.03976796194911003
+        },
+        {
+          "name": "bwd_bin_7",
+          "importance": 0.03449276089668274
+        },
+        {
+          "name": "bwd_bin_1",
+          "importance": 0.026443172246217728
+        },
+        {
+          "name": "fwd_bin_8",
+          "importance": 0.025013945996761322
+        },
+        {
+          "name": "bwd_bin_4",
+          "importance": 0.02500847354531288
+        },
+        {
+          "name": "bwd_bin_6",
+          "importance": 0.02283770963549614
+        },
+        {
+          "name": "bwd_bin_10",
+          "importance": 0.02223445288836956
+        },
+        {
+          "name": "bwd_bin_5",
+          "importance": 0.022144490852952003
+        },
+        {
+          "name": "bwd_bin_8",
+          "importance": 0.01854044198989868
+        }
+      ]
+    },
+    "flow_meta": {
+      "family": "flow_meta",
+      "status": "ok",
+      "description": "All flow-level scalars present in the canonical CSV.",
+      "model": "gradient_boosted_trees",
+      "n_features": 14,
+      "feature_names": [
+        "rtt_ms",
+        "jitter_ms",
+        "loss_rate",
+        "total packets",
+        "total fwd packets",
+        "total backward packets",
+        "packet length mean",
+        "packet length std",
+        "flow iat mean",
+        "flow iat std",
+        "flow duration",
+        "flow bytes/s",
+        "flow packets/s",
+        "protocol"
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 3.127,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.7193451982693251,
+        "macro_f1": 0.7110684561624795,
+        "balanced_accuracy": 0.7146261526028665,
+        "per_class_f1": {
+          "browsing": 0.5449221349660588,
+          "bulk_transfer": 0.7252615125646267,
+          "conferencing": 0.7794822627037392,
+          "gaming": 0.7383539403022356,
+          "streaming": 0.7673224302757368
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            2047,
+            436,
+            327,
+            420,
+            770
+          ],
+          [
+            247,
+            3016,
+            381,
+            181,
+            175
+          ],
+          [
+            234,
+            302,
+            3252,
+            97,
+            122
+          ],
+          [
+            338,
+            250,
+            134,
+            2956,
+            330
+          ],
+          [
+            647,
+            313,
+            243,
+            345,
+            4856
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.7110684561624795,
+          "lo": 0.7052158209812663,
+          "hi": 0.7168957918200598,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.7146261526028665,
+          "lo": 0.7089681683745414,
+          "hi": 0.7204294858768493,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 770,
+          "rate": 0.1925
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 647,
+          "rate": 0.10103060587133042
+        },
+        {
+          "true": "browsing",
+          "predicted": "bulk_transfer",
+          "count": 436,
+          "rate": 0.109
+        },
+        {
+          "true": "browsing",
+          "predicted": "gaming",
+          "count": 420,
+          "rate": 0.105
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 381,
+          "rate": 0.09525
+        }
+      ],
+      "top_features": [
+        {
+          "name": "protocol",
+          "importance": 0.7783918976783752
+        },
+        {
+          "name": "total backward packets",
+          "importance": 0.03090129792690277
+        },
+        {
+          "name": "flow duration",
+          "importance": 0.028248373419046402
+        },
+        {
+          "name": "jitter_ms",
+          "importance": 0.027924684807658195
+        },
+        {
+          "name": "flow bytes/s",
+          "importance": 0.026211915537714958
+        },
+        {
+          "name": "packet length std",
+          "importance": 0.02328968234360218
+        },
+        {
+          "name": "total fwd packets",
+          "importance": 0.023200377821922302
+        },
+        {
+          "name": "packet length mean",
+          "importance": 0.01888769306242466
+        },
+        {
+          "name": "total packets",
+          "importance": 0.015565220266580582
+        },
+        {
+          "name": "flow packets/s",
+          "importance": 0.01439584232866764
+        }
+      ]
+    },
+    "cumul": {
+      "family": "cumul",
+      "status": "ok",
+      "description": "CUMUL, Panchenko et al., NDSS 2016.",
+      "model": "svm_rbf",
+      "n_features": 104,
+      "feature_names": [
+        "n_in",
+        "n_out",
+        "bytes_in",
+        "bytes_out",
+        "cumul_0",
+        "cumul_1",
+        "cumul_2",
+        "cumul_3",
+        "cumul_4",
+        "cumul_5",
+        "cumul_6",
+        "cumul_7",
+        "cumul_8",
+        "cumul_9",
+        "cumul_10",
+        "cumul_11",
+        "cumul_12",
+        "cumul_13",
+        "cumul_14",
+        "cumul_15",
+        "cumul_16",
+        "cumul_17",
+        "cumul_18",
+        "cumul_19",
+        "cumul_20",
+        "cumul_21",
+        "cumul_22",
+        "cumul_23",
+        "cumul_24",
+        "cumul_25",
+        "cumul_26",
+        "cumul_27",
+        "..."
+      ],
+      "n_train": 7999,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 2.33,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.4993086221508542,
+        "macro_f1": 0.49745833470883927,
+        "balanced_accuracy": 0.5090571658364184,
+        "per_class_f1": {
+          "browsing": 0.35923309788092833,
+          "bulk_transfer": 0.49462686567164177,
+          "conferencing": 0.5687359147715632,
+          "gaming": 0.4884611607581263,
+          "streaming": 0.5762346344619366
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            1602,
+            329,
+            840,
+            1081,
+            148
+          ],
+          [
+            292,
+            1657,
+            1310,
+            724,
+            17
+          ],
+          [
+            189,
+            256,
+            2776,
+            764,
+            22
+          ],
+          [
+            1127,
+            179,
+            204,
+            2487,
+            11
+          ],
+          [
+            1709,
+            279,
+            625,
+            1119,
+            2672
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.49745833470883927,
+          "lo": 0.49094854458808995,
+          "hi": 0.504573255748984,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.5090571658364184,
+          "lo": 0.50302715423258,
+          "hi": 0.5161289790161004,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 1709,
+          "rate": 0.2668644597126796
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 1310,
+          "rate": 0.3275
+        },
+        {
+          "true": "gaming",
+          "predicted": "browsing",
+          "count": 1127,
+          "rate": 0.281187624750499
+        },
+        {
+          "true": "streaming",
+          "predicted": "gaming",
+          "count": 1119,
+          "rate": 0.17473454091193005
+        },
+        {
+          "true": "browsing",
+          "predicted": "gaming",
+          "count": 1081,
+          "rate": 0.27025
+        }
+      ],
+      "deviation_from_original": "Panchenko et al. fit an RBF-SVM with a grid search over C and gamma on the full training set. We fit an RBF-SVM with scikit-learn defaults on a stratified subsample of at most 8,000 rows (see subsampled_train_rows). Both deviations can only understate CUMUL, so it is a lower bound on what this feature set achieves.",
+      "subsampled_train_rows": 7999
+    },
+    "appscanner": {
+      "family": "appscanner",
+      "status": "ok",
+      "description": "AppScanner, Taylor et al., IEEE EuroS&P 2016.",
+      "model": "random_forest",
+      "n_features": 72,
+      "feature_names": [
+        "out_len_min",
+        "out_len_max",
+        "out_len_mean",
+        "out_len_mad",
+        "out_len_std",
+        "out_len_var",
+        "out_len_skew",
+        "out_len_kurt",
+        "out_len_sum",
+        "out_len_n",
+        "out_len_p10",
+        "out_len_p20",
+        "out_len_p30",
+        "out_len_p40",
+        "out_len_p50",
+        "out_len_p60",
+        "out_len_p70",
+        "out_len_p80",
+        "in_len_min",
+        "in_len_max",
+        "in_len_mean",
+        "in_len_mad",
+        "in_len_std",
+        "in_len_var",
+        "in_len_skew",
+        "in_len_kurt",
+        "in_len_sum",
+        "in_len_n",
+        "in_len_p10",
+        "in_len_p20",
+        "in_len_p30",
+        "in_len_p40",
+        "..."
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 13.322,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.8712252999687765,
+        "macro_f1": 0.8690334737195691,
+        "balanced_accuracy": 0.8705509902265016,
+        "per_class_f1": {
+          "browsing": 0.7881147009212405,
+          "bulk_transfer": 0.8549919782796496,
+          "conferencing": 0.8789402673862382,
+          "gaming": 0.9406426293843513,
+          "streaming": 0.8824777926263658
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            3037,
+            221,
+            162,
+            143,
+            437
+          ],
+          [
+            128,
+            3464,
+            297,
+            9,
+            102
+          ],
+          [
+            110,
+            236,
+            3583,
+            0,
+            78
+          ],
+          [
+            66,
+            15,
+            5,
+            3835,
+            87
+          ],
+          [
+            366,
+            167,
+            99,
+            159,
+            5613
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.8690334737195691,
+          "lo": 0.8646162941268274,
+          "hi": 0.8733950113447064,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.8705509902265016,
+          "lo": 0.8660919350532249,
+          "hi": 0.8747646009016176,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 437,
+          "rate": 0.10925
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 366,
+          "rate": 0.057151780137414114
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 297,
+          "rate": 0.07425
+        },
+        {
+          "true": "conferencing",
+          "predicted": "bulk_transfer",
+          "count": 236,
+          "rate": 0.05889693037184927
+        },
+        {
+          "true": "browsing",
+          "predicted": "bulk_transfer",
+          "count": 221,
+          "rate": 0.05525
+        }
+      ]
+    },
+    "kfp": {
+      "family": "kfp",
+      "status": "ok",
+      "description": "k-fingerprinting, Hayes and Danezis, USENIX Security 2016 (count/order/concentration/burst groups).",
+      "model": "random_forest",
+      "n_features": 52,
+      "feature_names": [
+        "n_total",
+        "n_in",
+        "n_out",
+        "frac_in",
+        "frac_out",
+        "iat_sum",
+        "iat_mean",
+        "iat_std",
+        "iat_max",
+        "n_bursts",
+        "burst_mean",
+        "burst_max",
+        "conc_0",
+        "conc_1",
+        "conc_2",
+        "conc_3",
+        "conc_4",
+        "conc_5",
+        "conc_6",
+        "conc_7",
+        "conc_8",
+        "conc_9",
+        "conc_10",
+        "conc_11",
+        "conc_12",
+        "conc_13",
+        "conc_14",
+        "conc_15",
+        "conc_16",
+        "conc_17",
+        "conc_18",
+        "conc_19",
+        "..."
+      ],
+      "n_train": 78469,
+      "n_test": 22419,
+      "classes_absent_from_train": [],
+      "fit_seconds": 6.426,
+      "seed": 42,
+      "metrics": {
+        "accuracy": 0.778045407912931,
+        "macro_f1": 0.7738742384670683,
+        "balanced_accuracy": 0.776674315222724,
+        "per_class_f1": {
+          "browsing": 0.6302826030593726,
+          "bulk_transfer": 0.792088998763906,
+          "conferencing": 0.7991229138750152,
+          "gaming": 0.8471477328132618,
+          "streaming": 0.8007289438237858
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            2431,
+            301,
+            273,
+            322,
+            673
+          ],
+          [
+            237,
+            3204,
+            388,
+            55,
+            116
+          ],
+          [
+            220,
+            343,
+            3280,
+            41,
+            123
+          ],
+          [
+            176,
+            65,
+            40,
+            3475,
+            252
+          ],
+          [
+            650,
+            177,
+            221,
+            303,
+            5053
+          ]
+        ],
+        "macro_f1_ci95": {
+          "point": 0.7738742384670683,
+          "lo": 0.7685628310574295,
+          "hi": 0.7795286321610532,
+          "n_resamples": 1000
+        },
+        "balanced_accuracy_ci95": {
+          "point": 0.776674315222724,
+          "lo": 0.7714611948322821,
+          "hi": 0.7823341619704244,
+          "n_resamples": 1000
+        }
+      },
+      "top_confusions": [
+        {
+          "true": "browsing",
+          "predicted": "streaming",
+          "count": 673,
+          "rate": 0.16825
+        },
+        {
+          "true": "streaming",
+          "predicted": "browsing",
+          "count": 650,
+          "rate": 0.10149906308557152
+        },
+        {
+          "true": "bulk_transfer",
+          "predicted": "conferencing",
+          "count": 388,
+          "rate": 0.097
+        },
+        {
+          "true": "conferencing",
+          "predicted": "bulk_transfer",
+          "count": 343,
+          "rate": 0.08560019965061143
+        },
+        {
+          "true": "browsing",
+          "predicted": "gaming",
+          "count": 322,
+          "rate": 0.0805
+        }
+      ],
+      "deviation_from_original": "Hayes and Danezis use random-forest leaf vectors followed by a k-NN stage. We report the random forest directly, which is the standard simplification in the literature.",
+      "top_features": [
+        {
+          "name": "iat_std",
+          "importance": 0.06917843255499734
+        },
+        {
+          "name": "iat_max",
+          "importance": 0.06015813943072259
+        },
+        {
+          "name": "iat_sum",
+          "importance": 0.05592819899945023
+        },
+        {
+          "name": "iat_mean",
+          "importance": 0.05374939464244651
+        },
+        {
+          "name": "n_in",
+          "importance": 0.03318571154091632
+        },
+        {
+          "name": "order_3",
+          "importance": 0.030797295508893097
+        },
+        {
+          "name": "order_11",
+          "importance": 0.030751934951086534
+        },
+        {
+          "name": "order_9",
+          "importance": 0.02994073130476786
+        },
+        {
+          "name": "order_12",
+          "importance": 0.029433163931945346
+        },
+        {
+          "name": "order_8",
+          "importance": 0.02820868651841476
+        }
+      ]
+    },
+    "majority_class": {
+      "family": "majority_class",
+      "status": "ok",
+      "description": "Always predict the most frequent training class.",
+      "model": "constant",
+      "predicted_class": "streaming",
+      "metrics": {
+        "accuracy": 0.28565056425353497,
+        "macro_f1": 0.08887346910453457,
+        "balanced_accuracy": 0.2,
+        "per_class_f1": {
+          "browsing": 0.0,
+          "bulk_transfer": 0.0,
+          "conferencing": 0.0,
+          "gaming": 0.0,
+          "streaming": 0.4443673455226729
+        },
+        "support": {
+          "browsing": 4000,
+          "bulk_transfer": 4000,
+          "conferencing": 4007,
+          "gaming": 4008,
+          "streaming": 6404
+        },
+        "labels": [
+          "browsing",
+          "bulk_transfer",
+          "conferencing",
+          "gaming",
+          "streaming"
+        ],
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            0,
+            4000
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            4000
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            4007
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            4008
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            6404
+          ]
+        ]
+      }
+    }
+  }
+}

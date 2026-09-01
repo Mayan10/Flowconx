@@ -17,28 +17,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from flowconx.features import infer_condition
 
 
-CANONICAL_COLUMNS = [
-    "app",
-    "service",
-    "condition",
-    "packet_lengths",
-    "iat_values",
-    "directions",
-    "rtt_ms",
-    "jitter_ms",
-    "loss_rate",
-    "total packets",
-    "total fwd packets",
-    "total backward packets",
-    "packet length mean",
-    "packet length std",
-    "flow iat mean",
-    "flow iat std",
-    "flow duration",
-    "flow bytes/s",
-    "flow packets/s",
-    "protocol",
-]
+from flowconx.schema import CANONICAL_COLUMNS, make_flow_id
+
+ORIGIN = "mawi"
 
 
 Endpoint = Tuple[bytes, int]
@@ -66,6 +47,9 @@ def series_text(values: Iterable[float], precision: int) -> str:
 class FlowStats:
     protocol: int
     max_packets: int
+    capture_id: str = ""
+    flow_index: int = 0
+    server_ip: str = ""
     first_ts: Optional[float] = None
     last_ts: Optional[float] = None
     prev_ts: Optional[float] = None
@@ -111,6 +95,11 @@ class FlowStats:
         length_std = math.sqrt(max(0.0, self.length_sq_sum / total - length_mean * length_mean))
         iat_std = math.sqrt(max(0.0, self.iat_sq_sum / total - iat_mean * iat_mean))
         return {
+            "flow_id": make_flow_id(ORIGIN, self.capture_id, self.flow_index),
+            "origin": ORIGIN,
+            "capture_id": self.capture_id,
+            "flow_start_ts": float(self.first_ts or 0.0),
+            "server_ip": self.server_ip,
             "app": "mawi_background",
             "service": "unknown",
             "condition": infer_condition(iat_mean, iat_std, 0.0),
@@ -145,6 +134,27 @@ def pcap_endian_and_scale(header: bytes) -> Tuple[str, float]:
     if magic == b"\xa1\xb2\x3c\x4d":
         return ">", 1_000_000_000.0
     raise ValueError("Unsupported pcap magic number.")
+
+
+def format_ip(raw: bytes) -> str:
+    import ipaddress
+
+    try:
+        return str(ipaddress.ip_address(raw))
+    except ValueError:
+        return ""
+
+
+def server_endpoint(ep_a: Endpoint, ep_b: Endpoint) -> str:
+    """Heuristic server side: the endpoint with the lower port number.
+
+    MAWI endpoints are stored in canonical (sorted) order, so client/server
+    orientation is not recoverable exactly. The low-port convention is the
+    standard approximation and is only used for server-disjoint splitting,
+    never as a model input.
+    """
+    server = ep_a if ep_a[1] <= ep_b[1] else ep_b
+    return format_ip(server[0])
 
 
 def parse_packet(packet: bytes, orig_len: int) -> Optional[Tuple[int, Endpoint, Endpoint, int]]:
@@ -218,6 +228,8 @@ def main() -> None:
     active: Dict[WindowKey, FlowStats] = {}
     heap: List[Tuple[float, int, Dict[str, object]]] = []
     counter = 0
+    capture_id = Path(args.input).name
+    flow_counter = 0
     packets = 0
     accepted = 0
     first_ts: Optional[float] = None
@@ -251,7 +263,14 @@ def main() -> None:
             key = (window_id, (proto, ep_a, ep_b))
             stats = active.get(key)
             if stats is None:
-                stats = FlowStats(protocol=proto, max_packets=args.max_packets)
+                stats = FlowStats(
+                    protocol=proto,
+                    max_packets=args.max_packets,
+                    capture_id=capture_id,
+                    flow_index=flow_counter,
+                    server_ip=server_endpoint(ep_a, ep_b),
+                )
+                flow_counter += 1
                 active[key] = stats
             stats.add(timestamp, orig_len, direction)
             accepted += 1

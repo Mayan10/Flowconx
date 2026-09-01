@@ -17,9 +17,9 @@ jobs:
       - name: Install ruff
         run: pip install ruff==0.9.9
       - name: Run ruff
-        run: ruff check flowconx scripts
+        run: ruff check flowconx scripts tests
 
-  build:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,8 +31,33 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
       - name: Compile check
         run: python -m compileall flowconx scripts
       - name: Import check
-        run: python -c "from flowconx import config, datasets, features, losses, memory, model, evaluate, train, eval_cli"
+        run: python -c "from flowconx import config, datasets, features, labels, losses, memory, metrics, model, schema, evaluate, train, eval_cli"
+      # The leakage tests are the gate. A split that stops being a partition,
+      # a feature family that starts exposing an identifier, or a split
+      # protocol that silently degrades instead of raising, fails the build.
+      - name: Leakage and metric tests
+        run: python -m pytest tests/ -q
+
+  audit-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      # End-to-end audit run on a generated table with the canonical schema.
+      # The 87 MB training CSV is not committed, so CI cannot audit it; this
+      # asserts the pipeline itself still runs and writes its artifacts.
+      - name: Audit smoke run
+        run: python scripts/audit_smoke.py

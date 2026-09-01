@@ -21,3 +21,23 @@ data/*.csv
 data/*.parquet
 data/*.pcap
 data/*.pcapng
+
+# Audit artifacts are committed: they are the evidence behind every table.
+# Split manifests (gzipped flow-ID lists + SHA256) and small result JSON only.
+!results/
+!results/**/*.json
+!results/**/*.md
+!splits/
+!splits/**/*.json
+!splits/**/*.json.gz
+
+# Never commit raw captures or checkpoints beyond the one reference run.
+*.pcap
+*.pcapng
+*.pt
+!outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt
+
+# Test and build noise
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/

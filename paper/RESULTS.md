@@ -706,6 +706,35 @@ contingency, and the decision rule it records now resolves that way.
 
 ---
 
+## 2026-09-02 — Deep baselines at three seeds
+
+CESNET-QUIC22, session-disjoint, identical committed split, identical
+optimiser, epoch budget, class weighting and early-stopping rule.
+
+| Method | Macro-F1 | Params | Train | Cohen's d vs ours |
+| --- | --- | ---: | ---: | ---: |
+| Flow-statistics MLP | 0.2569 ± 0.0033 | 73,234 | 31 s | 63.6 |
+| DeepPacket-style CNN | 0.6522 ± 0.0023 | 270,918 | 110 s | 47.9 |
+| Bi-LSTM + attention | 0.7031 ± 0.0023 | 573,331 | 412 s | 11.0 |
+| FS-Net | 0.7613 ± 0.0074 | 634,258 | 749 s | 2.4 |
+| **FlowCon-X** | **0.7827 ± 0.0050** | 1,406,342 | 1125 s | — |
+
+FlowCon-X beats all four, and the margins are stable across seeds — every
+baseline's own standard deviation is 0.002–0.007. Cohen's d against FS-Net,
+the closest, is 2.42; against the rest it is 11 to 64.
+
+Three seeds still cannot produce a Wilcoxon p-value, and
+`results/significance.json` records all four as `undetermined`. Seeds 3–5 are
+queued for exactly this comparison.
+
+**But the ranking that matters is the one including the classical tier.**
+XGBoost over the first twenty signed packet sizes reaches 0.790 in about three
+seconds. Every neural model here, ours included, is below it. The deep-baseline
+table shows the architecture is a better *neural* design; it does not show the
+neural approach is warranted on this benchmark.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

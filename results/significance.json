@@ -5,6 +5,154 @@
   "test": "wilcoxon_signed_rank_across_seeds",
   "families": [
     {
+      "family": "against_baselines/cesnet_quic22/session_disjoint",
+      "correction": "holm_bonferroni",
+      "alpha": 0.05,
+      "n_comparisons": 4,
+      "comparisons": [
+        {
+          "name": "baseline_deeppacket_cnn",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.13044404115173283,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.13044404115173283,
+            "std_difference": 0.0022225323664799043,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 1,
+            "adjusted_threshold": 0.0125,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_deeppacket_cnn",
+          "dataset": "cesnet_quic22",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": 47.92151295932475,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.7826650057432086,
+          "member_mean": 0.6522209645914757
+        },
+        {
+          "name": "baseline_fsnet",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.02135037794475821,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.02135037794475821,
+            "std_difference": 0.007200104497147305,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 2,
+            "adjusted_threshold": 0.016666666666666666,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_fsnet",
+          "dataset": "cesnet_quic22",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": 2.4211468875648405,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.7826650057432086,
+          "member_mean": 0.7613146277984503
+        },
+        {
+          "name": "baseline_lstm_attention",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.07957547785073156,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.07957547785073156,
+            "std_difference": 0.005907128039847028,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 3,
+            "adjusted_threshold": 0.025,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_lstm_attention",
+          "dataset": "cesnet_quic22",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": 10.99910229684049,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.7826650057432086,
+          "member_mean": 0.703089527892477
+        },
+        {
+          "name": "baseline_mlp_stats",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.5258084697432669,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.5258084697432669,
+            "std_difference": 0.006751079555479882,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 4,
+            "adjusted_threshold": 0.05,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_mlp_stats",
+          "dataset": "cesnet_quic22",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": 63.592913435560895,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.7826650057432086,
+          "member_mean": 0.2568565359999416
+        }
+      ]
+    },
+    {
       "family": "split_protocol/cesnet_quic22",
       "correction": "holm_bonferroni",
       "alpha": 0.05,
@@ -235,32 +383,62 @@
       "reason": "reference ablation_full has 0 seed(s)"
     },
     {
-      "family": "against_baselines",
+      "family": "open_set_ablations",
       "dataset": "cesnet_quic22",
       "split": "session_disjoint",
-      "experiment": "baseline_deeppacket_cnn",
+      "reason": "reference flowconx_open_set has 0 seed(s)"
+    },
+    {
+      "family": "open_set_ablations",
+      "dataset": "cesnet_quic22",
+      "split": "temporal",
+      "reason": "reference flowconx_open_set has 0 seed(s)"
+    },
+    {
+      "family": "open_set_ablations",
+      "dataset": "cesnet_quic22",
+      "split": "random_flow",
+      "reason": "reference flowconx_open_set has 0 seed(s)"
+    },
+    {
+      "family": "open_set_ablations",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "experiment": "openset_ablation_no_flow_metric",
       "reason": "0 seed(s) shared with the reference"
     },
     {
-      "family": "against_baselines",
-      "dataset": "cesnet_quic22",
+      "family": "open_set_ablations",
+      "dataset": "fiveg_traffic",
       "split": "session_disjoint",
-      "experiment": "baseline_fsnet",
+      "experiment": "openset_ablation_no_pair_margin",
       "reason": "0 seed(s) shared with the reference"
     },
     {
-      "family": "against_baselines",
-      "dataset": "cesnet_quic22",
+      "family": "open_set_ablations",
+      "dataset": "fiveg_traffic",
       "split": "session_disjoint",
-      "experiment": "baseline_lstm_attention",
+      "experiment": "openset_ablation_no_flow_supcon",
       "reason": "0 seed(s) shared with the reference"
     },
     {
-      "family": "against_baselines",
-      "dataset": "cesnet_quic22",
+      "family": "open_set_ablations",
+      "dataset": "fiveg_traffic",
       "split": "session_disjoint",
-      "experiment": "baseline_mlp_stats",
+      "experiment": "openset_ablation_no_adversarial",
       "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "open_set_ablations",
+      "dataset": "fiveg_traffic",
+      "split": "temporal",
+      "reason": "reference flowconx_open_set has 0 seed(s)"
+    },
+    {
+      "family": "open_set_ablations",
+      "dataset": "fiveg_traffic",
+      "split": "random_flow",
+      "reason": "reference flowconx_open_set has 0 seed(s)"
     },
     {
       "family": "against_baselines",

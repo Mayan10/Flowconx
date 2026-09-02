@@ -1,0 +1,340 @@
+{
+  "experiment": "baseline_deeppacket_cnn",
+  "baseline": "deeppacket_cnn",
+  "reference": "Lotfollahi et al., Deep Packet, Soft Computing 2020",
+  "deviation_from_original": "Original consumes 1500 raw payload bytes per packet. Our schema retains no payload, so the 1D convolution runs over the same per-packet feature sequence FlowCon-X uses. Both models therefore see identical inputs.",
+  "config_hash": "b49931447656cba3",
+  "seed": 0,
+  "config": {
+    "name": "flowconx_main",
+    "description": "Headline configuration on 5G Traffic. One capture file is one session, and every conversation segment cut from it is correlated with its neighbours, so session-disjoint splitting groups on capture_id.\n",
+    "seed": 0,
+    "output_root": "results",
+    "data": {
+      "dataset": "fiveg_traffic",
+      "csv": "data/processed/fiveg_traffic.csv",
+      "label_column": "service",
+      "split_protocol": "session_disjoint",
+      "split_seed": 42,
+      "val_fraction": 0.1,
+      "test_fraction": 0.2,
+      "rare_class_mode": "drop",
+      "min_class_count": 100,
+      "max_packets": 32,
+      "observed_packets": null,
+      "limit": null,
+      "subsample_rows": null,
+      "unknown_apps": []
+    },
+    "model": {
+      "app_hidden_dim": 192,
+      "net_hidden_dim": 128,
+      "app_emb_dim": 256,
+      "net_emb_dim": 128,
+      "flow_emb_dim": 256,
+      "dropout": 0.1,
+      "n_conv_blocks": 3,
+      "n_heads": 6,
+      "n_transformer_layers": 1,
+      "dual_encoder": true,
+      "fusion": "cross_attention",
+      "adversarial_head": true,
+      "classify_from": "z_flow",
+      "width_multiplier": 1.0
+    },
+    "loss": {
+      "temperature": 0.07,
+      "lambda_service_supcon": 1.0,
+      "lambda_flow_supcon": 1.0,
+      "lambda_app_supcon": 0.0,
+      "lambda_prototype": 0.1,
+      "lambda_disentangle": 0.25,
+      "lambda_adversarial": 0.15,
+      "lambda_pair_margin": 0.0,
+      "lambda_flow_pair_margin": 1.0,
+      "pair_negative_margin": 0.2,
+      "pair_positive_target": 0.75,
+      "grl_warmup_epochs": 5
+    },
+    "train": {
+      "epochs": 15,
+      "batch_size": 512,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "grad_clip": 1.0,
+      "schedule": "two_stage",
+      "stage1_epochs": 7,
+      "memory_per_class": 512,
+      "num_workers": 0,
+      "device": "auto",
+      "early_stop_patience": 4,
+      "amp": false
+    },
+    "eval": {
+      "knn_k": 5,
+      "classifier_heads": [
+        "knn",
+        "prototype",
+        "linear"
+      ],
+      "max_reference_rows": 20000,
+      "bootstrap_resamples": 1000,
+      "open_set": false,
+      "few_shot": false,
+      "few_shot_k": [
+        1,
+        5,
+        10,
+        25,
+        50,
+        100
+      ],
+      "drift": false,
+      "robustness": true,
+      "early_classification": true,
+      "early_packet_budgets": [
+        1,
+        2,
+        3,
+        5,
+        10,
+        20
+      ],
+      "cost": true,
+      "probes": true
+    }
+  },
+  "provenance": {
+    "config_hash": "b49931447656cba3",
+    "config_name": "baseline_deeppacket_cnn",
+    "seed": 0,
+    "git": {
+      "commit": "2e5453db3faf4cb5df1373db82906504d1243de6",
+      "branch": "main",
+      "dirty": "yes",
+      "dirty_files": "?? results/baseline_fsnet/cesnet_quic22/session_disjoint/seed2/\n?? results/baseline_lstm_attention/cesnet_quic22/session_disjoint/seed2/\n?? results/baseline_mlp_stats/cesnet_quic22/session_disjoint/seed2/"
+    },
+    "libraries": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3",
+      "scipy": "1.14.1",
+      "sklearn": "1.5.2",
+      "torch": "2.8.0.dev20250420",
+      "xgboost": "2.1.2",
+      "yaml": "6.0.2",
+      "matplotlib": "3.9.2"
+    },
+    "python": "3.13.15",
+    "platform_name": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "cpu_count": 8,
+    "seeding": {
+      "seed": 0,
+      "deterministic_requested": true,
+      "torch": "2.8.0.dev20250420",
+      "deterministic_algorithms": true,
+      "cudnn_deterministic": true
+    },
+    "device": {
+      "requested": "auto",
+      "cuda_available": false,
+      "mps_available": true
+    },
+    "started_at": 1788367424.7374961,
+    "wall_clock_seconds": 98.468,
+    "started_at_iso": "2026-09-02T16:43:44Z"
+  },
+  "data": {
+    "csv": "data/processed/fiveg_traffic.csv",
+    "split_protocol": "session_disjoint",
+    "split_checksums": {
+      "train": "d61bec08a89f573253fd697b18f23a71d144f259d92dcb355e2d2ba8cbf1be97",
+      "val": "c78f091c69f4097f50b2bfb159f4bf9932edd90bd1065308b914c31e526eeb34",
+      "test": "82111af0a857b6afee30eed1adc2fd4a5eb1c14a0f4d3142e2fc87927316a880"
+    },
+    "split_sizes": {
+      "train": 114872,
+      "val": 16617,
+      "test": 32859
+    },
+    "label_space": {
+      "classes": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "n_apps": 15,
+      "nuisance_source": "none",
+      "n_nuisance": 1
+    }
+  },
+  "training": {
+    "n_parameters": 269706,
+    "device": "mps",
+    "epochs_run": 15,
+    "seconds": 96.39,
+    "enrollment_requires_retraining": true
+  },
+  "closed_set": {
+    "softmax": {
+      "accuracy": 0.6494111202410299,
+      "macro_f1": 0.5752771240147717,
+      "balanced_accuracy": 0.675457255438367,
+      "per_class_f1": {
+        "game_streaming": 0.48084074373484237,
+        "live_streaming": 0.8326251896813354,
+        "metaverse": 0.009979728676126618,
+        "online_game": 0.628234722390961,
+        "stored_streaming": 0.9007298235669241,
+        "video_conferencing": 0.599252536038441
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          1487,
+          14,
+          158,
+          20,
+          6,
+          9
+        ],
+        [
+          77,
+          5487,
+          14,
+          279,
+          1155,
+          427
+        ],
+        [
+          0,
+          3,
+          32,
+          5755,
+          5,
+          248
+        ],
+        [
+          6,
+          16,
+          25,
+          5171,
+          8,
+          6
+        ],
+        [
+          1,
+          220,
+          5,
+          0,
+          6356,
+          1
+        ],
+        [
+          2920,
+          1,
+          136,
+          5,
+          0,
+          2806
+        ]
+      ],
+      "macro_f1_ci95": {
+        "point": 0.5752771240147717,
+        "lo": 0.5710794709633181,
+        "hi": 0.5798087879051644,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.675457255438367,
+        "lo": 0.6718918515056748,
+        "hi": 0.6792075070611379,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5755,
+          "rate": 0.9523415522091676
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 2920,
+          "rate": 0.49761417859577367
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 1155,
+          "rate": 0.15526280414034144
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 427,
+          "rate": 0.05740018819733835
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "online_game",
+          "count": 279,
+          "rate": 0.03750504100013443
+        },
+        {
+          "true": "metaverse",
+          "predicted": "video_conferencing",
+          "count": 248,
+          "rate": 0.04103921893099454
+        },
+        {
+          "true": "stored_streaming",
+          "predicted": "live_streaming",
+          "count": 220,
+          "rate": 0.03341941364119702
+        },
+        {
+          "true": "game_streaming",
+          "predicted": "metaverse",
+          "count": 158,
+          "rate": 0.09327036599763873
+        }
+      ]
+    }
+  },
+  "cost": {
+    "n_parameters": 269706,
+    "model_size_bytes": 1082693,
+    "observed_packets": 32,
+    "device": "mps",
+    "forward_batch1": {
+      "mean_ms": 0.48625891795381904,
+      "p50_ms": 0.45027100713923573,
+      "p95_ms": 0.48033929197117686,
+      "p99_ms": 0.49025000655092277,
+      "min_ms": 0.41750003583729267,
+      "max_ms": 7.90429103653878,
+      "n_samples": 200
+    },
+    "note": "Forward pass only. The end-to-end path is measured for the model in flowconx/eval/cost.py."
+  }
+}

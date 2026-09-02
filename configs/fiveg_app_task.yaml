@@ -1,0 +1,38 @@
+defaults: [fiveg_main.yaml]
+name: flowconx_app_task
+description: >
+  The same architecture, the same split, the same budget -- classifying the
+  application instead of the service category.
+
+  This exists because the enrollment result forced the question. On the
+  identical frozen embedding, with identical k and procedure, prototype
+  enrollment reaches macro-F1 0.7378 identifying the application from a single
+  labelled flow and 0.4234 for the service category. That is not a small
+  difference in difficulty; it says the embedding encodes application identity
+  and does not encode the service taxonomy it is being scored against.
+
+  The 5G service taxonomy is the dataset's own directory structure, and it
+  groups applications that behave nothing alike: `metaverse` is Zepeto and
+  Roblox, `game_streaming` is GeForce Now and KT GameBox. A model that
+  fingerprints applications well will look bad on it, and a coarse volume
+  statistic that captures "bursty and small-packet" will look good -- which is
+  exactly the pattern in the headline table, where XGBoost on thirteen flow
+  scalars beats us by 0.25.
+
+  If this run scores well, the paper's task should change and the service
+  results become a documented negative. If it does not, the architecture has a
+  problem that reframing will not fix. Either answer is worth one run.
+
+  Note that 15 applications with `min_class_count: 100` includes apps whose
+  captures land entirely in test under session-disjoint splitting (roblox has
+  one capture file). Those are unpredictable by construction and will drag
+  macro-F1 down; the per-class table in the result JSON separates them out.
+data:
+  label_column: app
+  min_class_count: 200
+eval:
+  classifier_heads: [knn, prototype, linear]
+  few_shot: true
+  probes: false
+  early_classification: false
+  robustness: false

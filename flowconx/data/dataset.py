@@ -188,7 +188,64 @@ class TensorFlowDataset(_torch_dataset_base()):  # type: ignore[misc]
         }
 
 
+class TensorBatchLoader:
+    """Batch iterator that slices preallocated tensors directly.
+
+    ``DataLoader`` builds a per-item dict and calls ``default_collate`` to
+    stack 256 of them on every batch, which is thousands of small Python-level
+    tensor operations per step. All of this data is already contiguous in
+    memory, so a batch is a single slice of each array. On 137k rows this is
+    the difference between the loop being CPU-bound in collation and being
+    bound by the model.
+
+    Shuffling uses a seeded generator and is reshuffled every epoch, so the
+    order is reproducible from the run's seed without being fixed across
+    epochs.
+    """
+
+    def __init__(self, split: EncodedSplit, batch_size: int, shuffle: bool, seed: int) -> None:
+        import torch
+
+        self.data = TensorFlowDataset(split)
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.generator = torch.Generator()
+        self.generator.manual_seed(seed)
+        self._n = len(self.data)
+
+    def __len__(self) -> int:
+        return (self._n + self.batch_size - 1) // self.batch_size
+
+    def __iter__(self):
+        import torch
+
+        order = (
+            torch.randperm(self._n, generator=self.generator)
+            if self.shuffle
+            else torch.arange(self._n)
+        )
+        for start in range(0, self._n, self.batch_size):
+            idx = order[start : start + self.batch_size]
+            yield {
+                "packet_seq": self.data.packet_seq[idx],
+                "packet_mask": self.data.packet_mask[idx],
+                "flow_features": self.data.flow_features[idx],
+                "label": self.data.labels[idx],
+                "app_label": self.data.app_labels[idx],
+                "nuisance_label": self.data.nuisance_labels[idx],
+            }
+
+
 def make_loader(split: EncodedSplit, batch_size: int, shuffle: bool, seed: int, num_workers: int = 0):
+    """Batch iterator for one split.
+
+    ``num_workers`` selects the implementation: 0 uses the fast in-process
+    slicer, anything else falls back to a real DataLoader with seeded workers
+    for the case where per-item work is added later.
+    """
+    if num_workers == 0:
+        return TensorBatchLoader(split, batch_size=batch_size, shuffle=shuffle, seed=seed)
+
     import torch
     from torch.utils.data import DataLoader
 
@@ -202,6 +259,6 @@ def make_loader(split: EncodedSplit, batch_size: int, shuffle: bool, seed: int, 
         shuffle=shuffle,
         num_workers=num_workers,
         generator=generator,
-        worker_init_fn=worker_init_fn if num_workers else None,
+        worker_init_fn=worker_init_fn,
         drop_last=False,
     )

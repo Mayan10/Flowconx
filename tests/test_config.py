@@ -130,7 +130,7 @@ def test_defaults_chain_is_resolved_recursively():
     assert ablation.data.split_protocol == main.data.split_protocol
     assert ablation.data.csv == main.data.csv
     # From the parent.
-    assert ablation.data.limit == 80000
+    assert ablation.data.subsample_rows == 72000
     assert ablation.train.epochs == 10
     # Its own key.
     assert ablation.loss.lambda_flow_supcon == 0.0
@@ -160,3 +160,26 @@ def test_circular_defaults_are_rejected(tmp_path):
     (tmp_path / "b.yaml").write_text("defaults: [a.yaml]\nname: b\n", encoding="utf-8")
     with pytest.raises(ValueError, match="Circular"):
         load_config(tmp_path / "a.yaml")
+
+
+def test_limit_and_subsample_are_mutually_exclusive():
+    """`limit` reads a biased prefix; `subsample_rows` is stratified.
+
+    Setting both silently applies the prefix first, so the "stratified"
+    subsample would be drawn from the earliest capture days only. The config
+    refuses rather than producing a quietly biased experiment.
+    """
+    with pytest.raises(ValueError, match="Pick one"):
+        from_dict({"data": {"limit": 1000, "subsample_rows": 500}})
+
+
+def test_ablations_use_a_stratified_subsample_not_a_prefix():
+    from pathlib import Path
+
+    for path in sorted(Path("configs/ablations").glob("*.yaml")):
+        config = load_config(path)
+        assert config.data.limit is None, (
+            f"{path.name} uses data.limit, which reads a prefix of the CSV and would restrict the "
+            "ablation to the earliest capture days"
+        )
+        assert config.data.subsample_rows is not None

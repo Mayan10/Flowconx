@@ -59,6 +59,10 @@ def load_frame(config: ExperimentConfig) -> pd.DataFrame:
             f"{path} does not exist. Build it with `python -m flowconx.data.prepare --source all`."
         )
     frame = pd.read_csv(path, nrows=config.data.limit)
+    if config.data.subsample_rows and len(frame) > config.data.subsample_rows:
+        frame = _stratified_rows(
+            frame, config.data.label_column, config.data.subsample_rows, config.data.split_seed
+        )
     policy = RareClassPolicy(
         mode=config.data.rare_class_mode,
         min_class_count=config.data.min_class_count,
@@ -67,6 +71,25 @@ def load_frame(config: ExperimentConfig) -> pd.DataFrame:
     frame, _ = apply_rare_class_policy(frame, policy)
     frame, _ = ensure_flow_ids(frame)
     return frame.reset_index(drop=True)
+
+
+def _stratified_rows(frame: pd.DataFrame, label_column: str, target: int, seed: int) -> pd.DataFrame:
+    """Seeded stratified subsample, preserving class balance and capture spread.
+
+    Keyed on the split seed rather than the run seed so that every seed of one
+    experiment sees the same rows and the seeds differ only in initialisation
+    and batch order -- otherwise the error bars would mix two sources of
+    variance and mean nothing.
+    """
+    rng = np.random.default_rng(seed)
+    labels = frame[label_column].astype(str).to_numpy()
+    classes, counts = np.unique(labels, return_counts=True)
+    per_class = max(1, target // len(classes))
+    keep: List[int] = []
+    for cls in classes:
+        pool = np.flatnonzero(labels == cls)
+        keep.extend(rng.choice(pool, size=min(per_class, pool.size), replace=False).tolist())
+    return frame.iloc[sorted(keep)].reset_index(drop=True)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -179,6 +202,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         "data": {
             "csv": config.data.csv,
             "n_rows": int(len(frame)),
+            "subsample_rows": config.data.subsample_rows,
             "split_protocol": config.data.split_protocol,
             "split_checksums": manifest.checksums,
             "split_sizes": {side: int(len(splits[side])) for side in splits},

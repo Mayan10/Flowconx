@@ -10,9 +10,10 @@ data:
   split_protocol: session_disjoint
   max_packets: 32
 train:
-  epochs: 20
-  stage1_epochs: 10
-  early_stop_patience: 6
+  epochs: 15
+  stage1_epochs: 7
+  batch_size: 512
+  early_stop_patience: 4
 eval:
   classifier_heads: [knn, prototype, linear]
   probes: true

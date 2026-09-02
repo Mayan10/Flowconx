@@ -46,7 +46,16 @@ class DataConfig:
     # max_packets, which is what the CSV stores: the input-budget sweep in the
     # ablations varies this without re-reading the data.
     observed_packets: Optional[int] = None
+    # Read only the first N rows of the CSV. This is a *smoke-test* switch and
+    # nothing else: the rows are in capture order, so on CESNET it selects the
+    # earliest days and on 5G Traffic the first captures. Never use it to make
+    # an experiment cheaper -- use subsample_rows, which is stratified.
     limit: Optional[int] = None
+    # Seeded stratified subsample of the whole table, preserving class balance
+    # and drawing from every capture. This is the correct way to reduce an
+    # experiment's cost, and the count actually used is recorded in
+    # metrics.json.
+    subsample_rows: Optional[int] = None
     # Hold these apps out of training entirely, for open-set evaluation.
     unknown_apps: List[str] = field(default_factory=list)
 
@@ -163,6 +172,11 @@ class ExperimentConfig:
             )
         if self.model.classify_from == "z_network" and not self.model.dual_encoder:
             raise ValueError("model.classify_from='z_network' requires the dual encoder.")
+        if self.data.limit is not None and self.data.subsample_rows is not None:
+            raise ValueError(
+                "data.limit and data.subsample_rows are both set. limit reads a biased prefix and "
+                "exists only for smoke tests; subsample_rows is the stratified reduction. Pick one."
+            )
         observed = self.data.observed_packets
         if observed is not None and observed > self.data.max_packets:
             raise ValueError(

@@ -10,9 +10,15 @@ data:
   split_protocol: session_disjoint
   max_packets: 30
 train:
-  epochs: 20
-  stage1_epochs: 10
-  early_stop_patience: 6
+  # 15 epochs at batch 512 rather than 20 at 256. Measured on this hardware,
+  # a step costs about the same at either batch size, so the larger batch
+  # halves wall-clock per epoch; larger batches also help a contrastive
+  # objective, which sees more negatives per step. Early stopping on the
+  # prototype head usually triggers before epoch 15.
+  epochs: 15
+  stage1_epochs: 7
+  batch_size: 512
+  early_stop_patience: 4
 eval:
   classifier_heads: [knn, prototype, linear]
   probes: true

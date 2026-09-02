@@ -3,10 +3,16 @@ name: ablation_full
 description: >
   Reference row for the ablation family, and the budget every ablation shares.
 
-  Ablations run at a reduced budget: 10 epochs on a seeded 80,000-row subset of
-  CESNET-QUIC22 rather than 20 epochs on all 201,600. Thirty-five ablations at
-  five seeds is 175 runs, and at the headline budget that is days of compute for
-  a table whose purpose is to compare rows against each other.
+  Ablations run at a reduced budget: 10 epochs on a seeded *stratified* 72,000
+  row subsample of CESNET-QUIC22 rather than 20 epochs on all 201,600. Thirty
+  five ablations at five seeds is 175 runs, and at the headline budget that is
+  days of compute for a table whose purpose is to compare rows against each
+  other.
+
+  The subsample is stratified and drawn with the split seed, so every ablation
+  and every seed of it sees the same rows, spread across all 28 capture days.
+  An earlier version used data.limit, which reads a prefix of the CSV and would
+  have restricted every ablation to the first eleven days.
 
   What matters for that purpose is that every row shares the budget, including
   this reference row, so the comparisons are internally valid. The headline
@@ -14,11 +20,12 @@ description: >
   budget and are NOT comparable to the numbers in this family. The ablation
   table states the reduced budget in its caption.
 data:
-  limit: 80000
+  subsample_rows: 72000
 train:
   epochs: 10
   stage1_epochs: 5
   early_stop_patience: 4
+  batch_size: 512
 eval:
   bootstrap_resamples: 200
   classifier_heads: [prototype, knn]

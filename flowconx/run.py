@@ -27,7 +27,7 @@ from typing import Dict, List, Optional
 import numpy as np
 import pandas as pd
 
-from .audit.splits import SplitUnavailable, build_split, ensure_flow_ids, write_manifest
+from .audit.splits import SplitUnavailable, build_split, ensure_flow_ids
 from .data.dataset import build_label_space, encode_split
 from .determinism import RunProvenance, device_description, seed_everything
 from .experiment import ExperimentConfig, load_config, save_config
@@ -205,6 +205,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             "subsample_rows": config.data.subsample_rows,
             "split_protocol": config.data.split_protocol,
             "split_checksums": manifest.checksums,
+            "split_manifest": str(
+                Path("splits") / config.data.dataset / f"{config.data.split_protocol}_seed{config.data.split_seed}.json.gz"
+            ),
             "split_sizes": {side: int(len(splits[side])) for side in splits},
             "label_space": label_space.as_dict(),
             "features": splits["train"].features.describe(),
@@ -235,7 +238,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     metrics_path.write_text(json.dumps(metrics, indent=2, default=str), encoding="utf-8")
     (run_dir / "history.json").write_text(json.dumps(outcome.history, indent=2), encoding="utf-8")
     save_config(config, run_dir / "config.yaml")
-    write_manifest(manifest, run_dir / "split_manifest.json.gz")
+    # The split itself is not copied into every run directory. It is a pure
+    # function of (dataset, protocol, split_seed), it is already committed
+    # under splits/, and metrics.json records its per-side SHA256 under
+    # data.split_checksums -- which is what a reviewer verifies against. A
+    # 3 MB copy per run would be 400 MB across the sweep for information that
+    # is identical in every one of them.
     if args.save_model:
         import torch
 

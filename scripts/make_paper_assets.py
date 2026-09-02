@@ -133,10 +133,13 @@ def table_split_contrast(index, datasets: Sequence[str], audit: Dict[str, Any]) 
     return table_wrapper(
         "\n".join(rows),
         caption=(
-            "Macro-F1 under four split protocols. The random-flow row is the field's usual protocol and "
-            "is reported only as a contrast: correlated flows from one capture session appear on both "
-            "sides of it. The gap between it and the session-disjoint row is the inflation that protocol "
-            "produces, and it applies to a 2016 statistical baseline as much as to our model."
+            "Macro-F1 under four split protocols, every method on the identical committed splits. The "
+            "random-flow row is the protocol standard in the literature and is reported only as a "
+            "contrast: correlated flows from one capture session appear on both sides of it. "
+            "\\textbf{The size of that contrast is dataset-dependent}, which is itself the result: on a "
+            "corpus of single-session captures a flow's capture is nearly its label, while on a backbone "
+            "corpus whose flows are already independent the protocol makes little difference. The caption "
+            "deliberately does not assert a direction; read the columns."
         ),
         label="tab:split-contrast",
         columns="l" + "c" * len(datasets),
@@ -494,6 +497,13 @@ def figure_robustness(results_root: Path, out_dir: Path) -> Optional[Path]:
 
 
 def figure_adversarial_tradeoff(results_root: Path, out_dir: Path) -> Optional[Path]:
+    """Nuisance leakage against task performance, as the adversarial weight varies.
+
+    Needs at least two *distinct* weights. With one weight the plot is two
+    points stacked on a single x-value, which reads as a trade-off curve while
+    showing no trade-off at all -- the sweep behind it (configs/ablations/
+    adv_weight_*.yaml) simply has not run.
+    """
     points: List[Tuple[float, float, float]] = []
     for path in sorted(results_root.rglob("metrics.json")):
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -507,11 +517,11 @@ def figure_adversarial_tradeoff(results_root: Path, out_dir: Path) -> Optional[P
                 float(tradeoff["task_macro_f1_mlp"]),
             )
         )
-    if len(points) < 2:
+    weights = sorted({p[0] for p in points})
+    if len(weights) < 2:
         return None
     plt = _style()
     figure, axis = plt.subplots()
-    weights = sorted({p[0] for p in points})
     nuisance = [float(np.mean([p[1] for p in points if p[0] == w])) for w in weights]
     task = [float(np.mean([p[2] for p in points if p[0] == w])) for w in weights]
     axis.plot(weights, nuisance, marker="o", color=PALETTE[1], label="Nuisance probe above chance")

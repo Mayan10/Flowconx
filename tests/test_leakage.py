@@ -224,3 +224,48 @@ def test_manifest_survives_a_gzip_round_trip(synthetic_frame, tmp_path):
         reloaded = load_manifest(path)
         assert reloaded.checksums == manifest.checksums
         assert reloaded.train == manifest.train
+
+
+def test_large_manifest_omits_flow_ids_but_stays_verifiable(synthetic_frame, tmp_path, monkeypatch):
+    """A manifest that stores indices instead of IDs must verify just as hard.
+
+    Below the inline limit the flow-ID lists are written out; above it only row
+    indices are, and verification recomputes the IDs at those indices. That is
+    a stronger check than trusting a stored list, because it also detects a
+    dataset that has changed underneath the manifest.
+    """
+    from flowconx.audit import splits as splits_module
+    from flowconx.audit.splits import load_manifest, write_manifest
+
+    monkeypatch.setattr(splits_module, "INLINE_FLOW_ID_LIMIT", 10)
+    manifest, indices = _split(synthetic_frame, "session_disjoint")
+    assert not manifest.inlines_flow_ids, "manifest inlined IDs above the limit"
+    assert manifest.train_index and manifest.test_index
+    assert manifest.checksums["train"], "checksums must be present even without inlined IDs"
+
+    reloaded = load_manifest(write_manifest(manifest, tmp_path / "m.json.gz"))
+    recovered = indices_from_manifest(synthetic_frame, reloaded)
+    for side in ("train", "val", "test"):
+        assert np.array_equal(np.sort(recovered[side]), np.sort(indices[side]))
+
+
+def test_manifest_rejects_a_different_dataset(synthetic_frame, monkeypatch):
+    """Verification must fail if the table no longer produces the same IDs."""
+    from flowconx.audit import splits as splits_module
+
+    monkeypatch.setattr(splits_module, "INLINE_FLOW_ID_LIMIT", 10)
+    manifest, _ = _split(synthetic_frame, "session_disjoint")
+
+    tampered = synthetic_frame.copy()
+    tampered.loc[tampered.index[0], "flow_id"] = "0" * 24
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        indices_from_manifest(tampered, manifest)
+
+
+def test_manifest_rejects_a_shorter_table(synthetic_frame, monkeypatch):
+    from flowconx.audit import splits as splits_module
+
+    monkeypatch.setattr(splits_module, "INLINE_FLOW_ID_LIMIT", 10)
+    manifest, _ = _split(synthetic_frame, "session_disjoint")
+    with pytest.raises(ValueError, match="does not match the committed split"):
+        indices_from_manifest(synthetic_frame.head(5), manifest)

@@ -65,6 +65,17 @@ class SplitUnavailable(RuntimeError):
     """
 
 
+# Above this many rows the manifest stores row indices rather than the full
+# flow-ID list. The IDs are SHA256 prefixes -- high entropy, so they barely
+# compress -- and a 200k-row manifest is ~3 MB gzipped per protocol, which is
+# tens of megabytes of git history for information that is fully recoverable.
+# The SHA256 *over* the flow-ID list is stored either way, and verification
+# recomputes the IDs at the stored indices and compares. That is a stronger
+# check than trusting a stored list, because it also verifies that the dataset
+# still produces the same identifiers.
+INLINE_FLOW_ID_LIMIT = 50000
+
+
 @dataclass
 class SplitManifest:
     protocol: str
@@ -76,12 +87,25 @@ class SplitManifest:
     n_rows: int
     group_column: Optional[str]
     flow_id_synthesized: bool
+    # Row indices, always present. The authoritative record of the partition.
+    train_index: List[int] = field(default_factory=list)
+    val_index: List[int] = field(default_factory=list)
+    test_index: List[int] = field(default_factory=list)
+    # Flow-ID lists, inlined only for small tables. Absent does not mean
+    # unverifiable: `checksums` covers them and is recomputed on load.
     train: List[str] = field(default_factory=list)
     val: List[str] = field(default_factory=list)
     test: List[str] = field(default_factory=list)
     checksums: Dict[str, str] = field(default_factory=dict)
     class_counts: Dict[str, Dict[str, int]] = field(default_factory=dict)
     notes: List[str] = field(default_factory=list)
+
+    @property
+    def inlines_flow_ids(self) -> bool:
+        return bool(self.train or self.val or self.test)
+
+    def indices(self) -> Dict[str, List[int]]:
+        return {"train": self.train_index, "val": self.val_index, "test": self.test_index}
 
     def as_dict(self) -> Dict[str, object]:
         return asdict(self)
@@ -293,6 +317,8 @@ def build_split(
 
     indices = {"train": train, "val": val, "test": test}
     flow_ids = frame["flow_id"].to_numpy()
+    side_ids = {side: flow_ids[idx].tolist() for side, idx in indices.items()}
+    inline = len(frame) <= INLINE_FLOW_ID_LIMIT
     manifest = SplitManifest(
         protocol=protocol,
         seed=seed,
@@ -303,12 +329,21 @@ def build_split(
         n_rows=len(frame),
         group_column=group_column,
         flow_id_synthesized=synthesized,
-        train=flow_ids[train].tolist(),
-        val=flow_ids[val].tolist(),
-        test=flow_ids[test].tolist(),
+        train_index=[int(i) for i in train],
+        val_index=[int(i) for i in val],
+        test_index=[int(i) for i in test],
+        train=side_ids["train"] if inline else [],
+        val=side_ids["val"] if inline else [],
+        test=side_ids["test"] if inline else [],
         notes=notes,
     )
-    manifest.checksums = {side: sha256_of_strings(getattr(manifest, side)) for side in ("train", "val", "test")}
+    manifest.checksums = {side: sha256_of_strings(ids) for side, ids in side_ids.items()}
+    if not inline:
+        manifest.notes.append(
+            f"Flow-ID lists are not inlined ({len(frame):,} rows exceeds INLINE_FLOW_ID_LIMIT="
+            f"{INLINE_FLOW_ID_LIMIT:,}). Row indices are stored instead, and verification recomputes "
+            "the flow IDs at those indices and checks them against `checksums`."
+        )
     manifest.class_counts = {
         side: {
             str(label): int(count)
@@ -357,20 +392,45 @@ def load_manifest(path: str | Path) -> SplitManifest:
 
 
 def indices_from_manifest(df: pd.DataFrame, manifest: SplitManifest) -> Dict[str, np.ndarray]:
-    """Recover row indices for a committed manifest, verifying the checksums."""
+    """Recover row indices for a committed manifest, verifying its checksums.
+
+    Works whether or not the manifest inlines its flow-ID lists. When it does
+    not, the IDs are recomputed from the table at the stored indices and
+    checked against ``checksums`` -- which additionally verifies that the
+    dataset still produces the same identifiers, something a stored list
+    cannot tell you.
+    """
     frame, _ = ensure_flow_ids(df)
-    position = {flow_id: i for i, flow_id in enumerate(frame["flow_id"].astype(str))}
+    flow_ids = frame["flow_id"].astype(str).to_numpy()
     out: Dict[str, np.ndarray] = {}
     for side in ("train", "val", "test"):
-        ids = getattr(manifest, side)
+        inline_ids = getattr(manifest, side)
+        stored_index = manifest.indices()[side]
+
+        if inline_ids:
+            position = {flow_id: i for i, flow_id in enumerate(flow_ids)}
+            missing = [flow_id for flow_id in inline_ids if flow_id not in position]
+            if missing:
+                raise ValueError(
+                    f"{len(missing)} flow IDs from the {side!r} manifest are absent from the table; "
+                    "the dataset does not match the committed split."
+                )
+            index = np.asarray([position[flow_id] for flow_id in inline_ids], dtype=int)
+            recovered = list(inline_ids)
+        else:
+            index = np.asarray(stored_index, dtype=int)
+            if index.size and int(index.max()) >= len(flow_ids):
+                raise ValueError(
+                    f"Manifest index for {side!r} references row {int(index.max())} but the table has "
+                    f"{len(flow_ids)}; the dataset does not match the committed split."
+                )
+            recovered = flow_ids[index].tolist()
+
         expected = manifest.checksums.get(side)
-        if expected and sha256_of_strings(ids) != expected:
-            raise ValueError(f"Manifest checksum mismatch for split side {side!r}.")
-        missing = [flow_id for flow_id in ids if flow_id not in position]
-        if missing:
+        if expected and sha256_of_strings(recovered) != expected:
             raise ValueError(
-                f"{len(missing)} flow IDs from the {side!r} manifest are absent from the table; "
-                "the dataset does not match the committed split."
+                f"Manifest checksum mismatch for split side {side!r}: the rows at the recorded "
+                "indices do not produce the recorded flow IDs, so this is a different dataset."
             )
-        out[side] = np.asarray([position[flow_id] for flow_id in ids], dtype=int)
+        out[side] = index
     return out

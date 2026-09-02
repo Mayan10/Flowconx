@@ -34,6 +34,9 @@ data/*.pcapng
 !results/
 !results/**/*.json
 !results/**/*.md
+# Checkpoints from `make repro-full --save-model` stay local: 5.7 MB each
+# across 132 runs. The metrics they produced are what gets committed.
+results/**/model.pt
 !splits/
 !splits/**/*.json
 !splits/**/*.json.gz

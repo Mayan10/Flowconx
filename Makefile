@@ -69,9 +69,12 @@ repro-small:
 
 # repro-full: the headline table, every ablation, every evaluation mode.
 repro-full: data audit
+	# --save-model keeps the encoder from every run, so a frozen-encoder
+	# evaluation (enrollment curves, open-set scoring, a new perturbation)
+	# can be added later without retraining anything.
 	$(PYTHON) scripts/run_all_experiments.py \
 		--stages headline split_contrast novelty baselines ablations \
-		--seeds $(SEEDS_FULL) --headline-seeds $(SEEDS_FULL)
+		--seeds $(SEEDS_FULL) --headline-seeds $(SEEDS_FULL) --save-model
 	$(PYTHON) -m flowconx.analysis.significance --results results --out results/significance.json
 	$(PYTHON) -m flowconx.analysis.aggregate --results results --out results/aggregate.json
 	$(MAKE) paper

@@ -7,10 +7,10 @@
 Method & p50 (ms) & p95 (ms) & p99 (ms) & Flows/s & Params & Size (MB) & New class \\
 \midrule
 FlowCon-X & 6.05 & 6.79 & 8.17 & 7863 & 1\,406\,342 & 5.7 & $k$ fwd passes \\
-DeepPacket-style CNN & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-FS-Net & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-Bi-LSTM + attention & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-Flow-statistics MLP & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
+DeepPacket-style CNN & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 270\,918 & 1.1 & fine-tune \\
+FS-Net & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 634\,258 & 2.5 & fine-tune \\
+Bi-LSTM + attention & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 573\,331 & 2.3 & fine-tune \\
+Flow-statistics MLP & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 73\,234 & 0.3 & fine-tune \\
 \bottomrule
 \end{tabular}
 \caption{Deployment cost, measured on identical hardware. Latency percentiles are end-to-end -- stored record in, decision out, including feature construction -- at batch size 1, not a mean of the forward pass alone. The last column is the cost of adding one new application: a prototype update needs $k$ forward passes, a softmax classifier needs a fine-tuning run.}

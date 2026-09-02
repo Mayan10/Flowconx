@@ -152,7 +152,14 @@ def table_split_contrast(index, datasets: Sequence[str], audit: Dict[str, Any]) 
 
 BASELINE_TIERS = [
     ("Identifier shortcuts", ["port_only", "sni_only", "server_ip_only", "server_asn_only", "protocol_only"]),
-    ("Classical statistical", ["five_stat", "size_histogram", "cumul", "appscanner", "kfp"]),
+    # first10/first20_sizes are included because on CESNET the 20-packet-size
+    # XGBoost is the strongest classical baseline and the one that beats us.
+    # An earlier version of this list omitted them, which flattered the model
+    # by hiding its closest competitor.
+    (
+        "Classical statistical",
+        ["five_stat", "flow_meta", "size_histogram", "first10_sizes", "first20_sizes", "cumul", "appscanner", "kfp"],
+    ),
     ("Deep, non-pretrained", ["deeppacket_cnn", "fsnet", "lstm_attention", "mlp_stats"]),
 ]
 PRETTY = {
@@ -163,6 +170,10 @@ PRETTY = {
     "protocol_only": "Transport protocol only",
     "five_stat": "5 flow statistics (RF)",
     "size_histogram": "Packet-size histogram (XGB)",
+    "first10_sizes": "First 10 packet sizes (XGB)",
+    "first20_sizes": "First 20 packet sizes (XGB)",
+    "flow_meta": "All flow scalars (XGB)",
+    "capture_id_only": "Capture session ID only",
     "cumul": "CUMUL",
     "appscanner": "AppScanner",
     "kfp": "$k$-fingerprinting",

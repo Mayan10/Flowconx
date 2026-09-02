@@ -641,6 +641,71 @@ C5 remains withdrawn on 5G Traffic. The reframing question stays open, and
 
 ---
 
+## 2026-09-02 — Main comparison, CESNET-QUIC22, session-disjoint
+
+Deep baselines at seed 0 (two more seeds queued); classical baselines and
+identifier probes from `make audit`; FlowCon-X at three seeds. Every method on
+the identical committed split.
+
+| Tier | Method | Macro-F1 | Params | Train time |
+| --- | --- | ---: | ---: | ---: |
+| — | Majority class | 0.006 | — | — |
+| Identifier | SNI string only | *0.967* | — | — |
+| Identifier | Server IP / prefix only | 0.768 | — | — |
+| Identifier | Server AS only | 0.162 | — | — |
+| Classical | 5 flow statistics (RF) | 0.415 | — | — |
+| Classical | All flow scalars (XGB) | 0.525 | — | — |
+| Classical | CUMUL | 0.373 | — | — |
+| Classical | k-fingerprinting | 0.590 | — | — |
+| Classical | Packet-size histogram (XGB) | 0.713 | — | — |
+| Classical | AppScanner (2016) | 0.772 | — | 13 s |
+| Classical | **First 20 packet sizes (XGB)** | **0.790** | — | ~3 s |
+| Deep | Flow-statistics MLP | 0.253 | 73 k | 31 s |
+| Deep | DeepPacket-style CNN | 0.655 | 271 k | 110 s |
+| Deep | Bi-LSTM + attention | 0.701 | 573 k | 412 s |
+| Deep | FS-Net | 0.762 | 634 k | 749 s |
+| Ours | **FlowCon-X** | **0.783 ± 0.005** | 1,406 k | ~1,000 s |
+
+### Reading
+
+**FlowCon-X is the best neural model here, and it loses to a gradient-boosted
+tree on twenty numbers.** XGBoost over the first twenty signed packet sizes
+reaches 0.790 in about three seconds of training; FlowCon-X reaches 0.783 in
+roughly a thousand, with 1.4 million parameters. AppScanner, from 2016, is
+0.011 behind us at 13 seconds.
+
+Among the deep models the ordering is clean and the gaps are real: FS-Net
+0.762, bi-LSTM 0.701, DeepPacket-style CNN 0.655, flow-statistics MLP 0.253.
+FlowCon-X beats the best of them by 0.021. So the architecture *is* doing
+something the other neural designs are not — it just is not enough to beat a
+tree.
+
+**The MLP result is worth its own line.** On the identical ten flow-statistics
+features, a 73k-parameter MLP scores 0.253 while a random forest scores 0.415
+and XGBoost on the same family scores 0.525. Gradient-boosted trees dominating
+neural networks on tabular features is a well-established result, and it
+reappears here cleanly.
+
+### What this settles
+
+C2 as originally stated — "competitive under strict protocols" — is
+**supported against deep baselines and not supported against classical ones**.
+The paper cannot claim a modelling win on closed-set accuracy for this dataset.
+Combined with the 5G result (0.574 against XGBoost's 0.849) and the withdrawn
+C5 and C6, the closed-set and enrollment arguments are both gone.
+
+**What remains standing** is the measurement contribution (C1, restated: the
+split axis that matters is corpus-specific, with a 0.418 swing on 5G Traffic
+and 0.191 on CESNET), the open-set rejection result (C4: half the false accepts
+of softmax at matched TPR), and the defence-overhead table (C7: only defences
+costing 2.28x bandwidth degrade the classifier meaningfully).
+
+That is a measurement paper with a modelling appendix, not a modelling paper.
+`paper/VENUE.md` already names IMC as the primary target on exactly this
+contingency, and the decision rule it records now resolves that way.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

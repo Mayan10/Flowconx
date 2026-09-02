@@ -17,16 +17,19 @@ Transport protocol only & \textsc{todo} & \textsc{todo} & --- \\
 \midrule
 \multicolumn{4}{l}{\emph{Classical statistical}} \\
 5 flow statistics (RF) & 0.415 & 0.421 & --- \\
+All flow scalars (XGB) & 0.525 & 0.536 & --- \\
 Packet-size histogram (XGB) & 0.713 & 0.719 & --- \\
+First 10 packet sizes (XGB) & 0.721 & 0.726 & --- \\
+First 20 packet sizes (XGB) & 0.790 & 0.793 & --- \\
 CUMUL & 0.373 & 0.402 & --- \\
 AppScanner & 0.772 & 0.775 & --- \\
 $k$-fingerprinting & 0.590 & 0.597 & --- \\
 \midrule
 \multicolumn{4}{l}{\emph{Deep, non-pretrained}} \\
-DeepPacket-style CNN & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-FS-Net & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-Bi-LSTM + attention & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-Flow-statistics MLP & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
+DeepPacket-style CNN & 0.655 $\pm$ 0.000 & 0.662 $\pm$ 0.000 & 270\,918 \\
+FS-Net & 0.762 $\pm$ 0.000 & 0.767 $\pm$ 0.000 & 634\,258 \\
+Bi-LSTM + attention & 0.701 $\pm$ 0.000 & 0.709 $\pm$ 0.000 & 573\,331 \\
+Flow-statistics MLP & 0.253 $\pm$ 0.000 & 0.290 $\pm$ 0.000 & 73\,234 \\
 \midrule
 \textbf{FlowCon-X} & \textbf{0.783 $\pm$ 0.005} & 0.788 $\pm$ 0.005 & 1\,406\,342 \\
 \bottomrule

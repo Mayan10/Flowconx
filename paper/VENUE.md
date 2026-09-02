@@ -5,9 +5,25 @@ land; the recommendation is a function of which claims survive.
 
 ---
 
-## Recommendation as of 2026-09-02
+## Recommendation as of 2026-09-02 (updated after the main comparison landed)
 
-**Primary: ACM IMC.** **Backup: PETS.**
+**Primary: ACM IMC. The decision rule below has now resolved, and it resolves
+to IMC.**
+
+The modelling case is gone. On CESNET, XGBoost over twenty packet sizes beats
+FlowCon-X (0.790 vs 0.783) in three seconds against a thousand. On 5G Traffic
+FlowCon-X loses by 0.25 to XGBoost on thirteen flow scalars. C5 (enrollment)
+and C6 (drift) are withdrawn on their own evidence.
+
+What stands is measurement: the split-protocol contrast (0.992 → 0.574 on 5G,
+0.786 → 0.582 on CESNET under the *different* axis that matters there), the
+identifier probes that explain both, and the defence-overhead table. Plus one
+modelling result, C4, that rejection by distance halves the false-accept rate
+of softmax thresholding at matched TPR.
+
+**That is an IMC paper with a modelling section, not a modelling paper.**
+
+**Backup: PETS.**
 
 This is a change from the earlier NDSS/USENIX framing, and the reason is what
 Phase 0 measured. The strongest result in hand is a *measurement* result: a

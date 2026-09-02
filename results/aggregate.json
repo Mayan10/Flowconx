@@ -1,6 +1,242 @@
 {
-  "n_runs": 18,
+  "n_runs": 25,
   "groups": [
+    {
+      "experiment": "baseline_deeppacket_cnn",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "seeds": [
+        0
+      ],
+      "n_seeds": 1,
+      "config_hash": "8fc88554f2c29aed",
+      "heads": {
+        "softmax": {
+          "macro_f1": {
+            "mean": 0.6548841667173706,
+            "std": 0.0,
+            "min": 0.6548841667173706,
+            "max": 0.6548841667173706,
+            "n_seeds": 1
+          },
+          "balanced_accuracy": {
+            "mean": 0.662337962962963,
+            "std": 0.0,
+            "min": 0.662337962962963,
+            "max": 0.662337962962963,
+            "n_seeds": 1
+          },
+          "accuracy": {
+            "mean": 0.662337962962963,
+            "std": 0.0,
+            "min": 0.662337962962963,
+            "max": 0.662337962962963,
+            "n_seeds": 1
+          }
+        }
+      },
+      "extras": {
+        "n_parameters": {
+          "mean": 270918.0,
+          "std": 0.0,
+          "min": 270918.0,
+          "max": 270918.0,
+          "n_seeds": 1
+        },
+        "train_seconds": {
+          "mean": 109.61,
+          "std": 0.0,
+          "min": 109.61,
+          "max": 109.61,
+          "n_seeds": 1
+        },
+        "model_size_bytes": {
+          "mean": 1087557.0,
+          "std": 0.0,
+          "min": 1087557.0,
+          "max": 1087557.0,
+          "n_seeds": 1
+        }
+      },
+      "warning_few_seeds": "1 seed(s). The paper's stated protocol is 5 minimum and 10 for the headline table."
+    },
+    {
+      "experiment": "baseline_fsnet",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "seeds": [
+        0
+      ],
+      "n_seeds": 1,
+      "config_hash": "8fc88554f2c29aed",
+      "heads": {
+        "softmax": {
+          "macro_f1": {
+            "mean": 0.7624430683601324,
+            "std": 0.0,
+            "min": 0.7624430683601324,
+            "max": 0.7624430683601324,
+            "n_seeds": 1
+          },
+          "balanced_accuracy": {
+            "mean": 0.7667592592592593,
+            "std": 0.0,
+            "min": 0.7667592592592593,
+            "max": 0.7667592592592593,
+            "n_seeds": 1
+          },
+          "accuracy": {
+            "mean": 0.7667592592592593,
+            "std": 0.0,
+            "min": 0.7667592592592593,
+            "max": 0.7667592592592593,
+            "n_seeds": 1
+          }
+        }
+      },
+      "extras": {
+        "n_parameters": {
+          "mean": 634258.0,
+          "std": 0.0,
+          "min": 634258.0,
+          "max": 634258.0,
+          "n_seeds": 1
+        },
+        "train_seconds": {
+          "mean": 748.63,
+          "std": 0.0,
+          "min": 748.63,
+          "max": 748.63,
+          "n_seeds": 1
+        },
+        "model_size_bytes": {
+          "mean": 2543841.0,
+          "std": 0.0,
+          "min": 2543841.0,
+          "max": 2543841.0,
+          "n_seeds": 1
+        }
+      },
+      "warning_few_seeds": "1 seed(s). The paper's stated protocol is 5 minimum and 10 for the headline table."
+    },
+    {
+      "experiment": "baseline_lstm_attention",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "seeds": [
+        0
+      ],
+      "n_seeds": 1,
+      "config_hash": "8fc88554f2c29aed",
+      "heads": {
+        "softmax": {
+          "macro_f1": {
+            "mean": 0.7006861509046418,
+            "std": 0.0,
+            "min": 0.7006861509046418,
+            "max": 0.7006861509046418,
+            "n_seeds": 1
+          },
+          "balanced_accuracy": {
+            "mean": 0.7087962962962963,
+            "std": 0.0,
+            "min": 0.7087962962962963,
+            "max": 0.7087962962962963,
+            "n_seeds": 1
+          },
+          "accuracy": {
+            "mean": 0.7087962962962963,
+            "std": 0.0,
+            "min": 0.7087962962962963,
+            "max": 0.7087962962962963,
+            "n_seeds": 1
+          }
+        }
+      },
+      "extras": {
+        "n_parameters": {
+          "mean": 573331.0,
+          "std": 0.0,
+          "min": 573331.0,
+          "max": 573331.0,
+          "n_seeds": 1
+        },
+        "train_seconds": {
+          "mean": 412.43,
+          "std": 0.0,
+          "min": 412.43,
+          "max": 412.43,
+          "n_seeds": 1
+        },
+        "model_size_bytes": {
+          "mean": 2300193.0,
+          "std": 0.0,
+          "min": 2300193.0,
+          "max": 2300193.0,
+          "n_seeds": 1
+        }
+      },
+      "warning_few_seeds": "1 seed(s). The paper's stated protocol is 5 minimum and 10 for the headline table."
+    },
+    {
+      "experiment": "baseline_mlp_stats",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "seeds": [
+        0
+      ],
+      "n_seeds": 1,
+      "config_hash": "8fc88554f2c29aed",
+      "heads": {
+        "softmax": {
+          "macro_f1": {
+            "mean": 0.2531079093352118,
+            "std": 0.0,
+            "min": 0.2531079093352118,
+            "max": 0.2531079093352118,
+            "n_seeds": 1
+          },
+          "balanced_accuracy": {
+            "mean": 0.28995370370370366,
+            "std": 0.0,
+            "min": 0.28995370370370366,
+            "max": 0.28995370370370366,
+            "n_seeds": 1
+          },
+          "accuracy": {
+            "mean": 0.2899537037037037,
+            "std": 0.0,
+            "min": 0.2899537037037037,
+            "max": 0.2899537037037037,
+            "n_seeds": 1
+          }
+        }
+      },
+      "extras": {
+        "n_parameters": {
+          "mean": 73234.0,
+          "std": 0.0,
+          "min": 73234.0,
+          "max": 73234.0,
+          "n_seeds": 1
+        },
+        "train_seconds": {
+          "mean": 30.52,
+          "std": 0.0,
+          "min": 30.52,
+          "max": 30.52,
+          "n_seeds": 1
+        },
+        "model_size_bytes": {
+          "mean": 295701.0,
+          "std": 0.0,
+          "min": 295701.0,
+          "max": 295701.0,
+          "n_seeds": 1
+        }
+      },
+      "warning_few_seeds": "1 seed(s). The paper's stated protocol is 5 minimum and 10 for the headline table."
+    },
     {
       "experiment": "flowconx_main",
       "dataset": "cesnet_quic22",
@@ -294,6 +530,211 @@
           "std": 0.008400087277564607,
           "min": 0.960102954252967,
           "max": 0.9750875922065733,
+          "n_seeds": 3
+        }
+      },
+      "warning_few_seeds": "3 seed(s). The paper's stated protocol is 5 minimum and 10 for the headline table."
+    },
+    {
+      "experiment": "flowconx_open_set",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_seeds": 3,
+      "config_hash": "9823c1972fe8b790",
+      "heads": {
+        "knn": {
+          "macro_f1": {
+            "mean": 0.5265972934623258,
+            "std": 0.02292240604500872,
+            "min": 0.5082367822588019,
+            "max": 0.5522883158588555,
+            "n_seeds": 3
+          },
+          "balanced_accuracy": {
+            "mean": 0.5827477343360887,
+            "std": 0.03219385798186813,
+            "min": 0.5535989835530496,
+            "max": 0.6173022808379341,
+            "n_seeds": 3
+          },
+          "accuracy": {
+            "mean": 0.6037006603974558,
+            "std": 0.03192898205749064,
+            "min": 0.5755500776043093,
+            "max": 0.6383943516236039,
+            "n_seeds": 3
+          }
+        },
+        "prototype": {
+          "macro_f1": {
+            "mean": 0.5048289354325465,
+            "std": 0.07053722297265108,
+            "min": 0.42442595936376354,
+            "max": 0.5563007785702849,
+            "n_seeds": 3
+          },
+          "balanced_accuracy": {
+            "mean": 0.5576743433692893,
+            "std": 0.04509903425615864,
+            "min": 0.5171975136605393,
+            "max": 0.6062877927326268,
+            "n_seeds": 3
+          },
+          "accuracy": {
+            "mean": 0.579617963622346,
+            "std": 0.04673105833009672,
+            "min": 0.5376304817553791,
+            "max": 0.6299643933168995,
+            "n_seeds": 3
+          }
+        },
+        "linear": {
+          "macro_f1": {
+            "mean": 0.5371975301610651,
+            "std": 0.016397054993825762,
+            "min": 0.5196079917574802,
+            "max": 0.552060208107405,
+            "n_seeds": 3
+          },
+          "balanced_accuracy": {
+            "mean": 0.5837622943737243,
+            "std": 0.02515943715944004,
+            "min": 0.5621648128598449,
+            "max": 0.6113883603005489,
+            "n_seeds": 3
+          },
+          "accuracy": {
+            "mean": 0.6067642553536828,
+            "std": 0.02513649987051599,
+            "min": 0.584893027785386,
+            "max": 0.6342250220639702,
+            "n_seeds": 3
+          }
+        }
+      },
+      "extras": {
+        "n_parameters": {
+          "mean": 1415501.0,
+          "std": 0.0,
+          "min": 1415501.0,
+          "max": 1415501.0,
+          "n_seeds": 3
+        },
+        "train_seconds": {
+          "mean": 885.11,
+          "std": 165.31186164337998,
+          "min": 694.41,
+          "max": 987.75,
+          "n_seeds": 3
+        },
+        "latency_p50_ms": {
+          "mean": 6.043270831772436,
+          "std": 0.02700635474376157,
+          "min": 6.017125037033111,
+          "max": 6.0710624675266445,
+          "n_seeds": 3
+        },
+        "latency_p95_ms": {
+          "mean": 6.402871264920879,
+          "std": 0.14537674297081513,
+          "min": 6.23645182349719,
+          "max": 6.505128939170388,
+          "n_seeds": 3
+        },
+        "latency_p99_ms": {
+          "mean": 7.673725382192057,
+          "std": 0.6599427131588567,
+          "min": 7.261500214226542,
+          "max": 8.434884984744706,
+          "n_seeds": 3
+        },
+        "throughput_flows_per_s": {
+          "mean": 5253.659256304539,
+          "std": 1920.2910190194561,
+          "min": 3037.0029661314074,
+          "max": 6410.399860053097,
+          "n_seeds": 3
+        },
+        "model_size_bytes": {
+          "mean": 5690547.0,
+          "std": 0.0,
+          "min": 5690547.0,
+          "max": 5690547.0,
+          "n_seeds": 3
+        },
+        "open_set_auroc_prototype_cosine": {
+          "mean": 0.918889490402444,
+          "std": 0.03272436240293565,
+          "min": 0.8812486633396925,
+          "max": 0.940583925193778,
+          "n_seeds": 3
+        },
+        "open_set_fpr95_prototype_cosine": {
+          "mean": 0.34096861543925067,
+          "std": 0.10736101815102582,
+          "min": 0.23491809828206153,
+          "max": 0.44959382074843524,
+          "n_seeds": 3
+        },
+        "open_set_auroc_softmax_msp": {
+          "mean": 0.8372060597193515,
+          "std": 0.08529418482057363,
+          "min": 0.7393376626549127,
+          "max": 0.8957021935281869,
+          "n_seeds": 3
+        },
+        "open_set_fpr95_softmax_msp": {
+          "mean": 0.6102010920229058,
+          "std": 0.1359686039085361,
+          "min": 0.4887468371287788,
+          "max": 0.7570914902117459,
+          "n_seeds": 3
+        },
+        "open_set_auroc_energy": {
+          "mean": 0.8699206956473621,
+          "std": 0.08060047550576163,
+          "min": 0.7768638816851731,
+          "max": 0.9177752561489001,
+          "n_seeds": 3
+        },
+        "open_set_fpr95_energy": {
+          "mean": 0.37470590846539703,
+          "std": 0.13774065876204897,
+          "min": 0.27580237048874684,
+          "max": 0.5320282327873219,
+          "n_seeds": 3
+        },
+        "open_set_auroc_mahalanobis": {
+          "mean": 0.9271345058732502,
+          "std": 0.030351283344196473,
+          "min": 0.8923888677439801,
+          "max": 0.9484766918750753,
+          "n_seeds": 3
+        },
+        "open_set_fpr95_mahalanobis": {
+          "mean": 0.31615394859501933,
+          "std": 0.13287855200314097,
+          "min": 0.20495405513383938,
+          "max": 0.4633106938340658,
+          "n_seeds": 3
+        },
+        "probe_nuisance_above_majority": {
+          "mean": 0.3565416666666667,
+          "std": 0.036483158214898746,
+          "min": 0.317125,
+          "max": 0.389125,
+          "n_seeds": 3
+        },
+        "probe_task_macro_f1": {
+          "mean": 0.9504462756423302,
+          "std": 0.020891630665418607,
+          "min": 0.9271108423838129,
+          "max": 0.9674105381118722,
           "n_seeds": 3
         }
       },

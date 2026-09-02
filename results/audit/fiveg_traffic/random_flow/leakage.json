@@ -1,0 +1,152 @@
+{
+  "checks": [
+    {
+      "check": "row_index_disjoint",
+      "status": "pass",
+      "overlaps": {}
+    },
+    {
+      "check": "flow_id_disjoint",
+      "status": "pass",
+      "n_shared": 0,
+      "n_train_values": 115043,
+      "n_test_values": 32870,
+      "examples": []
+    },
+    {
+      "check": "capture_id_disjoint",
+      "status": "FAIL",
+      "n_shared": 75,
+      "n_train_values": 75,
+      "n_test_values": 75,
+      "examples": [
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_1.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_2.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_3.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_4.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_5.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_6.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_7.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_8.csv",
+        "5G_Traffic_Datasets/Game_Streaming/GeForce_Now/GeForce_Now_9.csv",
+        "5G_Traffic_Datasets/Game_Streaming/KT_GameBox/KT_GameBox_1.csv"
+      ]
+    },
+    {
+      "check": "five_tuple_disjoint",
+      "status": "unavailable",
+      "reason": "column 'five_tuple' is not present in the table"
+    },
+    {
+      "check": "client_ip_disjoint",
+      "status": "unavailable",
+      "reason": "column 'client_ip' is not present in the table"
+    },
+    {
+      "check": "server_ip_disjoint",
+      "status": "FAIL",
+      "n_shared": 628,
+      "n_train_values": 967,
+      "n_test_values": 687,
+      "examples": [
+        "100.20.201.140",
+        "100.20.211.234",
+        "101.32.110.252",
+        "101.32.110.253",
+        "101.32.110.254",
+        "101.32.143.142",
+        "101.32.143.171",
+        "101.32.143.232",
+        "101.32.143.247",
+        "101.32.143.64"
+      ]
+    },
+    {
+      "check": "origin_disjoint",
+      "status": "unavailable",
+      "reason": "column 'origin' has a single distinct value across the whole table, so it cannot be disjoint across splits and cannot leak anything either",
+      "n_distinct": 1
+    },
+    {
+      "check": "no_exact_duplicates_across_splits",
+      "status": "pass",
+      "n_test_rows_duplicated_in_train": 0,
+      "fraction_of_test": 0.0,
+      "columns_hashed": [
+        "origin",
+        "capture_id",
+        "flow_start_ts",
+        "client_ip",
+        "server_ip",
+        "server_port",
+        "sni",
+        "dst_asn",
+        "protocol",
+        "app",
+        "service",
+        "condition",
+        "packet_lengths",
+        "iat_values",
+        "directions",
+        "rtt_ms",
+        "jitter_ms",
+        "loss_rate",
+        "total packets",
+        "total fwd packets",
+        "total backward packets",
+        "packet length mean",
+        "packet length std",
+        "flow iat mean",
+        "flow iat std",
+        "flow duration",
+        "flow bytes/s",
+        "flow packets/s"
+      ]
+    },
+    {
+      "check": "no_near_duplicates_across_splits",
+      "status": "FAIL",
+      "threshold": 0.999,
+      "tolerance": 0.01,
+      "standardised": true,
+      "n_test_rows_with_near_duplicate": 3280,
+      "fraction_of_sampled_test": 0.41,
+      "max_cosine_observed": 0.9999999998830538,
+      "sampled_train_rows": 8000,
+      "sampled_test_rows": 8000
+    },
+    {
+      "check": "label_and_identifiers_excluded_from_inputs",
+      "status": "pass",
+      "declared_inputs": [
+        "packet_lengths",
+        "iat_values",
+        "directions"
+      ],
+      "forbidden_present": []
+    },
+    {
+      "check": "nuisance_not_deterministic_in_inputs",
+      "status": "pass",
+      "nuisance": "condition",
+      "reconstruction_agreement": 0.0,
+      "reconstructed_from": [
+        "flow iat mean",
+        "flow iat std"
+      ],
+      "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+    }
+  ],
+  "n_failed": 3,
+  "failed": [
+    "capture_id_disjoint",
+    "server_ip_disjoint",
+    "no_near_duplicates_across_splits"
+  ],
+  "unavailable": [
+    "five_tuple_disjoint",
+    "client_ip_disjoint",
+    "origin_disjoint"
+  ],
+  "verdict": "FAIL"
+}

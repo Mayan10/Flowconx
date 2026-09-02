@@ -1,0 +1,1831 @@
+{
+  "dataset": "cesnet_quic22",
+  "csv": "data/processed/cesnet_quic22.csv",
+  "n_rows": 201600,
+  "label_column": "service",
+  "classes": [
+    "advertising",
+    "analytics_&_telemetry",
+    "antivirus",
+    "authentication_services",
+    "blogs_&_news",
+    "default",
+    "e_commerce",
+    "file_sharing",
+    "games",
+    "information_systems",
+    "instant_messaging",
+    "mail",
+    "music",
+    "other_services_and_apis",
+    "search",
+    "social",
+    "streaming_media",
+    "videoconferencing"
+  ],
+  "class_handling": {
+    "mode": "drop",
+    "min_class_count": 100,
+    "label_column": "service",
+    "rare_classes": [],
+    "counts_before": {
+      "advertising": 11200,
+      "analytics_&_telemetry": 11200,
+      "streaming_media": 11200,
+      "social": 11200,
+      "search": 11200,
+      "other_services_and_apis": 11200,
+      "music": 11200,
+      "mail": 11200,
+      "instant_messaging": 11200,
+      "information_systems": 11200,
+      "games": 11200,
+      "file_sharing": 11200,
+      "e_commerce": 11200,
+      "default": 11200,
+      "blogs_&_news": 11200,
+      "authentication_services": 11200,
+      "antivirus": 11200,
+      "videoconferencing": 11200
+    },
+    "rows_before": 201600,
+    "action": "no_rare_classes",
+    "counts_after": {
+      "advertising": 11200,
+      "analytics_&_telemetry": 11200,
+      "streaming_media": 11200,
+      "social": 11200,
+      "search": 11200,
+      "other_services_and_apis": 11200,
+      "music": 11200,
+      "mail": 11200,
+      "instant_messaging": 11200,
+      "information_systems": 11200,
+      "games": 11200,
+      "file_sharing": 11200,
+      "e_commerce": 11200,
+      "default": 11200,
+      "blogs_&_news": 11200,
+      "authentication_services": 11200,
+      "antivirus": 11200,
+      "videoconferencing": 11200
+    },
+    "rows_after": 201600
+  },
+  "provenance_columns_present": {
+    "flow_id": "True",
+    "origin": "True",
+    "capture_id": "True",
+    "flow_start_ts": "True",
+    "server_ip": "True"
+  },
+  "flow_id_synthesized": false,
+  "split_protocol_availability": {
+    "random_flow": true,
+    "session_disjoint": true,
+    "temporal": true,
+    "server_disjoint": true,
+    "app_disjoint": true,
+    "origin_disjoint": true
+  },
+  "environment": {
+    "git_commit": "51a8a8a2a348c15445c221edf6ef4d9621b6b6c8",
+    "python": "3.13.15",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "library_versions": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3",
+      "sklearn": "1.5.2",
+      "scipy": "1.14.1",
+      "xgboost": "2.1.2",
+      "torch": "2.8.0.dev20250420"
+    }
+  },
+  "config": {
+    "csv": "data/processed/cesnet_quic22.csv",
+    "label_column": "service",
+    "protocols": [
+      "random_flow",
+      "session_disjoint",
+      "temporal",
+      "server_disjoint",
+      "app_disjoint",
+      "origin_disjoint"
+    ],
+    "families": [
+      "protocol_only",
+      "condition_only",
+      "port_only",
+      "sni_only",
+      "server_ip_only",
+      "server_asn_only",
+      "capture_id_only",
+      "five_stat",
+      "first10_sizes",
+      "first20_sizes",
+      "size_histogram",
+      "flow_meta",
+      "cumul",
+      "appscanner",
+      "kfp"
+    ],
+    "rare_class_mode": "drop",
+    "min_class_count": 100,
+    "seed": 42,
+    "val_fraction": 0.1,
+    "test_fraction": 0.2,
+    "limit": null,
+    "splits_dir": "splits",
+    "results_dir": "results/audit",
+    "no_bootstrap": false,
+    "near_duplicate_threshold": 0.999
+  },
+  "splits": {
+    "random_flow": {
+      "protocol": "random_flow",
+      "status": "ok",
+      "manifest": "splits/cesnet_quic22/random_flow_seed42.json.gz",
+      "checksums": {
+        "train": "70aa6fc369ff4999d070c27b64ebd417e99ee7600d6f6a1a716aab26e2b1c789",
+        "val": "4d2acdbff43feb22db68ab4c1cff84e7b1a35085679c283d31adf8d08c3c2b27",
+        "test": "fc9f5b2f373c907660ba633701408757c1fb6d0d3b59710442dc15d5afa9fff3"
+      },
+      "sizes": {
+        "train": 141120,
+        "val": 20160,
+        "test": 40320
+      },
+      "class_counts": {
+        "train": {
+          "advertising": 7840,
+          "analytics_&_telemetry": 7840,
+          "antivirus": 7840,
+          "authentication_services": 7840,
+          "blogs_&_news": 7840,
+          "default": 7840,
+          "e_commerce": 7840,
+          "file_sharing": 7840,
+          "games": 7840,
+          "information_systems": 7840,
+          "instant_messaging": 7840,
+          "mail": 7840,
+          "music": 7840,
+          "other_services_and_apis": 7840,
+          "search": 7840,
+          "social": 7840,
+          "streaming_media": 7840,
+          "videoconferencing": 7840
+        },
+        "val": {
+          "advertising": 1120,
+          "analytics_&_telemetry": 1120,
+          "antivirus": 1120,
+          "authentication_services": 1120,
+          "blogs_&_news": 1120,
+          "default": 1120,
+          "e_commerce": 1120,
+          "file_sharing": 1120,
+          "games": 1120,
+          "information_systems": 1120,
+          "instant_messaging": 1120,
+          "mail": 1120,
+          "music": 1120,
+          "other_services_and_apis": 1120,
+          "search": 1120,
+          "social": 1120,
+          "streaming_media": 1120,
+          "videoconferencing": 1120
+        },
+        "test": {
+          "advertising": 2240,
+          "analytics_&_telemetry": 2240,
+          "antivirus": 2240,
+          "authentication_services": 2240,
+          "blogs_&_news": 2240,
+          "default": 2240,
+          "e_commerce": 2240,
+          "file_sharing": 2240,
+          "games": 2240,
+          "information_systems": 2240,
+          "instant_messaging": 2240,
+          "mail": 2240,
+          "music": 2240,
+          "other_services_and_apis": 2240,
+          "search": 2240,
+          "social": 2240,
+          "streaming_media": 2240,
+          "videoconferencing": 2240
+        }
+      },
+      "notes": [
+        "Stratified random split over individual flows. Reported only as a contrast column: correlated flows from the same capture session appear on both sides."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 141120,
+            "n_test_values": 40320,
+            "examples": []
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "FAIL",
+            "n_shared": 28,
+            "n_train_values": 28,
+            "n_test_values": 28,
+            "examples": [
+              "W-2022-44/20221031",
+              "W-2022-44/20221101",
+              "W-2022-44/20221102",
+              "W-2022-44/20221103",
+              "W-2022-44/20221104",
+              "W-2022-44/20221105",
+              "W-2022-44/20221106",
+              "W-2022-45/20221107",
+              "W-2022-45/20221108",
+              "W-2022-45/20221109"
+            ]
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 9103,
+            "n_train_values": 38095,
+            "n_test_values": 15974,
+            "examples": [
+              "106.194.205.92",
+              "114.175.0.28",
+              "114.175.0.44",
+              "114.175.0.48",
+              "114.175.0.73",
+              "114.175.1.164",
+              "114.175.1.201",
+              "114.175.100.0",
+              "114.175.100.121",
+              "114.175.100.158"
+            ]
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 1017,
+            "n_train_values": 2662,
+            "n_test_values": 1372,
+            "examples": [
+              "104.16.105.87",
+              "104.16.151.166",
+              "104.16.152.166",
+              "104.16.153.166",
+              "104.16.154.10",
+              "104.16.154.166",
+              "104.16.155.166",
+              "104.16.168.131",
+              "104.16.169.131",
+              "104.16.192.226"
+            ]
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "FAIL",
+            "n_shared": 1,
+            "n_train_values": 1,
+            "n_test_values": 1,
+            "examples": [
+              "cesnet_quic22"
+            ]
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "pass",
+            "n_test_rows_duplicated_in_train": 0,
+            "fraction_of_test": 0.0,
+            "columns_hashed": [
+              "origin",
+              "capture_id",
+              "flow_start_ts",
+              "client_ip",
+              "server_ip",
+              "server_port",
+              "sni",
+              "dst_asn",
+              "protocol",
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 1275,
+            "fraction_of_sampled_test": 0.159375,
+            "max_cosine_observed": 1.0000000000000002,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "pass",
+            "nuisance": "condition",
+            "reconstruction_agreement": 0.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 5,
+        "failed": [
+          "capture_id_disjoint",
+          "client_ip_disjoint",
+          "server_ip_disjoint",
+          "origin_disjoint",
+          "no_near_duplicates_across_splits"
+        ],
+        "unavailable": [
+          "five_tuple_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "port_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "sni_only": {
+          "macro_f1": 0.9667169896918177,
+          "balanced_accuracy": 0.966939484126984,
+          "accuracy": 0.9669394841269842,
+          "status": "ok"
+        },
+        "server_ip_only": {
+          "macro_f1": 0.7721358875896037,
+          "balanced_accuracy": 0.773611111111111,
+          "accuracy": 0.7736111111111111,
+          "status": "ok"
+        },
+        "server_asn_only": {
+          "macro_f1": 0.16007973282559018,
+          "balanced_accuracy": 0.22934027777777777,
+          "accuracy": 0.22934027777777777,
+          "status": "ok"
+        },
+        "capture_id_only": {
+          "macro_f1": 0.04095626772628823,
+          "balanced_accuracy": 0.04652777777777778,
+          "accuracy": 0.04652777777777778,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.4137257459053081,
+          "balanced_accuracy": 0.41934523809523805,
+          "accuracy": 0.4193452380952381,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.7148931212676828,
+          "balanced_accuracy": 0.7200892857142858,
+          "accuracy": 0.7200892857142858,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.7851323289625218,
+          "balanced_accuracy": 0.7889136904761904,
+          "accuracy": 0.7889136904761904,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.708499608888278,
+          "balanced_accuracy": 0.7155009920634919,
+          "accuracy": 0.715500992063492,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.5196058159383036,
+          "balanced_accuracy": 0.5312251984126984,
+          "accuracy": 0.5312251984126984,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.3798749181738546,
+          "balanced_accuracy": 0.4053819444444444,
+          "accuracy": 0.4053819444444444,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.7675268041851683,
+          "balanced_accuracy": 0.7708829365079365,
+          "accuracy": 0.7708829365079365,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.5871196818063664,
+          "balanced_accuracy": 0.5937003968253968,
+          "accuracy": 0.5937003968253968,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        }
+      }
+    },
+    "session_disjoint": {
+      "protocol": "session_disjoint",
+      "status": "ok",
+      "manifest": "splits/cesnet_quic22/session_disjoint_seed42.json.gz",
+      "checksums": {
+        "train": "00607baaccbd630757c68671c6834521ea58ff2da69cd0ec85d761b643b2bace",
+        "val": "ec01dc29bbe389e4776b71c932ebe7b7d6de709f58053df9f03e6ae333b8deaa",
+        "test": "a145b22ea98ecafc46fd19d1a296751c2b88ec9333ae89528559873a6d9e7fa2"
+      },
+      "sizes": {
+        "train": 136800,
+        "val": 21600,
+        "test": 43200
+      },
+      "class_counts": {
+        "train": {
+          "advertising": 7600,
+          "analytics_&_telemetry": 7600,
+          "antivirus": 7600,
+          "authentication_services": 7600,
+          "blogs_&_news": 7600,
+          "default": 7600,
+          "e_commerce": 7600,
+          "file_sharing": 7600,
+          "games": 7600,
+          "information_systems": 7600,
+          "instant_messaging": 7600,
+          "mail": 7600,
+          "music": 7600,
+          "other_services_and_apis": 7600,
+          "search": 7600,
+          "social": 7600,
+          "streaming_media": 7600,
+          "videoconferencing": 7600
+        },
+        "val": {
+          "advertising": 1200,
+          "analytics_&_telemetry": 1200,
+          "antivirus": 1200,
+          "authentication_services": 1200,
+          "blogs_&_news": 1200,
+          "default": 1200,
+          "e_commerce": 1200,
+          "file_sharing": 1200,
+          "games": 1200,
+          "information_systems": 1200,
+          "instant_messaging": 1200,
+          "mail": 1200,
+          "music": 1200,
+          "other_services_and_apis": 1200,
+          "search": 1200,
+          "social": 1200,
+          "streaming_media": 1200,
+          "videoconferencing": 1200
+        },
+        "test": {
+          "advertising": 2400,
+          "analytics_&_telemetry": 2400,
+          "antivirus": 2400,
+          "authentication_services": 2400,
+          "blogs_&_news": 2400,
+          "default": 2400,
+          "e_commerce": 2400,
+          "file_sharing": 2400,
+          "games": 2400,
+          "information_systems": 2400,
+          "instant_messaging": 2400,
+          "mail": 2400,
+          "music": 2400,
+          "other_services_and_apis": 2400,
+          "search": 2400,
+          "social": 2400,
+          "streaming_media": 2400,
+          "videoconferencing": 2400
+        }
+      },
+      "notes": [
+        "Whole 'capture_id' groups are assigned to exactly one side."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 136800,
+            "n_test_values": 43200,
+            "examples": []
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 19,
+            "n_test_values": 6,
+            "examples": []
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 8563,
+            "n_train_values": 37084,
+            "n_test_values": 15842,
+            "examples": [
+              "106.194.205.92",
+              "114.175.0.28",
+              "114.175.0.44",
+              "114.175.0.48",
+              "114.175.0.73",
+              "114.175.1.201",
+              "114.175.1.205",
+              "114.175.100.0",
+              "114.175.100.103",
+              "114.175.100.158"
+            ]
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 1017,
+            "n_train_values": 2619,
+            "n_test_values": 1401,
+            "examples": [
+              "104.16.105.87",
+              "104.16.136.15",
+              "104.16.151.166",
+              "104.16.152.166",
+              "104.16.153.166",
+              "104.16.154.10",
+              "104.16.154.166",
+              "104.16.155.10",
+              "104.16.155.166",
+              "104.16.168.131"
+            ]
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "FAIL",
+            "n_shared": 1,
+            "n_train_values": 1,
+            "n_test_values": 1,
+            "examples": [
+              "cesnet_quic22"
+            ]
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "pass",
+            "n_test_rows_duplicated_in_train": 0,
+            "fraction_of_test": 0.0,
+            "columns_hashed": [
+              "origin",
+              "capture_id",
+              "flow_start_ts",
+              "client_ip",
+              "server_ip",
+              "server_port",
+              "sni",
+              "dst_asn",
+              "protocol",
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 1185,
+            "fraction_of_sampled_test": 0.148125,
+            "max_cosine_observed": 1.0000000000000004,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "pass",
+            "nuisance": "condition",
+            "reconstruction_agreement": 0.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 4,
+        "failed": [
+          "client_ip_disjoint",
+          "server_ip_disjoint",
+          "origin_disjoint",
+          "no_near_duplicates_across_splits"
+        ],
+        "unavailable": [
+          "five_tuple_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "port_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "sni_only": {
+          "macro_f1": 0.9674201238952109,
+          "balanced_accuracy": 0.9676388888888887,
+          "accuracy": 0.9676388888888889,
+          "status": "ok"
+        },
+        "server_ip_only": {
+          "macro_f1": 0.7683468367606137,
+          "balanced_accuracy": 0.7693749999999999,
+          "accuracy": 0.769375,
+          "status": "ok"
+        },
+        "server_asn_only": {
+          "macro_f1": 0.1618120223889476,
+          "balanced_accuracy": 0.22902777777777775,
+          "accuracy": 0.22902777777777777,
+          "status": "ok"
+        },
+        "capture_id_only": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.41485923981329914,
+          "balanced_accuracy": 0.4206481481481482,
+          "accuracy": 0.42064814814814816,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.7208009411024268,
+          "balanced_accuracy": 0.7255324074074073,
+          "accuracy": 0.7255324074074074,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.7897441039451066,
+          "balanced_accuracy": 0.7934027777777777,
+          "accuracy": 0.7934027777777778,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.7130621763939549,
+          "balanced_accuracy": 0.7192824074074076,
+          "accuracy": 0.7192824074074075,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.5249807918794948,
+          "balanced_accuracy": 0.5363425925925926,
+          "accuracy": 0.5363425925925925,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.37297212442194816,
+          "balanced_accuracy": 0.40189814814814817,
+          "accuracy": 0.40189814814814817,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.77179700083517,
+          "balanced_accuracy": 0.7749768518518518,
+          "accuracy": 0.7749768518518518,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.5902835809756953,
+          "balanced_accuracy": 0.597037037037037,
+          "accuracy": 0.597037037037037,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.005847953216374269,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.05555555555555555,
+          "status": "ok"
+        }
+      }
+    },
+    "temporal": {
+      "protocol": "temporal",
+      "status": "ok",
+      "manifest": "splits/cesnet_quic22/temporal_seed42.json.gz",
+      "checksums": {
+        "train": "34630c04fabea3c2e7b75da01157dacaca88df34106b4bda55d4b0d8334aa12c",
+        "val": "faf30a19c83b9d4554f109e985230a1eb433d2c43901bf6fdddba6bb2f001f05",
+        "test": "f5d62288b1edd0330db1f959bd609b6612385d1745d5149c85f65b0e0d80d30c"
+      },
+      "sizes": {
+        "train": 141120,
+        "val": 20160,
+        "test": 40320
+      },
+      "class_counts": {
+        "train": {
+          "advertising": 7852,
+          "analytics_&_telemetry": 7842,
+          "antivirus": 7834,
+          "authentication_services": 7840,
+          "blogs_&_news": 7837,
+          "default": 7842,
+          "e_commerce": 7860,
+          "file_sharing": 7843,
+          "games": 7815,
+          "information_systems": 7830,
+          "instant_messaging": 7808,
+          "mail": 7879,
+          "music": 7826,
+          "other_services_and_apis": 7850,
+          "search": 7825,
+          "social": 7845,
+          "streaming_media": 7827,
+          "videoconferencing": 7865
+        },
+        "val": {
+          "advertising": 1109,
+          "analytics_&_telemetry": 1128,
+          "antivirus": 1140,
+          "authentication_services": 1132,
+          "blogs_&_news": 1119,
+          "default": 1123,
+          "e_commerce": 1088,
+          "file_sharing": 1104,
+          "games": 1137,
+          "information_systems": 1134,
+          "instant_messaging": 1098,
+          "mail": 1093,
+          "music": 1098,
+          "other_services_and_apis": 1113,
+          "search": 1151,
+          "social": 1132,
+          "streaming_media": 1133,
+          "videoconferencing": 1128
+        },
+        "test": {
+          "advertising": 2239,
+          "analytics_&_telemetry": 2230,
+          "antivirus": 2226,
+          "authentication_services": 2228,
+          "blogs_&_news": 2244,
+          "default": 2235,
+          "e_commerce": 2252,
+          "file_sharing": 2253,
+          "games": 2248,
+          "information_systems": 2236,
+          "instant_messaging": 2294,
+          "mail": 2228,
+          "music": 2276,
+          "other_services_and_apis": 2237,
+          "search": 2224,
+          "social": 2223,
+          "streaming_media": 2240,
+          "videoconferencing": 2207
+        }
+      },
+      "notes": [
+        "Train on the earliest flows, test on the latest. No shuffling."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 141120,
+            "n_test_values": 40320,
+            "examples": []
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 20,
+            "n_test_values": 6,
+            "examples": []
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 7617,
+            "n_train_values": 37637,
+            "n_test_values": 14970,
+            "examples": [
+              "106.194.205.92",
+              "114.175.0.28",
+              "114.175.0.44",
+              "114.175.0.48",
+              "114.175.0.73",
+              "114.175.1.163",
+              "114.175.100.0",
+              "114.175.100.103",
+              "114.175.101.119",
+              "114.175.101.219"
+            ]
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 879,
+            "n_train_values": 2601,
+            "n_test_values": 1259,
+            "examples": [
+              "104.16.105.87",
+              "104.16.154.10",
+              "104.16.168.131",
+              "104.16.169.131",
+              "104.16.192.226",
+              "104.16.193.226",
+              "104.16.204.58",
+              "104.16.42.65",
+              "104.16.8.88",
+              "104.16.85.20"
+            ]
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "FAIL",
+            "n_shared": 1,
+            "n_train_values": 1,
+            "n_test_values": 1,
+            "examples": [
+              "cesnet_quic22"
+            ]
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "pass",
+            "n_test_rows_duplicated_in_train": 0,
+            "fraction_of_test": 0.0,
+            "columns_hashed": [
+              "origin",
+              "capture_id",
+              "flow_start_ts",
+              "client_ip",
+              "server_ip",
+              "server_port",
+              "sni",
+              "dst_asn",
+              "protocol",
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 1076,
+            "fraction_of_sampled_test": 0.1345,
+            "max_cosine_observed": 1.0000000000000004,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "pass",
+            "nuisance": "condition",
+            "reconstruction_agreement": 0.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 4,
+        "failed": [
+          "client_ip_disjoint",
+          "server_ip_disjoint",
+          "origin_disjoint",
+          "no_near_duplicates_across_splits"
+        ],
+        "unavailable": [
+          "five_tuple_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 0.0058454798697755534,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.055530753968253965,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 0.0058454798697755534,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.055530753968253965,
+          "status": "ok"
+        },
+        "port_only": {
+          "macro_f1": 0.0058454798697755534,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.055530753968253965,
+          "status": "ok"
+        },
+        "sni_only": {
+          "macro_f1": 0.967477833217826,
+          "balanced_accuracy": 0.9675705951945588,
+          "accuracy": 0.9675843253968254,
+          "status": "ok"
+        },
+        "server_ip_only": {
+          "macro_f1": 0.7599540792751406,
+          "balanced_accuracy": 0.7621837902496457,
+          "accuracy": 0.7625248015873016,
+          "status": "ok"
+        },
+        "server_asn_only": {
+          "macro_f1": 0.1603345961322283,
+          "balanced_accuracy": 0.22896487366549254,
+          "accuracy": 0.22785218253968254,
+          "status": "ok"
+        },
+        "capture_id_only": {
+          "macro_f1": 0.010656498628950982,
+          "balanced_accuracy": 0.055842516518951335,
+          "accuracy": 0.05689484126984127,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.40451443393751074,
+          "balanced_accuracy": 0.4108663263060845,
+          "accuracy": 0.4107638888888889,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.7059514986020652,
+          "balanced_accuracy": 0.7116622136058193,
+          "accuracy": 0.7118055555555556,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.7800104006214226,
+          "balanced_accuracy": 0.7837815841744762,
+          "accuracy": 0.7838789682539683,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.7094717067588474,
+          "balanced_accuracy": 0.7155753492416829,
+          "accuracy": 0.715625,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.5107178722128192,
+          "balanced_accuracy": 0.5239400515431425,
+          "accuracy": 0.5239087301587302,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.3714885447969516,
+          "balanced_accuracy": 0.3996550467945974,
+          "accuracy": 0.39987599206349206,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.7614617210195247,
+          "balanced_accuracy": 0.7650568907510652,
+          "accuracy": 0.7651785714285714,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.5860525285210322,
+          "balanced_accuracy": 0.5930872619763297,
+          "accuracy": 0.593204365079365,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.005818265383932395,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.055257936507936506,
+          "status": "ok"
+        }
+      }
+    },
+    "server_disjoint": {
+      "protocol": "server_disjoint",
+      "status": "ok",
+      "manifest": "splits/cesnet_quic22/server_disjoint_seed42.json.gz",
+      "checksums": {
+        "train": "f67b1469329a793619cc893322945ed1cab3393d8bdd6c8a6ec38d1fcc118a1f",
+        "val": "fe23b4bc29d61766d28ee4ea8944fc5292714824ac7fd7c2d90d6cf6f0372240",
+        "test": "f3e06b8b85e70c69016ef24245443beca770be4ea4448e60afe0f9c59055623c"
+      },
+      "sizes": {
+        "train": 141120,
+        "val": 20160,
+        "test": 40320
+      },
+      "class_counts": {
+        "train": {
+          "advertising": 7534,
+          "analytics_&_telemetry": 7480,
+          "antivirus": 7719,
+          "authentication_services": 7655,
+          "blogs_&_news": 4607,
+          "default": 7297,
+          "e_commerce": 9111,
+          "file_sharing": 7132,
+          "games": 8585,
+          "information_systems": 9004,
+          "instant_messaging": 5813,
+          "mail": 7493,
+          "music": 10740,
+          "other_services_and_apis": 7988,
+          "search": 7883,
+          "social": 11020,
+          "streaming_media": 8134,
+          "videoconferencing": 5925
+        },
+        "val": {
+          "advertising": 1662,
+          "analytics_&_telemetry": 1322,
+          "antivirus": 8,
+          "authentication_services": 3045,
+          "blogs_&_news": 812,
+          "default": 1544,
+          "e_commerce": 793,
+          "file_sharing": 1845,
+          "games": 977,
+          "information_systems": 22,
+          "instant_messaging": 1216,
+          "mail": 1187,
+          "music": 450,
+          "other_services_and_apis": 1051,
+          "search": 641,
+          "social": 12,
+          "streaming_media": 1165,
+          "videoconferencing": 2408
+        },
+        "test": {
+          "advertising": 2004,
+          "analytics_&_telemetry": 2398,
+          "antivirus": 3473,
+          "authentication_services": 500,
+          "blogs_&_news": 5781,
+          "default": 2359,
+          "e_commerce": 1296,
+          "file_sharing": 2223,
+          "games": 1638,
+          "information_systems": 2174,
+          "instant_messaging": 4171,
+          "mail": 2520,
+          "music": 10,
+          "other_services_and_apis": 2161,
+          "search": 2676,
+          "social": 168,
+          "streaming_media": 1901,
+          "videoconferencing": 2867
+        }
+      },
+      "notes": [
+        "Whole 'server_ip' groups are assigned to exactly one side."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 141120,
+            "n_test_values": 40320,
+            "examples": []
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "FAIL",
+            "n_shared": 28,
+            "n_train_values": 28,
+            "n_test_values": 28,
+            "examples": [
+              "W-2022-44/20221031",
+              "W-2022-44/20221101",
+              "W-2022-44/20221102",
+              "W-2022-44/20221103",
+              "W-2022-44/20221104",
+              "W-2022-44/20221105",
+              "W-2022-44/20221106",
+              "W-2022-45/20221107",
+              "W-2022-45/20221108",
+              "W-2022-45/20221109"
+            ]
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 8415,
+            "n_train_values": 38917,
+            "n_test_values": 15206,
+            "examples": [
+              "106.194.205.92",
+              "114.175.0.28",
+              "114.175.0.37",
+              "114.175.0.48",
+              "114.175.0.73",
+              "114.175.1.163",
+              "114.175.1.201",
+              "114.175.1.202",
+              "114.175.1.205",
+              "114.175.100.0"
+            ]
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 2231,
+            "n_test_values": 634,
+            "examples": []
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "FAIL",
+            "n_shared": 1,
+            "n_train_values": 1,
+            "n_test_values": 1,
+            "examples": [
+              "cesnet_quic22"
+            ]
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "pass",
+            "n_test_rows_duplicated_in_train": 0,
+            "fraction_of_test": 0.0,
+            "columns_hashed": [
+              "origin",
+              "capture_id",
+              "flow_start_ts",
+              "client_ip",
+              "server_ip",
+              "server_port",
+              "sni",
+              "dst_asn",
+              "protocol",
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 1041,
+            "fraction_of_sampled_test": 0.130125,
+            "max_cosine_observed": 1.0000000000000002,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "pass",
+            "nuisance": "condition",
+            "reconstruction_agreement": 0.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 4,
+        "failed": [
+          "capture_id_disjoint",
+          "client_ip_disjoint",
+          "origin_disjoint",
+          "no_near_duplicates_across_splits"
+        ],
+        "unavailable": [
+          "five_tuple_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 0.005002776396158836,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.04714781746031746,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 0.005002776396158836,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.04714781746031746,
+          "status": "ok"
+        },
+        "port_only": {
+          "macro_f1": 0.005002776396158836,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.04714781746031746,
+          "status": "ok"
+        },
+        "sni_only": {
+          "macro_f1": 0.7909747977146624,
+          "balanced_accuracy": 0.8007905122875661,
+          "accuracy": 0.8223958333333333,
+          "status": "ok"
+        },
+        "server_ip_only": {
+          "macro_f1": 0.025725744505200335,
+          "balanced_accuracy": 0.07894337730682637,
+          "accuracy": 0.0449156746031746,
+          "status": "ok"
+        },
+        "server_asn_only": {
+          "macro_f1": 0.08911155103817313,
+          "balanced_accuracy": 0.18159416851199112,
+          "accuracy": 0.1154513888888889,
+          "status": "ok"
+        },
+        "capture_id_only": {
+          "macro_f1": 0.02767506753460565,
+          "balanced_accuracy": 0.04061804787585228,
+          "accuracy": 0.06708829365079365,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.29694632576278995,
+          "balanced_accuracy": 0.3106466786423585,
+          "accuracy": 0.33678075396825397,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.5304310073581088,
+          "balanced_accuracy": 0.5549536382177432,
+          "accuracy": 0.5991319444444444,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.5994515885415724,
+          "balanced_accuracy": 0.6214193411449275,
+          "accuracy": 0.6639384920634921,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.5288362339502306,
+          "balanced_accuracy": 0.5753823145230907,
+          "accuracy": 0.6004216269841269,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.3708237287670274,
+          "balanced_accuracy": 0.39675856033350876,
+          "accuracy": 0.4250248015873016,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.29317052933785054,
+          "balanced_accuracy": 0.3116314698200574,
+          "accuracy": 0.36768353174603174,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.5658898716259222,
+          "balanced_accuracy": 0.6320738690881532,
+          "accuracy": 0.635094246031746,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.4233068075297226,
+          "balanced_accuracy": 0.48488610919468567,
+          "accuracy": 0.4785714285714286,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.0004610419548178884,
+          "balanced_accuracy": 0.05555555555555555,
+          "accuracy": 0.004166666666666667,
+          "status": "ok"
+        }
+      }
+    },
+    "app_disjoint": {
+      "protocol": "app_disjoint",
+      "status": "ok",
+      "manifest": "splits/cesnet_quic22/app_disjoint_seed42.json.gz",
+      "checksums": {
+        "train": "d8345529d0e005549731201fc3d0789b36d1830bffe9bc6a89998248543ca136",
+        "val": "25d888822d9462785053cbe75962ac210e630761f9c860e562a4a4d205f5cba7",
+        "test": "d8114335f54c01f559c969de18882b5fe6ba1087c22b63519393f6a1012fe023"
+      },
+      "sizes": {
+        "train": 141113,
+        "val": 20167,
+        "test": 40320
+      },
+      "class_counts": {
+        "train": {
+          "advertising": 1944,
+          "analytics_&_telemetry": 11200,
+          "antivirus": 23,
+          "authentication_services": 9983,
+          "blogs_&_news": 9142,
+          "default": 11200,
+          "e_commerce": 7160,
+          "file_sharing": 3514,
+          "games": 11200,
+          "information_systems": 5802,
+          "instant_messaging": 11200,
+          "mail": 11165,
+          "music": 11200,
+          "other_services_and_apis": 7446,
+          "social": 11178,
+          "streaming_media": 6556,
+          "videoconferencing": 11200
+        },
+        "val": {
+          "authentication_services": 890,
+          "e_commerce": 3231,
+          "file_sharing": 1854,
+          "other_services_and_apis": 46,
+          "search": 11200,
+          "streaming_media": 2946
+        },
+        "test": {
+          "advertising": 9256,
+          "antivirus": 11177,
+          "authentication_services": 327,
+          "blogs_&_news": 2058,
+          "e_commerce": 809,
+          "file_sharing": 5832,
+          "information_systems": 5398,
+          "mail": 35,
+          "other_services_and_apis": 3708,
+          "social": 22,
+          "streaming_media": 1698
+        }
+      },
+      "notes": [
+        "Whole 'app' groups are assigned to exactly one side."
+      ],
+      "leakage": {
+        "checks": [
+          {
+            "check": "row_index_disjoint",
+            "status": "pass",
+            "overlaps": {}
+          },
+          {
+            "check": "flow_id_disjoint",
+            "status": "pass",
+            "n_shared": 0,
+            "n_train_values": 141113,
+            "n_test_values": 40320,
+            "examples": []
+          },
+          {
+            "check": "capture_id_disjoint",
+            "status": "FAIL",
+            "n_shared": 28,
+            "n_train_values": 28,
+            "n_test_values": 28,
+            "examples": [
+              "W-2022-44/20221031",
+              "W-2022-44/20221101",
+              "W-2022-44/20221102",
+              "W-2022-44/20221103",
+              "W-2022-44/20221104",
+              "W-2022-44/20221105",
+              "W-2022-44/20221106",
+              "W-2022-45/20221107",
+              "W-2022-45/20221108",
+              "W-2022-45/20221109"
+            ]
+          },
+          {
+            "check": "five_tuple_disjoint",
+            "status": "unavailable",
+            "reason": "column 'five_tuple' is not present in the table"
+          },
+          {
+            "check": "client_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 7362,
+            "n_train_values": 37974,
+            "n_test_values": 14678,
+            "examples": [
+              "114.175.0.73",
+              "114.175.1.189",
+              "114.175.1.201",
+              "114.175.1.202",
+              "114.175.100.0",
+              "114.175.101.192",
+              "114.175.102.238",
+              "114.175.103.228",
+              "114.175.103.242",
+              "114.175.104.199"
+            ]
+          },
+          {
+            "check": "server_ip_disjoint",
+            "status": "FAIL",
+            "n_shared": 130,
+            "n_train_values": 2860,
+            "n_test_values": 387,
+            "examples": [
+              "142.250.180.193",
+              "142.250.180.202",
+              "142.250.180.206",
+              "142.250.180.225",
+              "142.250.180.234",
+              "142.250.180.238",
+              "142.250.181.234",
+              "142.250.181.238",
+              "142.250.184.202",
+              "142.250.184.206"
+            ]
+          },
+          {
+            "check": "origin_disjoint",
+            "status": "FAIL",
+            "n_shared": 1,
+            "n_train_values": 1,
+            "n_test_values": 1,
+            "examples": [
+              "cesnet_quic22"
+            ]
+          },
+          {
+            "check": "no_exact_duplicates_across_splits",
+            "status": "pass",
+            "n_test_rows_duplicated_in_train": 0,
+            "fraction_of_test": 0.0,
+            "columns_hashed": [
+              "origin",
+              "capture_id",
+              "flow_start_ts",
+              "client_ip",
+              "server_ip",
+              "server_port",
+              "sni",
+              "dst_asn",
+              "protocol",
+              "app",
+              "service",
+              "condition",
+              "packet_lengths",
+              "iat_values",
+              "directions",
+              "rtt_ms",
+              "jitter_ms",
+              "loss_rate",
+              "total packets",
+              "total fwd packets",
+              "total backward packets",
+              "packet length mean",
+              "packet length std",
+              "flow iat mean",
+              "flow iat std",
+              "flow duration",
+              "flow bytes/s",
+              "flow packets/s"
+            ]
+          },
+          {
+            "check": "no_near_duplicates_across_splits",
+            "status": "FAIL",
+            "threshold": 0.999,
+            "standardised": true,
+            "n_test_rows_with_near_duplicate": 300,
+            "fraction_of_sampled_test": 0.0375,
+            "max_cosine_observed": 1.0000000000000002,
+            "sampled_train_rows": 8000,
+            "sampled_test_rows": 8000
+          },
+          {
+            "check": "label_and_identifiers_excluded_from_inputs",
+            "status": "pass",
+            "declared_inputs": [
+              "packet_lengths",
+              "iat_values",
+              "directions"
+            ],
+            "forbidden_present": []
+          },
+          {
+            "check": "nuisance_not_deterministic_in_inputs",
+            "status": "pass",
+            "nuisance": "condition",
+            "reconstruction_agreement": 0.0,
+            "reconstructed_from": [
+              "flow iat mean",
+              "flow iat std"
+            ],
+            "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+          }
+        ],
+        "n_failed": 5,
+        "failed": [
+          "capture_id_disjoint",
+          "client_ip_disjoint",
+          "server_ip_disjoint",
+          "origin_disjoint",
+          "no_near_duplicates_across_splits"
+        ],
+        "unavailable": [
+          "five_tuple_disjoint"
+        ],
+        "verdict": "FAIL"
+      },
+      "baselines": {
+        "protocol_only": {
+          "macro_f1": 6.059304061386258e-05,
+          "balanced_accuracy": 0.09090909090909091,
+          "accuracy": 0.0005456349206349206,
+          "status": "ok"
+        },
+        "condition_only": {
+          "macro_f1": 6.059304061386258e-05,
+          "balanced_accuracy": 0.09090909090909091,
+          "accuracy": 0.0005456349206349206,
+          "status": "ok"
+        },
+        "port_only": {
+          "macro_f1": 6.059304061386258e-05,
+          "balanced_accuracy": 0.09090909090909091,
+          "accuracy": 0.0005456349206349206,
+          "status": "ok"
+        },
+        "sni_only": {
+          "macro_f1": 0.00419154025715872,
+          "balanced_accuracy": 0.004566516360804498,
+          "accuracy": 0.0052827380952380956,
+          "status": "ok"
+        },
+        "server_ip_only": {
+          "macro_f1": 0.027494284779248587,
+          "balanced_accuracy": 0.04987659827786175,
+          "accuracy": 0.04918154761904762,
+          "status": "ok"
+        },
+        "server_asn_only": {
+          "macro_f1": 0.029663877648466397,
+          "balanced_accuracy": 0.050931622880793954,
+          "accuracy": 0.07041170634920635,
+          "status": "ok"
+        },
+        "capture_id_only": {
+          "macro_f1": 0.04402967172952338,
+          "balanced_accuracy": 0.08249174612665194,
+          "accuracy": 0.2001984126984127,
+          "status": "ok"
+        },
+        "five_stat": {
+          "macro_f1": 0.028684529352627625,
+          "balanced_accuracy": 0.062187550452430934,
+          "accuracy": 0.03732638888888889,
+          "status": "ok"
+        },
+        "first10_sizes": {
+          "macro_f1": 0.0693174276204453,
+          "balanced_accuracy": 0.09766934511011742,
+          "accuracy": 0.06130952380952381,
+          "status": "ok"
+        },
+        "first20_sizes": {
+          "macro_f1": 0.10902541435365416,
+          "balanced_accuracy": 0.1622227898243428,
+          "accuracy": 0.07395833333333333,
+          "status": "ok"
+        },
+        "size_histogram": {
+          "macro_f1": 0.05456991042160167,
+          "balanced_accuracy": 0.08369886041668023,
+          "accuracy": 0.0699156746031746,
+          "status": "ok"
+        },
+        "flow_meta": {
+          "macro_f1": 0.03225288128126367,
+          "balanced_accuracy": 0.08076036497291236,
+          "accuracy": 0.04134424603174603,
+          "status": "ok"
+        },
+        "cumul": {
+          "macro_f1": 0.08602658308519992,
+          "balanced_accuracy": 0.15826021519771116,
+          "accuracy": 0.16398809523809524,
+          "status": "ok"
+        },
+        "appscanner": {
+          "macro_f1": 0.05682027506379698,
+          "balanced_accuracy": 0.08127022151978819,
+          "accuracy": 0.07584325396825396,
+          "status": "ok"
+        },
+        "kfp": {
+          "macro_f1": 0.05442774789009144,
+          "balanced_accuracy": 0.12229634163451512,
+          "accuracy": 0.07405753968253968,
+          "status": "ok"
+        },
+        "majority_class": {
+          "macro_f1": 0.0,
+          "balanced_accuracy": 0.0,
+          "accuracy": 0.0,
+          "status": "ok"
+        }
+      }
+    },
+    "origin_disjoint": {
+      "protocol": "origin_disjoint",
+      "status": "unavailable",
+      "reason": "Group-disjoint splitting needs at least 3 distinct groups to fill train/val/test, but the grouping column has only 1: ['cesnet_quic22']. A single-origin table cannot be split by origin."
+    }
+  },
+  "wall_clock_seconds": 1262.57
+}

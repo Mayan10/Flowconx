@@ -170,7 +170,16 @@ def run_family(
         if feature_cache is not None:
             feature_cache[family] = (features, feature_names)
     if features.shape[1] == 0:
-        return {"family": family, "status": "skipped", "reason": "family produced no features"}
+        return {
+            "family": family,
+            "status": "unavailable",
+            "description": FAMILY_CITATIONS.get(family, ""),
+            "reason": (
+                "The column this probe reads is absent or carries a single value in this dataset, so "
+                "the probe would degenerate to the majority classifier. Reporting that number would "
+                "read as 'this identifier does not help' when it means 'this dataset has no such field'."
+            ),
+        }
 
     fit_idx = train_idx
     subsampled = None

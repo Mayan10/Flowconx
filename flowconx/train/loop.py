@@ -28,6 +28,11 @@ from ..models import build_model
 from ..models.memory import EmbeddingMemoryBank
 
 
+# Training rows per class used to build validation prototypes. A class mean is
+# stable well below this; the cost of the full training set is not.
+VALIDATION_PROTOTYPE_EXAMPLES = 256
+
+
 def select_device(choice: str) -> torch.device:
     if choice == "cpu":
         return torch.device("cpu")
@@ -134,6 +139,7 @@ def train(
     patience_left = config.train.early_stop_patience
     optimizer: Optional[torch.optim.Optimizer] = None
     last_stage: Optional[int] = None
+    validation_cache: Dict[str, object] = {}
 
     for epoch in range(1, config.train.epochs + 1):
         stage = 1 if (config.train.schedule == "two_stage" and epoch <= config.train.stage1_epochs) else 2
@@ -190,7 +196,9 @@ def train(
         record.update({k: float(np.mean([e[k] for e in epoch_logs])) for k in epoch_logs[0]} if epoch_logs else {})
 
         if val_split is not None and len(val_split) > 0:
-            score = _validation_score(model, train_split, val_split, label_space, config, device)
+            score = _validation_score(
+                model, train_split, val_split, label_space, config, device, cache=validation_cache
+            )
             record["val_macro_f1"] = score
             if outcome.best_score is None or score > outcome.best_score:
                 outcome.best_score, outcome.best_epoch = score, epoch
@@ -211,18 +219,48 @@ def train(
     return outcome
 
 
-def _validation_score(model, train_split, val_split, label_space, config, device) -> float:
+def stratified_subsample(labels: np.ndarray, per_class: int, seed: int) -> np.ndarray:
+    """Indices of at most ``per_class`` rows per class, seeded."""
+    rng = np.random.default_rng(seed)
+    keep: List[int] = []
+    for cls in np.unique(labels):
+        pool = np.flatnonzero(labels == cls)
+        take = min(per_class, pool.size)
+        keep.extend(rng.choice(pool, size=take, replace=False).tolist())
+    return np.asarray(sorted(keep), dtype=int)
+
+
+def _validation_score(
+    model, train_split, val_split, label_space, config, device, cache: Optional[Dict[str, object]] = None
+) -> float:
     """Macro-F1 of the prototype head on validation.
 
     The prototype head is used for model selection because it is the head the
-    deployment claims rest on, and because it needs no extra fitting, which
-    keeps validation cheap enough to run every epoch.
+    deployment claims rest on, and because it needs no extra fitting.
+
+    The training embeddings behind the prototypes are a seeded stratified
+    subsample. Embedding all 137k training rows every epoch to compute a class
+    mean costs more than the epoch itself, and a class mean is already stable
+    at a few hundred examples. The subsample is fixed across epochs so the
+    validation score moves with the model rather than with the draw.
     """
-    train_emb = extract_embeddings(model, train_split, device, which=config.model.classify_from)
+    if cache is not None and "train_idx" in cache:
+        train_idx = cache["train_idx"]
+    else:
+        train_idx = stratified_subsample(
+            train_split.labels, per_class=VALIDATION_PROTOTYPE_EXAMPLES, seed=config.seed
+        )
+        if cache is not None:
+            cache["train_idx"] = train_idx
+
+    from ..run import _subset
+
+    train_view = _subset(train_split, train_idx)
+    train_emb = extract_embeddings(model, train_view, device, which=config.model.classify_from)
     val_emb = extract_embeddings(model, val_split, device, which=config.model.classify_from)
     report = evaluate_heads(
         train_emb,
-        train_split.labels,
+        train_view.labels,
         val_emb,
         val_split.labels,
         label_space.classes,

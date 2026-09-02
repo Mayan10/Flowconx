@@ -141,8 +141,25 @@ def family_protocol_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple
     than port-only would be; the AUDIT records that as a limitation.
     """
     _ = flows
-    values = pd.to_numeric(df.get("protocol", pd.Series(np.zeros(len(df)))), errors="coerce").fillna(-1.0)
+    if not column_is_informative(df, "protocol"):
+        return np.zeros((len(df), 0)), []
+    values = pd.to_numeric(df["protocol"], errors="coerce").fillna(-1.0)
     return values.to_numpy(dtype=np.float64).reshape(-1, 1), ["protocol"]
+
+
+def column_is_informative(df: pd.DataFrame, column: str) -> bool:
+    """Does this column carry more than one value?
+
+    A dataset without SNI produces an all-empty `sni` column, and a
+    single-feature probe over it degenerates to the majority classifier. That
+    is not "SNI does not help" -- it is "this dataset has no SNI", and the two
+    must not be reported as the same number.
+    """
+    if column not in df.columns:
+        return False
+    values = df[column].astype(str).str.strip()
+    non_empty = values[(values != "") & (values.str.lower() != "nan")]
+    return non_empty.nunique() > 1
 
 
 def _hashed_column(df: pd.DataFrame, column: str, n_buckets: int = 4096) -> Tuple[np.ndarray, List[str]]:
@@ -152,7 +169,7 @@ def _hashed_column(df: pd.DataFrame, column: str, n_buckets: int = 4096) -> Tupl
     thousands of distinct values (SNI, server IP), and a tree can still
     isolate an individual value because the hash is deterministic.
     """
-    if column not in df.columns:
+    if not column_is_informative(df, column):
         return np.zeros((len(df), 0)), []
     values = df[column].astype(str).fillna("")
     codes = values.map(lambda text: int(hashlib.sha256(text.encode("utf-8")).hexdigest()[:8], 16) % n_buckets)
@@ -162,7 +179,9 @@ def _hashed_column(df: pd.DataFrame, column: str, n_buckets: int = 4096) -> Tupl
 def family_port_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
     """Destination port alone. The classic shortcut every reviewer checks."""
     _ = flows
-    values = pd.to_numeric(df.get("server_port", pd.Series([""] * len(df))), errors="coerce").fillna(-1.0)
+    if not column_is_informative(df, "server_port"):
+        return np.zeros((len(df), 0)), []
+    values = pd.to_numeric(df["server_port"], errors="coerce").fillna(-1.0)
     return values.to_numpy(dtype=np.float64).reshape(-1, 1), ["server_port"]
 
 
@@ -178,7 +197,7 @@ def family_sni_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.n
 
 def family_server_ip_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
     _ = flows
-    if "server_ip" not in df.columns:
+    if not column_is_informative(df, "server_ip"):
         return np.zeros((len(df), 0)), []
     hashed, names = _hashed_column(df, "server_ip")
     # The /24 prefix as a second column: CDNs spread one service across many
@@ -190,7 +209,7 @@ def family_server_ip_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tupl
 
 def family_server_asn_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tuple[np.ndarray, List[str]]:
     _ = flows
-    if "dst_asn" not in df.columns:
+    if not column_is_informative(df, "dst_asn"):
         return np.zeros((len(df), 0)), []
     values = pd.to_numeric(df["dst_asn"], errors="coerce").fillna(-1.0)
     return values.to_numpy(dtype=np.float64).reshape(-1, 1), ["dst_asn"]
@@ -406,7 +425,7 @@ def family_condition_only(df: pd.DataFrame, flows: Sequence[ParsedFlow]) -> Tupl
     information, and the invariance claim needs restating.
     """
     _ = flows
-    if "condition" not in df.columns:
+    if not column_is_informative(df, "condition"):
         return np.zeros((len(df), 0)), []
     codes = pd.Categorical(df["condition"].astype(str)).codes.astype(np.float64)
     return codes.reshape(-1, 1), ["condition"]

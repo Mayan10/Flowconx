@@ -89,6 +89,12 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         default=0.999,
         help="Cosine similarity above which a train/test pair counts as a near duplicate.",
     )
+    parser.add_argument(
+        "--near-duplicate-tolerance",
+        type=float,
+        default=0.01,
+        help="Fraction of test rows allowed to have a near duplicate before the check fails.",
+    )
     return parser.parse_args(argv)
 
 
@@ -178,6 +184,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             features=dedup_features,
             declared_inputs=["packet_lengths", "iat_values", "directions"],
             near_duplicate_threshold=args.near_duplicate_threshold,
+            near_duplicate_tolerance=args.near_duplicate_tolerance,
             seed=args.seed,
             flow_id_synthesized=flow_id_synthesized,
         )

@@ -16,7 +16,14 @@ outputs/*
 !outputs/flowconx_final_labeled_kpi_pass/metrics.json
 !outputs/flowconx_final_labeled_kpi_pass/kpi_report.md
 !outputs/flowconx_final_labeled_kpi_pass/eval.json
+# Raw archives and derived datasets are never committed. The archives are
+# 3.2 GB and 21 GB; the derived CSVs are hundreds of megabytes and are fully
+# reproducible from them via `make data`. What IS committed is the manifest
+# (results/data/*_manifest.json), which records the archive checksum, the
+# loader configuration and the per-capture statistics, so a reviewer can
+# verify that a regenerated dataset matches the one behind the numbers.
 data/raw/
+data/processed/
 data/*.csv
 data/*.parquet
 data/*.pcap

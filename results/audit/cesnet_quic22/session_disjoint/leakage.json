@@ -1,0 +1,157 @@
+{
+  "checks": [
+    {
+      "check": "row_index_disjoint",
+      "status": "pass",
+      "overlaps": {}
+    },
+    {
+      "check": "flow_id_disjoint",
+      "status": "pass",
+      "n_shared": 0,
+      "n_train_values": 136800,
+      "n_test_values": 43200,
+      "examples": []
+    },
+    {
+      "check": "capture_id_disjoint",
+      "status": "pass",
+      "n_shared": 0,
+      "n_train_values": 19,
+      "n_test_values": 6,
+      "examples": []
+    },
+    {
+      "check": "five_tuple_disjoint",
+      "status": "unavailable",
+      "reason": "column 'five_tuple' is not present in the table"
+    },
+    {
+      "check": "client_ip_disjoint",
+      "status": "FAIL",
+      "n_shared": 8563,
+      "n_train_values": 37084,
+      "n_test_values": 15842,
+      "examples": [
+        "106.194.205.92",
+        "114.175.0.28",
+        "114.175.0.44",
+        "114.175.0.48",
+        "114.175.0.73",
+        "114.175.1.201",
+        "114.175.1.205",
+        "114.175.100.0",
+        "114.175.100.103",
+        "114.175.100.158"
+      ]
+    },
+    {
+      "check": "server_ip_disjoint",
+      "status": "FAIL",
+      "n_shared": 1017,
+      "n_train_values": 2619,
+      "n_test_values": 1401,
+      "examples": [
+        "104.16.105.87",
+        "104.16.136.15",
+        "104.16.151.166",
+        "104.16.152.166",
+        "104.16.153.166",
+        "104.16.154.10",
+        "104.16.154.166",
+        "104.16.155.10",
+        "104.16.155.166",
+        "104.16.168.131"
+      ]
+    },
+    {
+      "check": "origin_disjoint",
+      "status": "FAIL",
+      "n_shared": 1,
+      "n_train_values": 1,
+      "n_test_values": 1,
+      "examples": [
+        "cesnet_quic22"
+      ]
+    },
+    {
+      "check": "no_exact_duplicates_across_splits",
+      "status": "pass",
+      "n_test_rows_duplicated_in_train": 0,
+      "fraction_of_test": 0.0,
+      "columns_hashed": [
+        "origin",
+        "capture_id",
+        "flow_start_ts",
+        "client_ip",
+        "server_ip",
+        "server_port",
+        "sni",
+        "dst_asn",
+        "protocol",
+        "app",
+        "service",
+        "condition",
+        "packet_lengths",
+        "iat_values",
+        "directions",
+        "rtt_ms",
+        "jitter_ms",
+        "loss_rate",
+        "total packets",
+        "total fwd packets",
+        "total backward packets",
+        "packet length mean",
+        "packet length std",
+        "flow iat mean",
+        "flow iat std",
+        "flow duration",
+        "flow bytes/s",
+        "flow packets/s"
+      ]
+    },
+    {
+      "check": "no_near_duplicates_across_splits",
+      "status": "FAIL",
+      "threshold": 0.999,
+      "standardised": true,
+      "n_test_rows_with_near_duplicate": 1185,
+      "fraction_of_sampled_test": 0.148125,
+      "max_cosine_observed": 1.0000000000000004,
+      "sampled_train_rows": 8000,
+      "sampled_test_rows": 8000
+    },
+    {
+      "check": "label_and_identifiers_excluded_from_inputs",
+      "status": "pass",
+      "declared_inputs": [
+        "packet_lengths",
+        "iat_values",
+        "directions"
+      ],
+      "forbidden_present": []
+    },
+    {
+      "check": "nuisance_not_deterministic_in_inputs",
+      "status": "pass",
+      "nuisance": "condition",
+      "reconstruction_agreement": 0.0,
+      "reconstructed_from": [
+        "flow iat mean",
+        "flow iat std"
+      ],
+      "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
+    }
+  ],
+  "n_failed": 4,
+  "failed": [
+    "client_ip_disjoint",
+    "server_ip_disjoint",
+    "origin_disjoint",
+    "no_near_duplicates_across_splits"
+  ],
+  "unavailable": [
+    "five_tuple_disjoint"
+  ],
+  "verdict": "FAIL"
+}

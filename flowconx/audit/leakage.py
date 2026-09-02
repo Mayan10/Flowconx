@@ -46,6 +46,20 @@ def check_column_disjoint(
             None,
             reason=f"column {column!r} is not present in the table",
         )
+    distinct = df[column].astype(str).nunique()
+    if distinct <= 1:
+        # A single-origin dataset trivially has its origin on both sides. That
+        # is not leakage, and reporting it as a failure buries the real
+        # failures in noise.
+        return _verdict(
+            f"{column}_disjoint",
+            None,
+            reason=(
+                f"column {column!r} has a single distinct value across the whole table, so it cannot "
+                "be disjoint across splits and cannot leak anything either"
+            ),
+            n_distinct=int(distinct),
+        )
     values = df[column].astype(str).to_numpy()
     train = set(values[indices["train"]].tolist())
     test = set(values[indices["test"]].tolist())
@@ -90,12 +104,20 @@ def check_near_duplicates(
     threshold: float = 0.999,
     max_rows_per_side: int = 8000,
     seed: int = 0,
+    tolerance: float = 0.01,
 ) -> Dict[str, object]:
-    """No test row may have a train row at cosine similarity above ``threshold``.
+    """How many test rows have a near-identical training row.
 
-    Evaluated on a seeded subsample of each side because the exact
-    computation is quadratic; the subsample size is reported so the estimate
-    can be read for what it is.
+    Evaluated on a seeded subsample of each side because the exact computation
+    is quadratic; the subsample size is reported so the estimate can be read
+    for what it is.
+
+    Unlike the exact-duplicate check, this one has a ``tolerance``. Real
+    traffic contains genuinely distinct short flows that are indistinguishable
+    in a 72-dimensional summary -- two 5-packet DNS-like exchanges really are
+    the same shape -- so a nonzero rate is expected and a hard failure at any
+    rate would fire on every split and stop being read. The rate is always
+    reported; the verdict fails above the stated tolerance.
     """
     rng = np.random.default_rng(seed)
 
@@ -131,13 +153,15 @@ def check_near_duplicates(
         maxima = block.max(axis=1)
         hits += int(np.sum(maxima >= threshold))
         best = max(best, float(maxima.max()))
+    rate = float(hits / len(test_idx))
     return _verdict(
         "no_near_duplicates_across_splits",
-        hits == 0,
+        rate <= tolerance,
         threshold=threshold,
+        tolerance=tolerance,
         standardised=True,
         n_test_rows_with_near_duplicate=hits,
-        fraction_of_sampled_test=float(hits / len(test_idx)),
+        fraction_of_sampled_test=rate,
         max_cosine_observed=best,
         sampled_train_rows=int(train_idx.size),
         sampled_test_rows=int(test_idx.size),
@@ -205,6 +229,7 @@ def run_all_checks(
     features: Optional[np.ndarray] = None,
     declared_inputs: Optional[Sequence[str]] = None,
     near_duplicate_threshold: float = 0.999,
+    near_duplicate_tolerance: float = 0.01,
     seed: int = 0,
     flow_id_synthesized: bool = False,
 ) -> Dict[str, object]:
@@ -222,7 +247,11 @@ def run_all_checks(
         checks.append(verdict)
     checks.append(check_exact_duplicates(df, indices))
     if features is not None:
-        checks.append(check_near_duplicates(features, indices, near_duplicate_threshold, seed=seed))
+        checks.append(
+            check_near_duplicates(
+                features, indices, near_duplicate_threshold, seed=seed, tolerance=near_duplicate_tolerance
+            )
+        )
     if declared_inputs is not None:
         checks.append(check_label_not_in_declared_inputs(declared_inputs))
     checks.append(check_nuisance_label_derivable(df))

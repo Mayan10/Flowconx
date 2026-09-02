@@ -41,7 +41,16 @@ Status legend: **supported** (result exists and the test passed) ·
 - **Evidence:** `paper/tables/main_comparison_*.tex`
 - **Test:** Wilcoxon across seeds against every baseline we ran, Holm-Bonferroni
   corrected within the `against_baselines` family
-- **Status:** **pending**
+- **Status:** **supported, and smaller than hoped.** CESNET-QUIC22,
+  session-disjoint, 3 seeds: macro-F1 0.7889 ± 0.0046 (linear head) against
+  AppScanner at 0.7718 and XGBoost on the first 20 packet sizes at 0.7897 —
+  the latter is *within one seed standard deviation*. The closed-set gain is
+  about 1.5 points over a 2016 baseline and roughly nil over a well-tuned
+  gradient-boosted tree.
+- **Consequence for the paper:** the closed-set table cannot be the
+  contribution. It establishes competitiveness and nothing more, and the
+  introduction must not imply otherwise. C4–C8 carry the argument or there
+  isn't one.
 - **Constraint:** ET-BERT, YaTC, CLE-TFE, MIETT, FlowletFormer and PacketCLIP
   were **not run** — all six tokenise raw payload bytes, which our QUIC/TLS
   records do not retain. See `flowconx/baselines/WHY_NOT_RUN.md`. The claim is

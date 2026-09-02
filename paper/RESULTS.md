@@ -117,6 +117,70 @@ SNI and AS probes are `n/a` on 5G Traffic: the captures carry neither.
 
 ---
 
+## 2026-09-02 — FlowCon-X headline, CESNET-QUIC22, session-disjoint
+
+**Command**
+
+```bash
+python scripts/run_all_experiments.py --stages headline --seeds 0 1 2
+```
+
+**Config:** `configs/cesnet_main.yaml` — 201,600 flows, 18 classes,
+136,800 / 21,600 / 43,200 train/val/test, 15 epochs, batch 512, 1,406,342
+parameters, MPS.
+**Source:** `results/flowconx_main/cesnet_quic22/session_disjoint/seed*/metrics.json`
+
+| Head | Macro-F1 (3 seeds) | Balanced acc. |
+| --- | --- | --- |
+| knn | 0.7863 ± 0.0043 | 0.7891 |
+| prototype | 0.7827 ± 0.0050 | 0.7881 |
+| linear | 0.7889 ± 0.0046 | 0.7921 |
+
+Against the audit's baselines on the **identical committed split**:
+
+| Method | Macro-F1 |
+| --- | --- |
+| Majority class | 0.0058 |
+| 5 flow statistics (RF) | 0.4149 |
+| k-fingerprinting | 0.5903 |
+| AppScanner (2016) | 0.7718 |
+| First 20 packet sizes (XGBoost) | 0.7897 |
+| **FlowCon-X (linear head)** | **0.7889 ± 0.0046** |
+| *SNI string alone (not a model)* | *0.9674* |
+
+**Deployment cost** — stored record in, decision out, including parsing and
+feature construction, batch size 1:
+
+| p50 | p95 | p99 | Throughput | Params | Model size |
+| --- | --- | --- | --- | --- | --- |
+| 6.08 ms | 7.09 ms | 8.45 ms | 7828 flows/s | 1,406,342 | 5.7 MB |
+
+**Early classification** — macro-F1 against observed packets, encoder frozen:
+
+| Packets | 1 | 2 | 3 | 5 | 10 | 20 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Macro-F1 | 0.114 | 0.092 | 0.144 | 0.289 | 0.478 | 0.726 |
+
+**Reading.**
+
+FlowCon-X gains roughly **1.5 macro-F1 points over AppScanner**, a 2016
+statistical baseline, and about **0.4 points over XGBoost on the first 20
+packet sizes** — within a seed standard deviation of the latter. That is the
+honest size of the closed-set result on this benchmark. It is consistent with
+the expectation that behavioural features here are near saturation, and it
+means the case for the architecture cannot rest on closed-set accuracy. It has
+to come from open-set rejection, enrollment cost, drift and deployment cost.
+
+The SNI row is included as a reminder rather than a competitor: the dataset's
+labels are derived from SNI, so 0.9674 is roughly the ceiling of the labelling
+process itself, not a model to beat.
+
+**Still running:** 5G Traffic headline, the split-protocol contrast, open-set,
+and the 35-config ablation family. Those cells read `TODO` in the generated
+tables until they land.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

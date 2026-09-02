@@ -403,6 +403,60 @@ It is three extra runs, about an hour.
 
 ---
 
+## 2026-09-02 — The headline measurement result: 0.992 to 0.574 on one dataset
+
+5G Traffic, FlowCon-X, k-NN head, identical model and identical code, differing
+only in how the data was partitioned:
+
+| Split protocol | FlowCon-X | AppScanner (audit) | Seeds |
+| --- | --- | --- | --- |
+| **Random flow** | **0.9923 ± 0.0000** | 0.9958 | 1 |
+| **Session-disjoint** | **0.5741 ± 0.0240** | 0.6399 | 3 |
+| Temporal | TODO | 0.2553 | 0 |
+| Server-disjoint | TODO | 0.7111 | 0 |
+
+**A drop of 0.418 macro-F1 from changing nothing but the split.**
+
+Under the random-flow protocol every class exceeds 0.98:
+
+| `game_streaming` | 0.996 |
+| `live_streaming` | 0.987 |
+| `metaverse` | 0.991 |
+| `online_game` | 0.991 |
+| `stored_streaming` | 0.988 |
+| `video_conferencing` | 0.998 |
+
+Written up as a paper result, 0.992 macro-F1 across six service classes on 5G
+traffic would read as a strong contribution. It is an artefact of the protocol.
+The audit says exactly how: on this corpus the **server IP alone** reaches
+0.9986 and the **capture-session ID alone** reaches 0.9828 under a random
+split. A model that learned nothing except which capture a flow came from
+would score in the same range.
+
+Under session-disjoint splitting, capture ID alone drops to **0.0000** — the
+grouping doing precisely what it claims — and the model drops to 0.574.
+
+### Both datasets together
+
+| | 5G Traffic | CESNET-QUIC22 |
+| --- | --- | --- |
+| Collection | single-session captures, one app per capture | backbone, many hosts |
+| Random → session-disjoint | **−0.418** | −0.005 (nothing) |
+| Session → server-disjoint | TODO | **−0.191** |
+| Identifier that predicts the label | capture ID, 0.983 | server IP, 0.772; SNI, 0.967 |
+
+The two corpora fail in different places, and neither protocol protects
+against the other's failure. That is claim C1 in its restated form, and it is
+now supported end to end by our own measurements rather than asserted.
+
+**Caveat on seed count:** the 5G random-flow figure rests on 1 seed(s) at
+the time of writing; the remaining seeds are queued. The qualitative gap is
+far larger than the 5G session-disjoint seed spread (± 0.024), so the
+conclusion does not depend on them, but the table should not be cited until
+the cells say three.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

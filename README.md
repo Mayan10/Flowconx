@@ -14,11 +14,19 @@ that a reviewer can download it, run it, and try to break the claims.
 
 ## The short version
 
-We started by trying to break our own result. On the first version of this
-dataset, **AppScanner — eighteen summary statistics of the packet-size series,
-published in 2016 — reached macro-F1 0.869 under the split protocol the
-encrypted-traffic literature standardly uses**, against 0.884 for the neural
-model. Under an application-disjoint split, the same baseline fell to 0.202.
+We started by trying to break our own result, and succeeded.
+
+On 5G Traffic, the same model and the same code score **macro-F1 0.992 under
+the split protocol the encrypted-traffic literature standardly uses, and 0.574
+under a session-disjoint one.** Nothing changes but the partition. Written up,
+0.992 across six service classes would read as a strong contribution; the audit
+says precisely why it is not, because under that protocol the **server IP alone
+scores 0.999** and the **capture-session ID alone scores 0.983**.
+
+On CESNET-QUIC22 the same experiment finds nothing — random, session-disjoint
+and temporal splitting agree to within one seed's noise — but **server-disjoint
+splitting costs 0.19 macro-F1**. The axis that carries the label differs by
+corpus, and controlling the wrong one protects nothing.
 
 That is not a result about a model. It is a result about a protocol, and it is
 the reason this repository leads with `AUDIT.md` rather than with a headline

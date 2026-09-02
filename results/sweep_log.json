@@ -238,5 +238,21 @@
       "  prototype  macro-F1=0.5971 [0.5918, 0.6020]  bal-acc=0.6271  acc=0.6612",
       "  linear     macro-F1=0.5975 [0.5920, 0.6023]  bal-acc=0.6193  acc=0.6606"
     ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/fiveg_random_contrast.yaml",
+    "seed": 0,
+    "config_hash": "8b0548f9f056d1b6",
+    "experiment": "flowconx_random_contrast",
+    "dataset": "fiveg_traffic",
+    "split": "random_flow",
+    "status": "ok",
+    "seconds": 1295.9,
+    "summary": [
+      "  knn        macro-F1=0.9923 [0.9913, 0.9932]  bal-acc=0.9925  acc=0.9918",
+      "  prototype  macro-F1=0.9918 [0.9908, 0.9927]  bal-acc=0.9920  acc=0.9914",
+      "  linear     macro-F1=0.9918 [0.9908, 0.9927]  bal-acc=0.9920  acc=0.9913"
+    ]
   }
 ]

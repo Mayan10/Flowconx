@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_margin_only
 description: Margin terms only; no contrastive term.
 loss:

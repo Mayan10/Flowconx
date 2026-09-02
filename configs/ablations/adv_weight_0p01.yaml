@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_adv_weight_0p01
 description: Adversarial weight 0.01. The sweep the invariance/accuracy trade-off
   curve is drawn from.

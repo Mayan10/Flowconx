@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_margin_0p05
 description: Negative margin 0.05.
 loss:

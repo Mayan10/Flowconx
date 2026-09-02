@@ -1,0 +1,26 @@
+defaults: [cesnet_main.yaml]
+name: ablation_full
+description: >
+  Reference row for the ablation family, and the budget every ablation shares.
+
+  Ablations run at a reduced budget: 10 epochs on a seeded 80,000-row subset of
+  CESNET-QUIC22 rather than 20 epochs on all 201,600. Thirty-five ablations at
+  five seeds is 175 runs, and at the headline budget that is days of compute for
+  a table whose purpose is to compare rows against each other.
+
+  What matters for that purpose is that every row shares the budget, including
+  this reference row, so the comparisons are internally valid. The headline
+  numbers in Table 1 and Table 2 come from configs/cesnet_main.yaml at the full
+  budget and are NOT comparable to the numbers in this family. The ablation
+  table states the reduced budget in its caption.
+data:
+  limit: 80000
+train:
+  epochs: 10
+  stage1_epochs: 5
+  early_stop_patience: 4
+eval:
+  bootstrap_resamples: 200
+  classifier_heads: [prototype, knn]
+  probes: true
+  early_classification: false

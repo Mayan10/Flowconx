@@ -113,6 +113,12 @@ class TrainConfig:
 class EvalConfig:
     knn_k: int = 5
     classifier_heads: List[str] = field(default_factory=lambda: ["knn", "prototype"])
+    # Training rows used as the reference set for every classifier head, as a
+    # seeded stratified subsample. A k-NN over 137k reference embeddings is a
+    # 43k x 137k x 256 matmul per evaluation and a logistic probe on the same
+    # is minutes; a class prototype and a k-NN neighbourhood are both stable
+    # far below that. The actual count is recorded in every metrics.json.
+    max_reference_rows: Optional[int] = 20000
     bootstrap_resamples: int = 1000
     open_set: bool = False
     few_shot: bool = False
@@ -264,24 +270,36 @@ def deep_update(base: Dict[str, Any], overrides: Mapping[str, Any]) -> Dict[str,
     return out
 
 
-def load_config(path: str | Path, overrides: Optional[Sequence[str]] = None) -> ExperimentConfig:
-    """Load a YAML config, following a ``defaults:`` chain, then apply overrides.
+def _resolve_payload(path: Path, seen: Optional[List[Path]] = None) -> Dict[str, Any]:
+    """Read one config and everything it inherits, depth first.
 
-    ``defaults`` is a list of sibling config paths merged in order before this
-    file's own keys, which is how the ablation configs stay to three lines
-    each instead of restating the whole tree.
+    ``defaults`` is resolved **recursively**: the ablation configs inherit from
+    ``ablation_base.yaml``, which inherits from ``cesnet_main.yaml``, which
+    inherits from ``base.yaml``. A single-level implementation silently drops
+    the grandparent's keys and leaves the dataclass defaults in place, so an
+    ablation would run against a different dataset and split than its own
+    reference row while appearing in the same table.
     """
     import yaml
 
-    target = Path(path)
-    payload: Dict[str, Any] = yaml.safe_load(target.read_text(encoding="utf-8")) or {}
+    resolved = path.resolve()
+    seen = list(seen or [])
+    if resolved in seen:
+        chain = " -> ".join(p.name for p in seen + [resolved])
+        raise ValueError(f"Circular defaults chain in config inheritance: {chain}")
+    seen.append(resolved)
+
+    payload: Dict[str, Any] = yaml.safe_load(resolved.read_text(encoding="utf-8")) or {}
+    parents = payload.pop("defaults", []) or []
     merged: Dict[str, Any] = {}
-    for parent in payload.pop("defaults", []) or []:
-        parent_path = (target.parent / parent).resolve()
-        parent_payload = yaml.safe_load(Path(parent_path).read_text(encoding="utf-8")) or {}
-        parent_payload.pop("defaults", None)
-        merged = deep_update(merged, parent_payload)
-    merged = deep_update(merged, payload)
+    for parent in parents:
+        merged = deep_update(merged, _resolve_payload(resolved.parent / parent, seen))
+    return deep_update(merged, payload)
+
+
+def load_config(path: str | Path, overrides: Optional[Sequence[str]] = None) -> ExperimentConfig:
+    """Load a YAML config, following its ``defaults:`` chain, then apply overrides."""
+    merged = _resolve_payload(Path(path))
     for override in overrides or []:
         merged = deep_update(merged, _parse_override(override))
     return from_dict(merged)

@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_fusion_gated_sum
 description: Cross-attention replaced by a learned gated sum.
 model:

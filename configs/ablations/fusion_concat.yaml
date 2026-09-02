@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_fusion_concat
 description: Cross-attention replaced by concatenation.
 model:

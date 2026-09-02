@@ -146,9 +146,21 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     which = config.model.classify_from
     embeddings = {side: extract_embeddings(outcome.model, splits[side], device, which) for side in splits}
+
+    from .train.loop import stratified_subsample
+
+    reference_idx = (
+        stratified_subsample(
+            splits["train"].labels,
+            per_class=max(1, config.eval.max_reference_rows // max(label_space.n_classes, 1)),
+            seed=config.seed,
+        )
+        if config.eval.max_reference_rows and len(splits["train"]) > config.eval.max_reference_rows
+        else np.arange(len(splits["train"]))
+    )
     closed_set = evaluate_heads(
-        embeddings["train"],
-        splits["train"].labels,
+        embeddings["train"][reference_idx],
+        splits["train"].labels[reference_idx],
         embeddings["test"],
         splits["test"].labels,
         label_space.classes,
@@ -173,6 +185,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             "label_space": label_space.as_dict(),
             "features": splits["train"].features.describe(),
             "held_out_apps": held_out,
+            "classifier_reference_rows": int(len(reference_idx)),
+            "classifier_reference_is_subsample": bool(len(reference_idx) < len(splits["train"])),
         },
         "training": {
             "n_parameters": outcome.n_parameters,

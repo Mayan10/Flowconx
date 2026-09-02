@@ -112,3 +112,51 @@ def test_cli_override_wins_over_file():
     config = load_config("configs/smoke.yaml", ["model.fusion=concat", "train.epochs=7"])
     assert config.model.fusion == "concat"
     assert config.train.epochs == 7
+
+
+def test_defaults_chain_is_resolved_recursively():
+    """Two-level inheritance must carry the grandparent's keys.
+
+    The ablation configs inherit from ablation_base.yaml, which inherits from
+    cesnet_main.yaml, which inherits from base.yaml. A single-level resolver
+    silently drops the grandparent and leaves dataclass defaults in place, so
+    an ablation would run on a different dataset and split than the reference
+    row it is tabulated against, and nothing would report the mismatch.
+    """
+    ablation = load_config("configs/ablations/no_flow_metric.yaml")
+    main = load_config("configs/cesnet_main.yaml")
+    # From the grandparent, two levels up.
+    assert ablation.data.dataset == main.data.dataset
+    assert ablation.data.split_protocol == main.data.split_protocol
+    assert ablation.data.csv == main.data.csv
+    # From the parent.
+    assert ablation.data.limit == 80000
+    assert ablation.train.epochs == 10
+    # Its own key.
+    assert ablation.loss.lambda_flow_supcon == 0.0
+
+
+def test_ablation_family_shares_one_budget():
+    """Every ablation row must be comparable to every other row.
+
+    A table whose rows ran at different budgets is not an ablation table.
+    """
+    from pathlib import Path
+
+    reference = load_config("configs/ablation_base.yaml")
+    for path in sorted(Path("configs/ablations").glob("*.yaml")):
+        config = load_config(path)
+        assert config.data.limit == reference.data.limit, f"{path.name} has a different data budget"
+        assert config.data.dataset == reference.data.dataset, f"{path.name} uses a different dataset"
+        assert config.data.split_protocol == reference.data.split_protocol, f"{path.name} uses a different split"
+        # The input-budget sweep is the one family that legitimately varies
+        # epochs indirectly; it varies observed_packets, never the schedule.
+        if not path.stem.startswith("packets_"):
+            assert config.train.epochs == reference.train.epochs, f"{path.name} has a different epoch budget"
+
+
+def test_circular_defaults_are_rejected(tmp_path):
+    (tmp_path / "a.yaml").write_text("defaults: [b.yaml]\nname: a\n", encoding="utf-8")
+    (tmp_path / "b.yaml").write_text("defaults: [a.yaml]\nname: b\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="Circular"):
+        load_config(tmp_path / "a.yaml")

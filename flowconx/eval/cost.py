@@ -141,7 +141,7 @@ def measure_cost(
     device,
     config,
     runs: int = 200,
-    cpu_too: bool = True,
+    cpu_too: bool = False,
 ) -> Dict[str, object]:
     """The full cost block written into every ``metrics.json``."""
     import torch
@@ -173,6 +173,10 @@ def measure_cost(
     }
     out["feature_extraction_share"] = _share(out["end_to_end_batch1"], out["forward_batch1"])
 
+    # The CPU leg is off by default because it doubles the measurement time on
+    # every run in a sweep. The cost table needs it once, not 120 times:
+    #   python -m flowconx.run --config <c> --set eval.cost=true   (GPU)
+    # then re-measure on CPU for the final table.
     if cpu_too and device.type != "cpu":
         cpu = torch.device("cpu")
         model_cpu = model.to(cpu)

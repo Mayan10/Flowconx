@@ -68,6 +68,7 @@ train:
 eval:
   knn_k: 5
   classifier_heads: [knn, prototype]
+  max_reference_rows: 20000
   bootstrap_resamples: 1000
   open_set: false
   few_shot: false

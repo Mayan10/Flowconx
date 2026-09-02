@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_packets_5
 description: Only the first 5 packet(s) of each flow are observed.
 data:

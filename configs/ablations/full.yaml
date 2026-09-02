@@ -1,4 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_full
-description: The full model. The reference row of the ablation table.
+description: The full model at the ablation budget. The reference row every other
+  row is compared against.

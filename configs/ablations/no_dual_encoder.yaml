@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_no_dual_encoder
 description: One shared encoder over the packet sequence with the flow context appended
   to every position.

@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_no_flow_metric
 description: THE HEADLINE ABLATION. No metric objective on the deployed embedding;
   only z_app is trained, which is the current field-standard approach. Everything

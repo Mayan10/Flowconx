@@ -1,5 +1,5 @@
 defaults:
-- ../cesnet_main.yaml
+- ../ablation_base.yaml
 name: ablation_classify_z_concat
 description: Classify from the unfused concatenation, which is what justifies the
   fusion design.

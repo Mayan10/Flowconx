@@ -89,7 +89,7 @@
     "origin_disjoint": true
   },
   "environment": {
-    "git_commit": "51a8a8a2a348c15445c221edf6ef4d9621b6b6c8",
+    "git_commit": "0a17c0266fd2a83cd27335e99fe99bc9c06bcb1d",
     "python": "3.13.15",
     "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
     "machine": "arm64",
@@ -139,7 +139,8 @@
     "splits_dir": "splits",
     "results_dir": "results/audit",
     "no_bootstrap": false,
-    "near_duplicate_threshold": 0.999
+    "near_duplicate_threshold": 0.999,
+    "near_duplicate_tolerance": 0.01
   },
   "splits": {
     "random_flow": {
@@ -300,13 +301,9 @@
           },
           {
             "check": "origin_disjoint",
-            "status": "FAIL",
-            "n_shared": 1,
-            "n_train_values": 1,
-            "n_test_values": 1,
-            "examples": [
-              "cesnet_quic22"
-            ]
+            "status": "unavailable",
+            "reason": "column 'origin' has a single distinct value across the whole table, so it cannot be disjoint across splits and cannot leak anything either",
+            "n_distinct": 1
           },
           {
             "check": "no_exact_duplicates_across_splits",
@@ -348,6 +345,7 @@
             "check": "no_near_duplicates_across_splits",
             "status": "FAIL",
             "threshold": 0.999,
+            "tolerance": 0.01,
             "standardised": true,
             "n_test_rows_with_near_duplicate": 1275,
             "fraction_of_sampled_test": 0.159375,
@@ -377,37 +375,37 @@
             "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
           }
         ],
-        "n_failed": 5,
+        "n_failed": 4,
         "failed": [
           "capture_id_disjoint",
           "client_ip_disjoint",
           "server_ip_disjoint",
-          "origin_disjoint",
           "no_near_duplicates_across_splits"
         ],
         "unavailable": [
-          "five_tuple_disjoint"
+          "five_tuple_disjoint",
+          "origin_disjoint"
         ],
         "verdict": "FAIL"
       },
       "baselines": {
         "protocol_only": {
-          "macro_f1": 0.005847953216374269,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.05555555555555555,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "condition_only": {
-          "macro_f1": 0.005847953216374269,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.05555555555555555,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "port_only": {
-          "macro_f1": 0.005847953216374269,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.05555555555555555,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "sni_only": {
           "macro_f1": 0.9667169896918177,
@@ -636,13 +634,9 @@
           },
           {
             "check": "origin_disjoint",
-            "status": "FAIL",
-            "n_shared": 1,
-            "n_train_values": 1,
-            "n_test_values": 1,
-            "examples": [
-              "cesnet_quic22"
-            ]
+            "status": "unavailable",
+            "reason": "column 'origin' has a single distinct value across the whole table, so it cannot be disjoint across splits and cannot leak anything either",
+            "n_distinct": 1
           },
           {
             "check": "no_exact_duplicates_across_splits",
@@ -684,6 +678,7 @@
             "check": "no_near_duplicates_across_splits",
             "status": "FAIL",
             "threshold": 0.999,
+            "tolerance": 0.01,
             "standardised": true,
             "n_test_rows_with_near_duplicate": 1185,
             "fraction_of_sampled_test": 0.148125,
@@ -713,36 +708,36 @@
             "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
           }
         ],
-        "n_failed": 4,
+        "n_failed": 3,
         "failed": [
           "client_ip_disjoint",
           "server_ip_disjoint",
-          "origin_disjoint",
           "no_near_duplicates_across_splits"
         ],
         "unavailable": [
-          "five_tuple_disjoint"
+          "five_tuple_disjoint",
+          "origin_disjoint"
         ],
         "verdict": "FAIL"
       },
       "baselines": {
         "protocol_only": {
-          "macro_f1": 0.005847953216374269,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.05555555555555555,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "condition_only": {
-          "macro_f1": 0.005847953216374269,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.05555555555555555,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "port_only": {
-          "macro_f1": 0.005847953216374269,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.05555555555555555,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "sni_only": {
           "macro_f1": 0.9674201238952109,
@@ -971,13 +966,9 @@
           },
           {
             "check": "origin_disjoint",
-            "status": "FAIL",
-            "n_shared": 1,
-            "n_train_values": 1,
-            "n_test_values": 1,
-            "examples": [
-              "cesnet_quic22"
-            ]
+            "status": "unavailable",
+            "reason": "column 'origin' has a single distinct value across the whole table, so it cannot be disjoint across splits and cannot leak anything either",
+            "n_distinct": 1
           },
           {
             "check": "no_exact_duplicates_across_splits",
@@ -1019,6 +1010,7 @@
             "check": "no_near_duplicates_across_splits",
             "status": "FAIL",
             "threshold": 0.999,
+            "tolerance": 0.01,
             "standardised": true,
             "n_test_rows_with_near_duplicate": 1076,
             "fraction_of_sampled_test": 0.1345,
@@ -1048,36 +1040,36 @@
             "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
           }
         ],
-        "n_failed": 4,
+        "n_failed": 3,
         "failed": [
           "client_ip_disjoint",
           "server_ip_disjoint",
-          "origin_disjoint",
           "no_near_duplicates_across_splits"
         ],
         "unavailable": [
-          "five_tuple_disjoint"
+          "five_tuple_disjoint",
+          "origin_disjoint"
         ],
         "verdict": "FAIL"
       },
       "baselines": {
         "protocol_only": {
-          "macro_f1": 0.0058454798697755534,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.055530753968253965,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "condition_only": {
-          "macro_f1": 0.0058454798697755534,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.055530753968253965,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "port_only": {
-          "macro_f1": 0.0058454798697755534,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.055530753968253965,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "sni_only": {
           "macro_f1": 0.967477833217826,
@@ -1306,13 +1298,9 @@
           },
           {
             "check": "origin_disjoint",
-            "status": "FAIL",
-            "n_shared": 1,
-            "n_train_values": 1,
-            "n_test_values": 1,
-            "examples": [
-              "cesnet_quic22"
-            ]
+            "status": "unavailable",
+            "reason": "column 'origin' has a single distinct value across the whole table, so it cannot be disjoint across splits and cannot leak anything either",
+            "n_distinct": 1
           },
           {
             "check": "no_exact_duplicates_across_splits",
@@ -1354,6 +1342,7 @@
             "check": "no_near_duplicates_across_splits",
             "status": "FAIL",
             "threshold": 0.999,
+            "tolerance": 0.01,
             "standardised": true,
             "n_test_rows_with_near_duplicate": 1041,
             "fraction_of_sampled_test": 0.130125,
@@ -1383,36 +1372,36 @@
             "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
           }
         ],
-        "n_failed": 4,
+        "n_failed": 3,
         "failed": [
           "capture_id_disjoint",
           "client_ip_disjoint",
-          "origin_disjoint",
           "no_near_duplicates_across_splits"
         ],
         "unavailable": [
-          "five_tuple_disjoint"
+          "five_tuple_disjoint",
+          "origin_disjoint"
         ],
         "verdict": "FAIL"
       },
       "baselines": {
         "protocol_only": {
-          "macro_f1": 0.005002776396158836,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.04714781746031746,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "condition_only": {
-          "macro_f1": 0.005002776396158836,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.04714781746031746,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "port_only": {
-          "macro_f1": 0.005002776396158836,
-          "balanced_accuracy": 0.05555555555555555,
-          "accuracy": 0.04714781746031746,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "sni_only": {
           "macro_f1": 0.7909747977146624,
@@ -1632,13 +1621,9 @@
           },
           {
             "check": "origin_disjoint",
-            "status": "FAIL",
-            "n_shared": 1,
-            "n_train_values": 1,
-            "n_test_values": 1,
-            "examples": [
-              "cesnet_quic22"
-            ]
+            "status": "unavailable",
+            "reason": "column 'origin' has a single distinct value across the whole table, so it cannot be disjoint across splits and cannot leak anything either",
+            "n_distinct": 1
           },
           {
             "check": "no_exact_duplicates_across_splits",
@@ -1680,6 +1665,7 @@
             "check": "no_near_duplicates_across_splits",
             "status": "FAIL",
             "threshold": 0.999,
+            "tolerance": 0.01,
             "standardised": true,
             "n_test_rows_with_near_duplicate": 300,
             "fraction_of_sampled_test": 0.0375,
@@ -1709,37 +1695,37 @@
             "note": "Agreement near 1.0 means the nuisance label is a thresholding of two model input features, not an independently measured network condition."
           }
         ],
-        "n_failed": 5,
+        "n_failed": 4,
         "failed": [
           "capture_id_disjoint",
           "client_ip_disjoint",
           "server_ip_disjoint",
-          "origin_disjoint",
           "no_near_duplicates_across_splits"
         ],
         "unavailable": [
-          "five_tuple_disjoint"
+          "five_tuple_disjoint",
+          "origin_disjoint"
         ],
         "verdict": "FAIL"
       },
       "baselines": {
         "protocol_only": {
-          "macro_f1": 6.059304061386258e-05,
-          "balanced_accuracy": 0.09090909090909091,
-          "accuracy": 0.0005456349206349206,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "condition_only": {
-          "macro_f1": 6.059304061386258e-05,
-          "balanced_accuracy": 0.09090909090909091,
-          "accuracy": 0.0005456349206349206,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "port_only": {
-          "macro_f1": 6.059304061386258e-05,
-          "balanced_accuracy": 0.09090909090909091,
-          "accuracy": 0.0005456349206349206,
-          "status": "ok"
+          "macro_f1": null,
+          "balanced_accuracy": null,
+          "accuracy": null,
+          "status": "unavailable"
         },
         "sni_only": {
           "macro_f1": 0.00419154025715872,
@@ -1827,5 +1813,5 @@
       "reason": "Group-disjoint splitting needs at least 3 distinct groups to fill train/val/test, but the grouping column has only 1: ['cesnet_quic22']. A single-origin table cannot be split by origin."
     }
   },
-  "wall_clock_seconds": 1262.57
+  "wall_clock_seconds": 3018.09
 }

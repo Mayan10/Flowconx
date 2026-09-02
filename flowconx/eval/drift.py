@@ -9,7 +9,7 @@ the encoder stays frozen and only the class prototypes are refreshed.
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 
@@ -18,18 +18,40 @@ from .closed_set import class_prototypes
 from .few_shot import enroll_prototypes, predict_from_prototypes
 
 
-def _period_of(frame) -> np.ndarray:
-    """The time bucket each row belongs to, coarsest available."""
+def _candidate_periods(frame) -> List[Tuple[str, np.ndarray]]:
+    """Time bucketings for this table, coarsest first."""
+    out: List[Tuple[str, np.ndarray]] = []
     if "capture_id" in frame.columns:
         capture = frame["capture_id"].astype(str)
         if capture.str.contains("/").all():
-            return capture.str.split("/").str[0].to_numpy()
+            out.append(("week", capture.str.split("/").str[0].to_numpy()))
+        out.append(("capture", capture.to_numpy()))
     if "flow_start_ts" in frame.columns:
         import pandas as pd
 
         stamps = pd.to_datetime(frame["flow_start_ts"], unit="s", errors="coerce")
-        return stamps.dt.strftime("%Y-W%V").fillna("unknown").to_numpy()
-    return np.full(len(frame), "unknown")
+        out.append(("iso_week", stamps.dt.strftime("%Y-W%V").fillna("unknown").to_numpy()))
+        out.append(("day", stamps.dt.strftime("%Y-%m-%d").fillna("unknown").to_numpy()))
+    return out
+
+
+def _period_of(frame, min_periods: int = 2) -> Tuple[str, np.ndarray]:
+    """The coarsest bucketing that still yields at least ``min_periods`` groups.
+
+    A temporal split holds out the last 20% of the timeline, which on
+    CESNET-QUIC22 is about five days -- all inside one ISO week. Bucketing by
+    week therefore produced a single period and the drift evaluation skipped
+    itself on exactly the split it exists for. Falling through to a finer
+    granularity keeps the curve meaningful, and the granularity actually used
+    is reported so the x-axis is never ambiguous.
+    """
+    candidates = _candidate_periods(frame)
+    for name, values in candidates:
+        if len(set(values.tolist())) >= min_periods:
+            return name, values
+    if candidates:
+        return candidates[-1][0], candidates[-1][1]
+    return "unknown", np.full(len(frame), "unknown")
 
 
 def evaluate_drift(
@@ -40,21 +62,23 @@ def evaluate_drift(
     config,
     label_space,
 ) -> Dict[str, object]:
-    periods = _period_of(test_split.frame)
+    granularity, periods = _period_of(test_split.frame)
     unique = sorted(set(periods.tolist()))
     if len(unique) < 2:
         return {
             "status": "skipped",
+            "granularity_tried": [name for name, _ in _candidate_periods(test_split.frame)],
             "reason": (
-                f"the test split spans {len(unique)} time period(s); temporal drift needs at least two. "
-                "Use data.split_protocol=temporal on a dataset with a real timeline."
+                f"the test split spans {len(unique)} time period(s) at every available granularity; "
+                "temporal drift needs at least two. Use data.split_protocol=temporal on a dataset "
+                "with a real timeline."
             ),
         }
 
     n_classes = label_space.n_classes
     labels = np.arange(n_classes)
     baseline = class_prototypes(train_x, train_split.labels, n_classes)
-    train_periods = sorted(set(_period_of(train_split.frame).tolist()))
+    train_periods = sorted(set(_period_of(train_split.frame)[1].tolist()))
 
     curve: List[Dict[str, object]] = []
     for period in unique:
@@ -87,6 +111,7 @@ def evaluate_drift(
     ]
     return {
         "status": "ok",
+        "granularity": granularity,
         "train_periods": train_periods,
         "test_periods": unique,
         "curve": curve,

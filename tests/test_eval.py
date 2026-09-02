@@ -306,3 +306,44 @@ def test_probe_skips_a_single_valued_target():
     x = np.random.default_rng(2).normal(size=(50, 4))
     y = np.zeros(50, dtype=int)
     assert probe_target(x[:25], y[:25], x[25:], y[25:], seed=0)["status"] == "skipped"
+
+
+# --------------------------------------------------------------------------
+# Temporal drift
+# --------------------------------------------------------------------------
+
+
+def test_drift_falls_through_to_a_finer_granularity(synthetic_frame):
+    """A temporal test slice inside one week must not skip the evaluation.
+
+    A temporal split holds out the last 20% of the timeline, which on
+    CESNET-QUIC22 is about five days -- all in one ISO week. Bucketing by week
+    alone produced a single period, and the drift evaluation skipped itself on
+    exactly the split it exists for.
+    """
+    import pandas as pd
+
+    from flowconx.eval.drift import _period_of
+
+    frame = synthetic_frame.copy()
+    # One week, several days: the coarse bucketing collapses, the fine one does not.
+    frame["capture_id"] = "W-2022-47/" + pd.Series(
+        [f"2022112{i % 5}" for i in range(len(frame))], index=frame.index
+    )
+    granularity, periods = _period_of(frame)
+    assert granularity != "week"
+    assert len(set(periods.tolist())) >= 2
+
+
+def test_drift_prefers_the_coarsest_usable_granularity(synthetic_frame):
+    import pandas as pd
+
+    from flowconx.eval.drift import _period_of
+
+    frame = synthetic_frame.copy()
+    frame["capture_id"] = pd.Series(
+        [f"W-2022-4{4 + (i % 4)}/2022110{i % 5}" for i in range(len(frame))], index=frame.index
+    )
+    granularity, periods = _period_of(frame)
+    assert granularity == "week", "several weeks are present, so week is the right axis"
+    assert len(set(periods.tolist())) == 4

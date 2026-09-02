@@ -96,12 +96,30 @@ indistinguishable.)*
 > higher AUROC and lower FPR@95TPR than maximum-softmax-probability,
 > energy-based or Mahalanobis rejection on the same embedding.
 
-- **Evidence:** `results/flowconx_open_set/`, OSCR curves
-- **Test:** paired across seeds
-- **Status:** **pending**
-- **Note:** this is a claim ET-BERT-class models cannot easily make, since a
-  fine-tuned softmax head has one logit per training class and no "none of
-  these". Stated as a structural argument, not as a measured win over them.
+- **Evidence:** `results/flowconx_open_set/fiveg_traffic/session_disjoint/seed0/metrics.json`
+- **Test:** paired across seeds (2 more seeds queued)
+- **Status:** **supported, narrowed.** 5G Traffic, three held-out applications
+  spanning three service classes, 7,509 unknown against 25,350 known test rows.
+  All four rules score the same frozen embedding:
+
+  | Rule | AUROC | FPR@95TPR |
+  | --- | --- | --- |
+  | prototype cosine | 0.9406 | 0.2349 |
+  | softmax MSP | 0.8766 | 0.5848 |
+  | energy | 0.9178 | 0.2758 |
+  | Mahalanobis | **0.9485** | **0.2050** |
+
+  Distance to the nearest prototype beats softmax thresholding decisively —
+  2.5x fewer unknown applications accepted at the same true-positive rate.
+- **Narrowing, because a reviewer will find it:** Mahalanobis on the *same*
+  embedding is marginally better. The defensible claim is therefore *"a
+  metric-trained embedding supports distance-based rejection, and
+  distance-based rejection beats softmax thresholding"* — not "our rejector is
+  best". The comparison among distance rules is about scoring functions, not
+  architectures.
+- **Note:** the structural argument still holds — a fine-tuned softmax head has
+  one logit per training class and no "none of these" — but it is an argument,
+  not a measurement against ET-BERT, which we did not run.
 
 ## C5 — New applications enroll from a handful of labelled flows, without retraining
 
@@ -111,16 +129,32 @@ indistinguishable.)*
 
 - **Evidence:** `paper/figures/enrollment_curve.pdf`, `paper/tables/cost.tex`
 - **Test:** enrollment curves with spread over repeated draws
-- **Status:** **pending, and now load-bearing.**
-- **Both halves are required.** The accuracy curve alone is not the claim; the
-  cost asymmetry has to be measured in seconds and GPU-hours, or the claim is
-  rhetorical.
-- **Decision rule, written down before the result arrives.** The 5G loss shows
-  the embedding does not transfer zero-shot to an unseen application, which is
-  consistent with a design that expects enrollment. **If enrollment at
-  k = 5–25 labelled flows does not close that 0.25 macro-F1 gap, the
-  architecture has no case on this dataset and the paper says so** rather than
-  reframing around whatever else happens to look good.
+- **Status:** **NOT SUPPORTED on 5G Traffic. The decision rule below was
+  written before the run and the run failed it.**
+- **Result.** The enrollment curve is flat. Service-level macro-F1 moves from
+  0.4234 at k = 1 to 0.4258 at k = 100 — +0.002 across two orders of magnitude
+  in labelled data. At k = 25 it is 0.4267, against 0.8494 for XGBoost on
+  thirteen flow scalars. The 0.25 gap is not closed and not narrowed.
+- **The rule, as recorded in advance:** *"If enrollment at k = 5–25 labelled
+  flows does not close that 0.25 macro-F1 gap, the architecture has no case on
+  this dataset and the paper says so."* It does not. **C5 is withdrawn on 5G
+  Traffic.**
+- **What the flat curve means.** Not a mechanical failure: the prototype is
+  already converged at k = 1, which says the embedding places same-class flows
+  tightly. It is *where* it places them. Cheap enrollment of a weak classifier
+  is not a contribution.
+- **The diagnosis, from the same run.** Identical embedding, identical k,
+  identical procedure: **0.7378 macro-F1 identifying the application at k = 1,
+  0.4234 for the service category.** The model is an application fingerprinter
+  scored against a service taxonomy it does not encode. On CESNET that
+  mismatch is small because service and application correlate; on 5G Traffic,
+  where `metaverse` spans Zepeto and Roblox, it is fatal.
+- **Open question this raises, worth answering before more compute:** whether
+  application identification is the task this architecture should be evaluated
+  on. 0.74 from a single labelled example is a defensible result. 0.42 on a
+  taxonomy the embedding does not represent is not.
+- **Still unmeasured:** the cost asymmetry in seconds and GPU-hours. Without an
+  accuracy result to pair it with, it is not worth measuring yet.
 
 ## C6 — Performance degrades gracefully over time and is cheaply restored
 

@@ -500,6 +500,89 @@ does.
 
 ---
 
+## 2026-09-02 — Open-set works. Enrollment does not. C5 fails its own decision rule.
+
+5G Traffic, session-disjoint, seed 0. `ms_teams`, `teamfight_tactics` and
+`geforce_now` held out of training and validation entirely: 7,509 unknown test
+rows (22.9%) against 25,350 knowns, spanning three service classes.
+
+### C4 — open-set rejection: **supported, with one caveat**
+
+All four rules score the *same* frozen embedding, so the comparison isolates
+the rejection rule rather than the representation:
+
+| Scoring rule | AUROC | FPR@95TPR | Closed-set acc. on knowns |
+| --- | --- | --- | --- |
+| `prototype_cosine` | 0.9406 | 0.2349 | 0.6831 |
+| `softmax_msp` | 0.8766 | 0.5848 | 0.6757 |
+| `energy` | 0.9178 | 0.2758 | 0.6757 |
+| `mahalanobis` | 0.9485 | 0.2050 | 0.6757 |
+
+**Distance to the nearest prototype beats maximum-softmax-probability by a
+wide margin** — AUROC 0.941 against 0.877, and 0.235 against 0.585 at
+FPR@95TPR, which is **2.5× fewer unknown applications wrongly accepted** at the
+same true-positive rate. That is C4's claim and it holds.
+
+**The caveat, stated because a reviewer will find it:** Mahalanobis distance on
+the same embedding scores marginally *better* (0.9485 / 0.2050). So the honest
+claim is narrower than "our embedding rejects unknowns best". It is: *a
+metric-trained embedding supports distance-based rejection, and distance-based
+rejection beats softmax thresholding.* The comparison between distance rules is
+a comparison of scoring functions, not of architectures, and Mahalanobis wins it.
+
+### C5 — few-shot enrollment: **not supported**
+
+Encoder frozen, prototypes built from k labelled flows per class, five repeated
+draws:
+
+| k (service enrollment) | Macro-F1 | | k (application enrollment, 5 apps) | Macro-F1 |
+| --- | --- | --- | --- | --- |
+| 1 | 0.4234 ± 0.0029 | | 1 | 0.7378 ± 0.0293 |
+| 5 | 0.4337 ± 0.0258 | | 5 | 0.7532 ± 0.0040 |
+| 25 | 0.4267 ± 0.0021 | | 25 | 0.7533 ± 0.0020 |
+| 100 | 0.4258 ± 0.0013 | | 100 | 0.7521 ± 0.0016 |
+
+**The curve is flat.** Service enrollment moves +0.002 from k = 1 to k = 100;
+application enrollment moves +0.014. More labelled examples buy nothing.
+
+`paper/CLAIMS.md` C5 recorded the decision rule **before** this ran:
+
+> If enrollment at k = 5–25 does not close the 0.25 macro-F1 gap, the
+> architecture has no case on this dataset and the paper says so.
+
+Service enrollment at k = 25 is **0.4267**, against 0.8494 for XGBoost on
+thirteen flow scalars. The gap is not closed; it is not narrowed. **C5 is not
+supported, and by the rule as written the architecture has no case on 5G
+Traffic.**
+
+### What the flat curve actually means
+
+Not that enrollment fails mechanically — the prototype is *already converged at
+k = 1*, which says the embedding places same-class flows tightly. The problem is
+where it places them. Cheap enrollment of a weak classifier is not a
+contribution.
+
+The two columns above diagnose it precisely. The same embedding, same k,
+same procedure: **0.75 macro-F1 when asked to identify the application, 0.42
+when asked for the service category.** The model is an application
+fingerprinter being scored against a service taxonomy it does not encode. On
+CESNET that mismatch is small because service and application correlate
+tightly; on 5G Traffic, where `metaverse` spans Zepeto and Roblox and
+`game_streaming` spans GeForce Now and KT GameBox, it is fatal.
+
+### Consequences
+
+1. **C5 is withdrawn on 5G Traffic.** Whether it survives on CESNET is a
+   separate run that has not happened.
+2. **The service-taxonomy framing may be the wrong task for this
+   architecture.** Application identification at 0.75 from one labelled example
+   is a defensible result; service classification at 0.42 is not. That is a
+   reframing worth considering before more compute is spent.
+3. **C4 stands** and is the strongest remaining claim, narrowed to "distance
+   beats softmax" rather than "our embedding is the best rejector".
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

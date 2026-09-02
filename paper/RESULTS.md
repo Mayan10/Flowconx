@@ -583,6 +583,64 @@ tightly; on 5G Traffic, where `metaverse` spans Zepeto and Roblox and
 
 ---
 
+## 2026-09-02 — Open-set and enrollment at three seeds (supersedes the seed-0 entry)
+
+The entry above reports seed 0 alone. With all three seeds in, the direction of
+the open-set result holds but **the confidence in it is lower than seed 0
+suggested**, and the correction is recorded rather than left to the reader to
+notice.
+
+### C4 — open-set rejection, three seeds
+
+| Scoring rule | AUROC | FPR@95TPR |
+| --- | --- | --- |
+| `prototype_cosine` | 0.9189 ± 0.0327 | 0.3410 ± 0.1074 |
+| `softmax_msp` | 0.8372 ± 0.0853 | 0.6102 ± 0.1360 |
+| `energy` | 0.8699 ± 0.0806 | 0.3747 ± 0.1377 |
+| `mahalanobis` | 0.9271 ± 0.0304 | 0.3162 ± 0.1329 |
+
+Against the seed-0 numbers (prototype 0.9406 / 0.2349, softmax 0.8766 / 0.5848):
+
+- **The AUROC claim weakens.** 0.9189 ± 0.0327 against 0.8372 ± 0.0853. The
+  gap is 0.082 and the spreads overlap at one standard deviation. Seed 0 was
+  the most favourable of the three.
+- **The FPR@95TPR claim strengthens and is the one to report.** 0.341 ± 0.107
+  against 0.610 ± 0.136 — a gap of 0.27, roughly twice the pooled spread.
+  **At the same true-positive rate, prototype rejection accepts about half as
+  many unknown applications as softmax thresholding.** That is the defensible
+  form of C4.
+- **Mahalanobis still edges the prototype rule** (0.9271 ± 0.0304 /
+  0.3162 ± 0.1329) and at three seeds the two are statistically
+  indistinguishable. The narrowing recorded earlier stands: distance beats
+  softmax; among distance rules we have no evidence of a winner.
+
+### C5 — enrollment, three seeds
+
+| k | Service macro-F1 | Application macro-F1 |
+| --- | --- | --- |
+| 1 | 0.5020 ± 0.0697 | 0.7572 ± 0.0182 |
+| 5 | 0.5076 ± 0.0650 | 0.7624 ± 0.0106 |
+| 10 | 0.5040 ± 0.0711 | 0.7618 ± 0.0120 |
+| 25 | 0.5056 ± 0.0693 | 0.7625 ± 0.0106 |
+| 50 | 0.5047 ± 0.0706 | 0.7622 ± 0.0109 |
+| 100 | 0.5054 ± 0.0698 | 0.7621 ± 0.0111 |
+
+**Flat, confirmed.** Service moves +0.003 from k = 1 to k = 100; application
+moves +0.005. The seed spread on the service task (± 0.07) is more than twenty
+times the entire effect of going from one labelled example to a hundred.
+
+The application/service split widens rather than closes with more seeds:
+**0.7572 ± 0.0182 identifying the application from a single labelled flow,
+against 0.5020 ± 0.0697 for the service category.** Note also that the
+application figure is far more *stable* across seeds — a quarter of the
+variance — which is what one expects when a model is being scored on the thing
+it actually represents.
+
+C5 remains withdrawn on 5G Traffic. The reframing question stays open, and
+`configs/fiveg_app_task.yaml` is queued to answer it.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

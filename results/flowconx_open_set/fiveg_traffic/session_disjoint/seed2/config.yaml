@@ -1,0 +1,112 @@
+name: flowconx_open_set
+description: "Open-set rejection and few-shot enrollment on 5G Traffic.\nThree applications\
+  \ are held out of training entirely -- including out of validation, or model selection\
+  \ leaks them back in -- and treated as unknown at test time. They are chosen to\
+  \ satisfy three conditions that an earlier version of this config silently violated:\n\
+  \n  1. Each must actually appear in the session-disjoint test split. The\n     previous\
+  \ choice (netflix, kt_gamebox, google_meet) had two apps that do\n     not appear\
+  \ there at all, so the evaluation would have scored AUROC on a\n     single held-out\
+  \ app contributing 2.9% of test rows.\n  2. They must span different service classes,\
+  \ or rejection collapses into\n     \"reject one class\".\n  3. Removing each from\
+  \ training must leave its service class with at least\n     one other application,\
+  \ or the class disappears from training and the\n     closed-set half of the open-set\
+  \ metric becomes meaningless.\n\nChosen: ms_teams (video_conferencing, 5,868 test\
+  \ rows; zoom and google_meet remain in training), teamfight_tactics (online_game,\
+  \ 898; battleground remains), geforce_now (game_streaming, 743; kt_gamebox remains).\
+  \ Together 7,509 of 32,859 test rows, 22.8%, across three service classes.\nNote\
+  \ that `roblox` is *already* unknown in this split without being declared: it has\
+  \ a single capture file, so session-disjoint grouping puts all of it in test. Its\
+  \ 6,000 test rows are scored as knowns of the metaverse class, which is why that\
+  \ class's per-class F1 collapses in the headline run. It is left undeclared here\
+  \ so that the open-set result is about the apps we chose, and the effect is documented\
+  \ in paper/THREATS.md instead.\n"
+seed: 2
+output_root: results
+data:
+  dataset: fiveg_traffic
+  csv: data/processed/fiveg_traffic.csv
+  label_column: service
+  split_protocol: session_disjoint
+  split_seed: 42
+  val_fraction: 0.1
+  test_fraction: 0.2
+  rare_class_mode: drop
+  min_class_count: 100
+  max_packets: 32
+  observed_packets: null
+  limit: null
+  subsample_rows: null
+  unknown_apps:
+  - ms_teams
+  - teamfight_tactics
+  - geforce_now
+model:
+  app_hidden_dim: 192
+  net_hidden_dim: 128
+  app_emb_dim: 256
+  net_emb_dim: 128
+  flow_emb_dim: 256
+  dropout: 0.1
+  n_conv_blocks: 3
+  n_heads: 6
+  n_transformer_layers: 1
+  dual_encoder: true
+  fusion: cross_attention
+  adversarial_head: true
+  classify_from: z_flow
+  width_multiplier: 1.0
+loss:
+  temperature: 0.07
+  lambda_service_supcon: 1.0
+  lambda_flow_supcon: 1.0
+  lambda_app_supcon: 0.0
+  lambda_prototype: 0.1
+  lambda_disentangle: 0.25
+  lambda_adversarial: 0.15
+  lambda_pair_margin: 0.0
+  lambda_flow_pair_margin: 1.0
+  pair_negative_margin: 0.2
+  pair_positive_target: 0.75
+  grl_warmup_epochs: 5
+train:
+  epochs: 15
+  batch_size: 512
+  lr: 0.0003
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  schedule: two_stage
+  stage1_epochs: 7
+  memory_per_class: 512
+  num_workers: 0
+  device: auto
+  early_stop_patience: 4
+  amp: false
+eval:
+  knn_k: 5
+  classifier_heads:
+  - knn
+  - prototype
+  - linear
+  max_reference_rows: 20000
+  bootstrap_resamples: 1000
+  open_set: true
+  few_shot: true
+  few_shot_k:
+  - 1
+  - 5
+  - 10
+  - 25
+  - 50
+  - 100
+  drift: false
+  robustness: false
+  early_classification: false
+  early_packet_budgets:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 10
+  - 20
+  cost: true
+  probes: true

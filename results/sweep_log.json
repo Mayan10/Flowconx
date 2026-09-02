@@ -318,5 +318,21 @@
       "  prototype  macro-F1=0.5563 [0.5512, 0.5609]  bal-acc=0.6063  acc=0.6300",
       "  linear     macro-F1=0.5521 [0.5469, 0.5566]  bal-acc=0.6114  acc=0.6342"
     ]
+  },
+  {
+    "stage": "novelty",
+    "config": "configs/fiveg_open_set.yaml",
+    "seed": 2,
+    "config_hash": "e2e91bac24c27ee7",
+    "experiment": "flowconx_open_set",
+    "dataset": "fiveg_traffic",
+    "split": "session_disjoint",
+    "status": "ok",
+    "seconds": 1133.6,
+    "summary": [
+      "  knn        macro-F1=0.5082 [0.5031, 0.5134]  bal-acc=0.5536  acc=0.5756",
+      "  prototype  macro-F1=0.5338 [0.5288, 0.5390]  bal-acc=0.5495  acc=0.5713",
+      "  linear     macro-F1=0.5399 [0.5347, 0.5453]  bal-acc=0.5622  acc=0.5849"
+    ]
   }
 ]

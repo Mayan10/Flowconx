@@ -102,15 +102,19 @@ indistinguishable.)*
   spanning three service classes, 7,509 unknown against 25,350 known test rows.
   All four rules score the same frozen embedding:
 
+  Three seeds:
+
   | Rule | AUROC | FPR@95TPR |
   | --- | --- | --- |
-  | prototype cosine | 0.9406 | 0.2349 |
-  | softmax MSP | 0.8766 | 0.5848 |
-  | energy | 0.9178 | 0.2758 |
-  | Mahalanobis | **0.9485** | **0.2050** |
+  | prototype cosine | 0.9189 ± 0.0327 | 0.3410 ± 0.1074 |
+  | softmax MSP | 0.8372 ± 0.0853 | 0.6102 ± 0.1360 |
+  | energy | 0.8699 ± 0.0806 | 0.3747 ± 0.1377 |
+  | Mahalanobis | **0.9271 ± 0.0304** | **0.3162 ± 0.1329** |
 
-  Distance to the nearest prototype beats softmax thresholding decisively —
-  2.5x fewer unknown applications accepted at the same true-positive rate.
+  **Report FPR@95TPR, not AUROC.** The AUROC gap (0.082) is within the pooled
+  seed spread; the FPR@95TPR gap (0.27) is about twice it. The claim is that
+  **at the same true-positive rate, prototype rejection accepts roughly half as
+  many unknown applications as softmax thresholding.**
 - **Narrowing, because a reviewer will find it:** Mahalanobis on the *same*
   embedding is marginally better. The defensible claim is therefore *"a
   metric-trained embedding supports distance-based rejection, and
@@ -131,10 +135,11 @@ indistinguishable.)*
 - **Test:** enrollment curves with spread over repeated draws
 - **Status:** **NOT SUPPORTED on 5G Traffic. The decision rule below was
   written before the run and the run failed it.**
-- **Result.** The enrollment curve is flat. Service-level macro-F1 moves from
-  0.4234 at k = 1 to 0.4258 at k = 100 — +0.002 across two orders of magnitude
-  in labelled data. At k = 25 it is 0.4267, against 0.8494 for XGBoost on
-  thirteen flow scalars. The 0.25 gap is not closed and not narrowed.
+- **Result (three seeds).** The enrollment curve is flat. Service macro-F1
+  moves from 0.5020 ± 0.0697 at k = 1 to 0.5054 ± 0.0698 at k = 100 — +0.003,
+  against a seed spread of ± 0.07. Application enrollment moves +0.005. At
+  k = 25 the service figure is 0.5056, against 0.8494 for XGBoost on thirteen
+  flow scalars. The 0.25 gap is not closed and not narrowed.
 - **The rule, as recorded in advance:** *"If enrollment at k = 5–25 labelled
   flows does not close that 0.25 macro-F1 gap, the architecture has no case on
   this dataset and the paper says so."* It does not. **C5 is withdrawn on 5G
@@ -144,8 +149,10 @@ indistinguishable.)*
   tightly. It is *where* it places them. Cheap enrollment of a weak classifier
   is not a contribution.
 - **The diagnosis, from the same run.** Identical embedding, identical k,
-  identical procedure: **0.7378 macro-F1 identifying the application at k = 1,
-  0.4234 for the service category.** The model is an application fingerprinter
+  identical procedure: **0.7572 ± 0.0182 identifying the application at k = 1,
+  0.5020 ± 0.0697 for the service category.** The application figure also has
+  a quarter of the variance, which is what one expects when a model is scored
+  on what it actually represents. The model is an application fingerprinter
   scored against a service taxonomy it does not encode. On CESNET that
   mismatch is small because service and application correlate; on 5G Traffic,
   where `metaverse` spans Zepeto and Roblox, it is fatal.

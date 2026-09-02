@@ -55,7 +55,7 @@ Three things follow, and they shape everything here:
 | C1 | The split axis that matters is corpus-specific; controlling the wrong one protects nothing | `paper/tables/split_contrast.tex` | supported (5G: capture axis; CESNET: server axis, −0.19 macro-F1) |
 | C2 | Competitive under strict protocols — **not** state of the art | `paper/tables/main_comparison_*.tex` | supported on CESNET (0.789 vs 0.772); **not supported on 5G** (0.595 vs 0.849) |
 | C3 | Identifier shortcuts do not explain the task | main comparison, shortcut tier | pending |
-| C4 | Metric-trained embedding rejects unknown applications better than softmax | `results/flowconx_open_set/` | supported, narrowed (AUROC 0.941 vs 0.877; Mahalanobis 0.949) |
+| C4 | Metric-trained embedding rejects unknown applications better than softmax | `results/flowconx_open_set/` | supported on FPR@95TPR (0.34 vs 0.61); AUROC gap within seed spread |
 | C5 | New applications enroll from a handful of flows, no retraining | `paper/figures/enrollment_curve.pdf` | **not supported on 5G** — curve flat, failed its pre-registered rule |
 | C6 | Degrades gracefully over time; cheaply restored by re-enrollment | `drift` block | **withdrawn** — 4-week corpus cannot exhibit drift |
 | C7 | Survives padding defences at a stated overhead | `paper/figures/robustness_overhead.pdf` | supported (only 2.28× -overhead defences bite) |

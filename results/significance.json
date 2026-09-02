@@ -116,6 +116,49 @@
           "member_mean": 0.5912655524967186
         }
       ]
+    },
+    {
+      "family": "split_protocol/fiveg_traffic",
+      "correction": "holm_bonferroni",
+      "alpha": 0.05,
+      "n_comparisons": 1,
+      "comparisons": [
+        {
+          "name": "random_flow_vs_session_disjoint",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": -0.44451315759446536,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": -0.44451315759446536,
+            "std_difference": 0.03799020169460038,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 1,
+            "adjusted_threshold": 0.05,
+            "significant": false,
+            "family_size": 1,
+            "alpha": 0.05
+          },
+          "experiment": "flowconx_random_contrast",
+          "dataset": "fiveg_traffic",
+          "split": "random_flow",
+          "reference": "flowconx_main@session_disjoint",
+          "cohens_d": -9.553607434646873,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.546918738300043,
+          "member_mean": 0.9914318958945082
+        }
+      ]
     }
   ],
   "skipped": [
@@ -270,12 +313,6 @@
       "dataset": "fiveg_traffic",
       "split": "random_flow",
       "reason": "reference flowconx_main has 0 seed(s)"
-    },
-    {
-      "family": "split_protocol",
-      "dataset": "fiveg_traffic",
-      "contrast": "random_flow_vs_session_disjoint",
-      "reason": "3 reference and 0 member seed(s)"
     },
     {
       "family": "split_protocol",

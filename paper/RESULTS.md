@@ -410,12 +410,15 @@ only in how the data was partitioned:
 
 | Split protocol | FlowCon-X | AppScanner (audit) | Seeds |
 | --- | --- | --- | --- |
-| **Random flow** | **0.9923 ± 0.0000** | 0.9958 | 1 |
+| **Random flow** | **0.9925 ± 0.0004** | 0.9958 | 3 |
 | **Session-disjoint** | **0.5741 ± 0.0240** | 0.6399 | 3 |
 | Temporal | TODO | 0.2553 | 0 |
 | Server-disjoint | TODO | 0.7111 | 0 |
 
-**A drop of 0.418 macro-F1 from changing nothing but the split.**
+**A drop of 0.418 macro-F1 from changing nothing but the split.** The
+random-flow figure is remarkably stable across seeds (± 0.0004), which is
+itself telling: when the label is recoverable from the capture, every seed
+recovers it.
 
 Under the random-flow protocol every class exceeds 0.98:
 
@@ -449,11 +452,11 @@ The two corpora fail in different places, and neither protocol protects
 against the other's failure. That is claim C1 in its restated form, and it is
 now supported end to end by our own measurements rather than asserted.
 
-**Caveat on seed count:** the 5G random-flow figure rests on 1 seed(s) at
-the time of writing; the remaining seeds are queued. The qualitative gap is
-far larger than the 5G session-disjoint seed spread (± 0.024), so the
-conclusion does not depend on them, but the table should not be cited until
-the cells say three.
+**Seed counts:** 3 seeds on each of the two protocols compared here. The
+gap (0.418) is seventeen times the larger of the two standard deviations
+(0.0240), so it is not a seed effect. Three seeds still cannot produce a
+Wilcoxon p-value, and `results/significance.json` records the comparison as
+`undetermined` rather than inventing one.
 
 ---
 

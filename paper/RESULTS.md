@@ -735,6 +735,56 @@ neural approach is warranted on this benchmark.
 
 ---
 
+## 2026-09-03 — On 5G Traffic it is not the architecture, it is the approach
+
+Deep baselines on 5G Traffic, session-disjoint, seed 0, identical split and
+budget — alongside the classical tier from `make audit` on the same split:
+
+| Tier | Method | Macro-F1 | Inputs |
+| --- | --- | ---: | --- |
+| Deep | Flow-statistics MLP | 0.5682 | 10 flow scalars, no sequence |
+| Deep | DeepPacket-style CNN | 0.5753 | packet sequence |
+| Deep | **FlowCon-X** | **0.5741** | packet sequence + flow scalars |
+| Deep | FS-Net | 0.5849 | packet sequence |
+| Deep | Bi-LSTM + attention | **0.6139** | packet sequence |
+| Classical | AppScanner (2016) | 0.6399 | size-series statistics |
+| Classical | Packet-size histogram (XGB) | 0.8302 | size histogram |
+| Classical | **All flow scalars (XGB)** | **0.8494** | 13 flow scalars |
+
+**Every neural model lands between 0.57 and 0.61.** FlowCon-X sits in the
+middle of that band and the plain bi-LSTM beats it. Meanwhile XGBoost on
+thirteen flow scalars reaches 0.849.
+
+This reframes the 5G loss recorded earlier. It is not a defect of *this*
+architecture — a CNN, a GRU encoder, a bi-LSTM and our dual-encoder model all
+fail by the same margin, on the same split, with the same budget. It is a
+property of applying neural sequence models to this taxonomy.
+
+The sharpest single line in the table: **the flow-statistics MLP scores 0.5682
+using only the ten flow scalars and no packet sequence at all** — matching the
+sequence models — while **XGBoost on thirteen of the same kind of scalars
+scores 0.8494.** Same information, same split; a 0.28 gap attributable purely
+to model class. Gradient-boosted trees dominating neural networks on tabular
+features is a well-established result, and here it is the entire story.
+
+### What this means for the paper
+
+1. **The 5G negative result is about neural traffic classification, not about
+   FlowCon-X.** That is a more interesting finding and a fairer one to report.
+   A reader should take away "sequence models are the wrong tool for a
+   volume-defined taxonomy", not "this particular design underperforms".
+2. **It supports the reframing hypothesis.** The 5G service taxonomy groups
+   applications by what they are *for* (`metaverse` = Zepeto + Roblox), and
+   what distinguishes those groups is aggregate volume, which trees read
+   directly. Application identity — what the sequence models actually encode —
+   is orthogonal to it. `configs/fiveg_app_task.yaml` tests that directly and
+   is running now.
+3. **It is a result worth reporting regardless of how the reframing lands.**
+   A benchmark on which four independent neural architectures lose to XGBoost
+   on thirteen numbers is telling the field something about the benchmark.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

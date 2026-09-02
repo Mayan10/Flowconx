@@ -64,11 +64,16 @@ indistinguishable.)*
   the latter is *within one seed standard deviation*. The closed-set gain is
   about 1.5 points over a 2016 baseline and roughly nil over a well-tuned
   gradient-boosted tree.
-- **Not supported on 5G Traffic.** Session-disjoint, seed 0: FlowCon-X reaches
-  0.5953 (k-NN) against 0.8494 for XGBoost on thirteen flow scalars and 0.6399
-  for AppScanner. A 0.25 macro-F1 loss, driven by two classes collapsing where
-  the split is accidentally app-disjoint (`metaverse` F1 = 0.008, its test set
-  being almost entirely an application absent from training).
+- **Not supported on 5G Traffic, and the reason is not this architecture.**
+  Session-disjoint: FlowCon-X 0.574, DeepPacket-style CNN 0.575, FS-Net 0.585,
+  bi-LSTM 0.614, flow-statistics MLP 0.568 — every neural model in a 0.05 band,
+  with the plain bi-LSTM ahead of ours. XGBoost on thirteen flow scalars
+  reaches 0.849 on the same split. The MLP result is the sharpest: 0.568 from
+  the ten flow scalars alone, against 0.849 for a tree on the same kind of
+  input. A 0.28 gap attributable purely to model class.
+- **So the 5G finding is about neural traffic classification, not about us.**
+  Four independent architectures fail by the same margin. That is a fairer and
+  more interesting thing to report than a single model underperforming.
 - **Consequence for the paper:** the closed-set table cannot be the
   contribution. It establishes competitiveness on one dataset and a clear loss
   on the other, and the introduction must not imply otherwise. C4–C8 carry the

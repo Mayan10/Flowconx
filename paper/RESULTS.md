@@ -457,6 +457,46 @@ the cells say three.
 
 ---
 
+## 2026-09-02 — Every headline number is a lower bound: the model is under-trained
+
+**13 of 16 completed runs stopped with `best_epoch == epochs_run`.** Early
+stopping (patience 4) never triggered, because validation macro-F1 was still
+rising when the epoch budget ran out.
+
+Validation trajectory, CESNET-QUIC22 session-disjoint, seed 0:
+
+```
+epoch  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+val  .457 .548 .588 .622 .648 .667 .690 .711 .725 .735 .743 .756 .763 .771 .779
+```
+
+Monotone increasing throughout, with a per-epoch gain of about +0.008 at
+epoch 15 and no sign of a plateau.
+
+**Consequence.** Every FlowCon-X number in this repository is a **lower bound**
+on what this configuration reaches, and comparisons against the classical
+baselines are correspondingly unfair *to us* — those baselines are trained to
+convergence (random forests and XGBoost to their own stopping criteria; the
+SVM to optimality), while the neural model is cut off mid-ascent.
+
+This does not rescue the 5G result: an extra 0.02–0.05 macro-F1 would not close
+a 0.25 gap to XGBoost there. It does mean the CESNET comparison
+(0.786 against AppScanner's 0.772) understates the model, and that the honest
+framing is "at a fixed 15-epoch budget" rather than "at convergence".
+
+**Why the budget was set where it is, stated plainly:** 15 epochs at batch 512
+was chosen so that 21 runs fit in about seven hours on one machine, after
+profiling showed a step costs 873 ms on MPS with deterministic kernels
+(`CHANGELOG`, 2026-09-02). It is a compute decision, not a modelling one, and
+it is recorded rather than presented as a converged result.
+
+**What to run before the paper:** the headline configs to convergence — epochs
+raised until early stopping actually fires — at ten seeds. Everything else can
+stay at the reduced budget provided the ablation family shares it, which it
+does.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

@@ -42,6 +42,9 @@ Three things follow, and they shape everything here:
    numbers use session-disjoint, temporal and server-disjoint protocols.
 3. **Nothing is reported that a script did not produce.** Table cells with no
    run behind them read `TODO`. `scripts/make_paper_assets.py` counts them.
+4. **Every model number here is a lower bound.** 13 of 16 runs stopped with
+   validation accuracy still rising — the 15-epoch budget is a compute
+   decision, not a modelling one. See `paper/THREATS.md` §8.
 
 ---
 

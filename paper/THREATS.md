@@ -116,14 +116,28 @@ constant encoder.
   because a reader would take a flat curve as a claim about deployment
   lifetime.
 
-## 8. Compute and statistical power
+## 8. The model is under-trained, and every number is a lower bound
+
+13 of 16 completed runs ended with `best_epoch == epochs_run`: early stopping
+never fired because validation macro-F1 was still rising at the epoch budget.
+The CESNET seed-0 trajectory climbs monotonically from 0.457 to 0.779 across
+15 epochs with no plateau.
+
+The 15-epoch budget is a compute decision — it makes a 21-run sweep fit in
+seven hours on one machine — not a modelling one. Every FlowCon-X figure here
+is therefore a lower bound, and the comparison against classical baselines is
+unfair in our own disfavour, since those are trained to their own convergence
+criteria while the neural model is cut off mid-ascent. The headline
+configurations must be re-run to convergence before submission.
+
+## 9. Compute and statistical power
 
 Runs are on a single machine. Where fewer than the stated number of seeds were
 completed, `results/aggregate.json` marks the cell and the Wilcoxon test
 **refuses to emit a p-value below six seeds** rather than reporting an
 underpowered one.
 
-## 9. Ethical and privacy considerations
+## 10. Ethical and privacy considerations
 
 *(Mandatory for NDSS, USENIX Security and IMC.)*
 

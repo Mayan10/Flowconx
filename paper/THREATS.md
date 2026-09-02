@@ -55,6 +55,14 @@ random flow split as a contrast column. Residual dependence remains:
   CESNET session-disjoint number**, where 104 applications spread across all 28
   capture days. Both numbers appear in the paper with this stated; presenting
   them in one column without it would be misleading.
+
+  A second consequence: **`roblox` is an undeclared unknown application.** It
+  has one capture file, so all 6,000 of its flows land in test while training
+  sees only `zepeto` for the metaverse class. Those rows are scored as knowns,
+  which is why that class's per-class F1 is 0.008 in the headline run. The
+  open-set experiment deliberately does *not* declare it, so that its result
+  is about the applications we chose to hold out rather than about an artefact
+  of the split.
 - **CESNET-QUIC22:** we group on the capture day. Flows from one client on
   consecutive days are not separated. A client-disjoint split is possible
   (`SRC_IP` is retained) and is the obvious next control.

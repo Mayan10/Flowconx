@@ -1,12 +1,36 @@
 defaults: [fiveg_main.yaml]
 name: flowconx_open_set
 description: >
-  Three applications held out of training entirely, including out of
-  validation, and treated as unknown at test time. Held-out apps span three
-  different service classes so that rejection cannot be solved by rejecting
-  one class.
+  Open-set rejection and few-shot enrollment on 5G Traffic.
+
+  Three applications are held out of training entirely -- including out of
+  validation, or model selection leaks them back in -- and treated as unknown
+  at test time. They are chosen to satisfy three conditions that an earlier
+  version of this config silently violated:
+
+    1. Each must actually appear in the session-disjoint test split. The
+       previous choice (netflix, kt_gamebox, google_meet) had two apps that do
+       not appear there at all, so the evaluation would have scored AUROC on a
+       single held-out app contributing 2.9% of test rows.
+    2. They must span different service classes, or rejection collapses into
+       "reject one class".
+    3. Removing each from training must leave its service class with at least
+       one other application, or the class disappears from training and the
+       closed-set half of the open-set metric becomes meaningless.
+
+  Chosen: ms_teams (video_conferencing, 5,868 test rows; zoom and google_meet
+  remain in training), teamfight_tactics (online_game, 898; battleground
+  remains), geforce_now (game_streaming, 743; kt_gamebox remains). Together
+  7,509 of 32,859 test rows, 22.8%, across three service classes.
+
+  Note that `roblox` is *already* unknown in this split without being declared:
+  it has a single capture file, so session-disjoint grouping puts all of it in
+  test. Its 6,000 test rows are scored as knowns of the metaverse class, which
+  is why that class's per-class F1 collapses in the headline run. It is left
+  undeclared here so that the open-set result is about the apps we chose, and
+  the effect is documented in paper/THREATS.md instead.
 data:
-  unknown_apps: [netflix, kt_gamebox, google_meet]
+  unknown_apps: [ms_teams, teamfight_tactics, geforce_now]
 eval:
   open_set: true
   few_shot: true

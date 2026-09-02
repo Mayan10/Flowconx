@@ -183,3 +183,55 @@ def test_ablations_use_a_stratified_subsample_not_a_prefix():
             "ablation to the earliest capture days"
         )
         assert config.data.subsample_rows is not None
+
+
+def test_open_set_holdout_is_viable():
+    """Held-out apps must actually be unknown *in the test split*.
+
+    An earlier version of configs/fiveg_open_set.yaml held out three apps of
+    which two do not appear in the session-disjoint test split at all, so the
+    evaluation would have scored AUROC against a single held-out app
+    contributing 2.9% of test rows, all from one service class. The config
+    would have run and produced a number; nothing would have flagged it.
+
+    Skips when the dataset is absent, since CI does not carry it.
+    """
+    from pathlib import Path
+
+    import pandas as pd
+    import pytest as _pytest
+
+    from flowconx.audit.splits import ensure_flow_ids, indices_from_manifest, load_manifest
+    from flowconx.labels import RareClassPolicy, apply_rare_class_policy
+
+    csv = Path("data/processed/fiveg_traffic.csv")
+    manifest_path = Path("splits/fiveg_traffic/session_disjoint_seed42.json.gz")
+    if not csv.exists() or not manifest_path.exists():
+        _pytest.skip("5G dataset not built; run `python -m flowconx.data.prepare --source fiveg`")
+
+    config = load_config("configs/fiveg_open_set.yaml")
+    unknown = {a.lower() for a in config.data.unknown_apps}
+    assert unknown, "the open-set config declares no held-out applications"
+
+    frame = pd.read_csv(csv, usecols=["app", "service", "capture_id", "flow_id"])
+    frame, _ = apply_rare_class_policy(
+        frame, RareClassPolicy(mode=config.data.rare_class_mode, min_class_count=config.data.min_class_count)
+    )
+    frame, _ = ensure_flow_ids(frame)
+    indices = indices_from_manifest(frame, load_manifest(manifest_path))
+    train, test = frame.iloc[indices["train"]], frame.iloc[indices["test"]]
+
+    present = unknown & set(test["app"].str.lower())
+    assert present == unknown, f"held-out apps absent from the test split: {sorted(unknown - present)}"
+
+    share = float(test["app"].str.lower().isin(unknown).mean())
+    assert 0.05 < share < 0.5, f"unknowns are {share:.1%} of test; too lopsided to score AUROC on"
+
+    services = set(frame[frame["app"].str.lower().isin(unknown)]["service"])
+    assert len(services) >= 2, "held-out apps share one service; rejection collapses to rejecting a class"
+
+    surviving = set(train[~train["app"].str.lower().isin(unknown)]["service"])
+    assert surviving == set(frame["service"]), (
+        "removing the held-out apps empties a service class from training, which makes the "
+        "closed-set half of the open-set metric meaningless"
+    )

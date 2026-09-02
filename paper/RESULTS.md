@@ -57,6 +57,66 @@ replanning before Phase 1.
 
 ---
 
+## 2026-09-02 — Second shortcut audit, on the regenerated corpora
+
+**Command**
+
+```bash
+make data     # 5G Traffic: 330M packet rows; CESNET: 153M flow rows
+make audit
+```
+
+**Sources:** `results/audit/fiveg_traffic/`, `results/audit/cesnet_quic22/`
+**Full reading:** `AUDIT.md` §9
+
+### 5G Traffic (164,348 conversation segments, 6 classes)
+
+Macro-F1, identical committed splits:
+
+| Probe | Random flow | Session-disjoint | Temporal | Server-disjoint | App-disjoint |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Majority class | 0.061 | 0.056 | 0.000 | 0.036 | 0.000 |
+| Server IP only | **0.999** | 0.765 | 0.269 | 0.337 | 0.055 |
+| Capture ID only | **0.983** | **0.000** | 0.079 | 0.325 | 0.164 |
+| Port only | 0.814 | 0.598 | 0.153 | 0.684 | 0.000 |
+| AppScanner (2016) | 0.996 | 0.640 | 0.255 | 0.711 | 0.075 |
+| FlowCon-X | TODO | TODO | TODO | TODO | TODO |
+
+### CESNET-QUIC22 (201,600 flows, 18 classes)
+
+| Probe | Random flow | Session-disjoint | Temporal | Server-disjoint | App-disjoint |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Majority class | 0.006 | 0.006 | 0.006 | 0.001 | 0.000 |
+| SNI only | **0.967** | **0.967** | **0.968** | 0.791 | 0.004 |
+| Server IP only | 0.772 | 0.768 | 0.760 | 0.026 | 0.028 |
+| AppScanner (2016) | 0.768 | 0.772 | 0.762 | 0.566 | 0.057 |
+| FlowCon-X | TODO | TODO | TODO | TODO | TODO |
+
+Port and protocol probes are `n/a` on CESNET: every flow is QUIC to port 443.
+SNI and AS probes are `n/a` on 5G Traffic: the captures carry neither.
+
+**What surprised me.**
+
+1. **Server IP alone gets 0.999 under a random flow split on 5G Traffic**, and
+   capture ID alone gets 0.983. That protocol is not measuring traffic analysis;
+   it is measuring capture identity. Session-disjoint splitting drives capture
+   ID to exactly 0.000, which is the grouping doing precisely what it claims.
+2. **On CESNET, session-disjoint is indistinguishable from random** (0.772 vs
+   0.768). The split-protocol effect is dataset-dependent, not universal. This
+   *qualifies* the measurement claim rather than reinforcing it, and both halves
+   go in the paper.
+3. **SNI alone reaches 0.967 on CESNET** — the label's own source. It caps what
+   any result on this dataset can mean.
+4. **Temporal is the hardest protocol on 5G Traffic**, halving every baseline
+   against session-disjoint. It should be a headline column, not a robustness
+   appendix.
+5. Zero exact duplicates across splits on every protocol of both datasets. The
+   v1 corpus had 53.
+
+**Status:** complete. Model runs in progress.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

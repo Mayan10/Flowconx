@@ -6,6 +6,67 @@ than deleted.
 
 ## [Unreleased]
 
+### 2026-09-02 — Phase 1-5: rebuilt data pipeline, harness, and evaluation
+
+**Data.** Both corpora rebuilt from the raw archives, streamed from the zips
+without expanding them. 5G Traffic: 164,348 conversation segments from 330M
+packet rows across all 75 captures. CESNET-QUIC22: 201,600 flows sampled from
+153M rows across all 28 days and four weeks. Both carry full provenance, so
+five of six split protocols are available where two were before.
+
+**The two datasets are no longer merged.** The merge was itself a shortcut:
+`protocol == 0` was 99.9% one class because it recorded which preparer had
+run. `protocol` is now provenance rather than a model input.
+
+**Impact on results: total.** No number from the previous corpus carries over.
+`AUDIT.md` §9 is the audit of the new one.
+
+**Changes that alter what the paper can claim** (per standing rule 3):
+
+1. *The nuisance variable changed.* It was `condition`, a threshold on two of
+   the model's own input features, reconstructed with agreement 1.000. It is
+   now drawn from provenance the model never sees (capture session, week,
+   server AS). The invariance claim now refers to a different quantity and the
+   0.6409 CIST score does not carry over. Recorded in `paper/CLAIMS.md` C9 and
+   `paper/THREATS.md` §6.
+2. *Labels come from each dataset's own taxonomy.* 5G Traffic uses its
+   directory structure; CESNET uses its `CATEGORY` field. The hand-written
+   mapping with its substring fallback is gone, along with the mislabels it
+   produced (`csgo_market` and `cloudflare_cdnjs` both matched "ar" and were
+   labelled `xr_interactive`).
+3. *A row is a conversation segment, not a 10-second window over a whole
+   capture.* The unit of observation is now the same across both datasets.
+
+**Defects found and fixed while building** (each changed results, not only
+speed):
+
+- `byte_progress` and `time_progress` normalised by the observation window's
+  total, so the value at packet 1 depended on packets not yet seen. Harmless
+  for full-flow scoring, but it inflated the early-classification curve, which
+  is one of the paper's claims. Both channels are causal now; a test asserts
+  that truncating a sequence equals observing fewer packets.
+- The memory bank's `sample()` broke at `max_total` while looping over
+  classes, so the contrastive loss saw only whichever 4 of 18 classes came
+  first in dictionary order. First-epoch validation macro-F1 moved 0.164 →
+  0.513 when fixed.
+- The `defaults:` chain was resolved one level deep, so every ablation
+  silently fell back to dataclass defaults for its grandparent's keys and
+  would have run on a different dataset and split than its own reference row.
+- The audit reported a degenerate number for a probe whose column was absent
+  or constant, which reads as "this identifier does not help" when it means
+  "this dataset has no such field". It now reports `unavailable` with the
+  reason.
+
+**Harness.** Single entry point (`python -m flowconx.run`), 45 YAML configs
+including 35 ablations sharing one documented reduced budget, full determinism
+and provenance recording, Makefile, Dockerfile, 100 tests.
+
+**Evaluation.** Open-set rejection with four scoring rules on one embedding,
+few-shot enrollment curves, temporal drift with prototype re-enrollment,
+eleven condition and countermeasure perturbations reported against the
+overhead each imposes, early-classification curves, end-to-end latency
+percentiles, and adversarial probing to replace the CIST score.
+
 ### 2026-08-28 — Phase 0: audit, split protocols, leakage tests
 
 Standing-rule compliance: no number in this repository is hand-entered. Every

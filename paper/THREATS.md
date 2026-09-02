@@ -45,6 +45,16 @@ random flow split as a contrast column. Residual dependence remains:
   time window and a network path. `capture_id` grouping removes the worst of it.
   Segments from *different* captures of the same app on the same day may still
   be correlated through the device and the access network.
+- **5G session-disjoint is partly app-disjoint, by accident.** Several
+  applications have only one or two capture files -- Roblox and Netflix have
+  one each -- so grouping on `capture_id` puts an entire application on one
+  side of the split. In the seed-42 split, the whole of `roblox` lands in test
+  while training sees only `zepeto` for the `metaverse` class, and its per-class
+  F1 is 0.008 as a result. **The 5G session-disjoint number is therefore a
+  hybrid of session- and application-disjointness and is not comparable to the
+  CESNET session-disjoint number**, where 104 applications spread across all 28
+  capture days. Both numbers appear in the paper with this stated; presenting
+  them in one column without it would be misleading.
 - **CESNET-QUIC22:** we group on the capture day. Flows from one client on
   consecutive days are not separated. A client-disjoint split is possible
   (`SRC_IP` is retained) and is the obvious next control.

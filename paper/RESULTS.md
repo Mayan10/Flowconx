@@ -181,6 +181,107 @@ tables until they land.
 
 ---
 
+## 2026-09-02 — 5G Traffic headline: FlowCon-X **loses** to the baselines
+
+**Recorded because it happened, not because it helps.**
+
+**Config:** `configs/fiveg_main.yaml`, session-disjoint, 114,872 / 16,617 /
+32,859, 6 classes, seed 0.
+**Source:** `results/flowconx_main/fiveg_traffic/session_disjoint/seed0/metrics.json`
+
+| Method (identical committed split) | Macro-F1 |
+| --- | --- |
+| Majority class | 0.0556 |
+| CUMUL | 0.3401 |
+| AppScanner (2016) | 0.6399 |
+| **FlowCon-X (k-NN)** | **0.5953** |
+| **FlowCon-X (prototype)** | **0.5677** |
+| Packet-size histogram (XGBoost) | 0.8302 |
+| **All flow scalars (XGBoost)** | **0.8494** |
+
+FlowCon-X is **0.25 macro-F1 below a gradient-boosted tree on thirteen flow
+scalars**, and below AppScanner. This is not a close call and it is not noise.
+
+### Why
+
+Per-class F1 for the prototype head:
+
+| Class | F1 |
+| --- | --- |
+| `metaverse` | 0.008 |
+| `video_conferencing` | 0.197 |
+| `online_game` | 0.550 |
+| `game_streaming` | 0.816 |
+| `live_streaming` | 0.878 |
+| `stored_streaming` | 0.956 |
+
+Two classes collapse. The cause is structural, and it is a property of the
+split rather than of the model:
+
+| Service | Train apps | Test apps | Unseen in train |
+| --- | --- | --- | --- |
+| metaverse | zepeto | roblox, zepeto | **roblox** (6,000 of 6,043 test rows) |
+| video_conferencing | google_meet, ms_teams, zoom | ms_teams | — |
+| live_streaming | afreecatv, naver_now, youtube_live | youtube_live | — |
+| stored_streaming | amazon_prime, netflix, youtube | amazon_prime | — |
+
+Several 5G applications have only one or two capture files, so grouping on
+`capture_id` puts an entire application on one side. **The 5G session-disjoint
+split is therefore partly app-disjoint by accident**, and `metaverse` in
+particular is a leave-one-app-out result wearing a closed-set label.
+
+That explains the direction of the loss. A gradient-boosted tree on coarse
+volume statistics transfers across applications within a service, because
+"metaverse traffic is bursty and small-packet" holds for Roblox whether or not
+Roblox was in training. A metric-trained embedding keys on finer per-application
+structure, which does not transfer zero-shot.
+
+### What this means for the paper
+
+1. **The 5G and CESNET headline numbers are not comparable** and must not sit
+   in one column without this note.
+2. **This is a real negative result about the architecture**, not only about
+   the split: the embedding generalises *worse* to unseen applications than a
+   coarse statistical model does. Claim C2 is not supported on this dataset.
+3. It sharpens rather than refutes C5. The embedding needs a handful of
+   labelled flows to enroll a new application precisely because it does not
+   transfer zero-shot; the few-shot curve is the experiment that decides
+   whether that trade is worth making. **If enrollment at k = 5-25 does not
+   close the 0.25 gap, the architecture has no case on this dataset and the
+   paper should say so.**
+4. `paper/THREATS.md` §3 needs the app-per-capture structure added.
+
+### Robustness (the part that did work)
+
+4,000 test rows, encoder frozen, perturbations applied to test traffic only:
+
+| Perturbation | Kind | Macro-F1 | Drop | Byte overhead | Packet overhead |
+| --- | --- | --- | --- | --- | --- |
+| `clean` | reference | 0.5539 | +0.0000 | 1.00x | 1.00x |
+| `jitter_5ms` | condition | 0.5542 | -0.0003 | 1.00x | 1.00x |
+| `jitter_25ms` | condition | 0.5285 | +0.0254 | 1.00x | 1.00x |
+| `loss_1pct` | condition | 0.5508 | +0.0031 | 0.99x | 0.99x |
+| `loss_5pct` | condition | 0.5430 | +0.0109 | 0.95x | 0.95x |
+| `pad_mtu` | defence | 0.2556 | +0.2983 | 2.28x | 1.00x |
+| `pad_buckets` | defence | 0.5048 | +0.0491 | 1.14x | 1.00x |
+| `quantize_128` | defence | 0.5431 | +0.0108 | 1.08x | 1.00x |
+| `random_pad` | defence | 0.5535 | +0.0004 | 1.15x | 1.00x |
+| `constant_rate` | defence | 0.2097 | +0.3441 | 2.28x | 1.00x |
+| `dummy_20pct` | defence | 0.5439 | +0.0100 | 1.17x | 1.19x |
+
+Read as a defender's table, this is the useful result:
+
+- **Network conditions barely matter.** Jitter at 25 ms costs 0.025 and 5%
+  packet loss costs 0.011. The condition-robustness claim survives.
+- **Only defences that destroy packet-size information work, and they cost
+  2.28x bandwidth.** Constant-rate padding costs 0.344 macro-F1, MTU padding
+  0.298 — both at 2.28x bytes.
+- **The cheap defences do nothing.** Random padding costs 0.0004 at 1.15x
+  overhead, dummy injection 0.010 at 1.17x, 128-byte quantisation 0.011 at
+  1.08x. A defender deploying these is paying for nothing.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

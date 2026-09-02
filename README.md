@@ -42,12 +42,12 @@ Three things follow, and they shape everything here:
 | # | Claim | Evidence | Status |
 | --- | --- | --- | --- |
 | C1 | Random flow splitting substantially inflates encrypted-traffic results | `paper/tables/split_contrast.tex` | partially supported |
-| C2 | Competitive under strict protocols — **not** state of the art | `paper/tables/main_comparison_*.tex` | supported (0.789 vs 0.772 AppScanner; ~nil vs XGBoost) |
+| C2 | Competitive under strict protocols — **not** state of the art | `paper/tables/main_comparison_*.tex` | supported on CESNET (0.789 vs 0.772); **not supported on 5G** (0.595 vs 0.849) |
 | C3 | Identifier shortcuts do not explain the task | main comparison, shortcut tier | pending |
 | C4 | Metric-trained embedding rejects unknown applications better than softmax | `results/flowconx_open_set/` | pending |
 | C5 | New applications enroll from a handful of flows, no retraining | `paper/figures/enrollment_curve.pdf` | pending |
 | C6 | Degrades gracefully over time; cheaply restored by re-enrollment | `drift` block | pending |
-| C7 | Survives padding defences at a stated overhead | `paper/figures/robustness_overhead.pdf` | pending |
+| C7 | Survives padding defences at a stated overhead | `paper/figures/robustness_overhead.pdf` | supported (only 2.28× -overhead defences bite) |
 | C8 | Decides from few packets, fast enough to sit inline | `paper/tables/cost.tex` | partially supported (p50 6.1 ms end-to-end, 7.8k flows/s) |
 | C9 | Adversarial removal reduces nuisance leakage without destroying the representation | `paper/figures/adversarial_tradeoff.pdf` | pending |
 

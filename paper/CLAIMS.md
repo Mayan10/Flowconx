@@ -47,10 +47,15 @@ Status legend: **supported** (result exists and the test passed) ·
   the latter is *within one seed standard deviation*. The closed-set gain is
   about 1.5 points over a 2016 baseline and roughly nil over a well-tuned
   gradient-boosted tree.
+- **Not supported on 5G Traffic.** Session-disjoint, seed 0: FlowCon-X reaches
+  0.5953 (k-NN) against 0.8494 for XGBoost on thirteen flow scalars and 0.6399
+  for AppScanner. A 0.25 macro-F1 loss, driven by two classes collapsing where
+  the split is accidentally app-disjoint (`metaverse` F1 = 0.008, its test set
+  being almost entirely an application absent from training).
 - **Consequence for the paper:** the closed-set table cannot be the
-  contribution. It establishes competitiveness and nothing more, and the
-  introduction must not imply otherwise. C4–C8 carry the argument or there
-  isn't one.
+  contribution. It establishes competitiveness on one dataset and a clear loss
+  on the other, and the introduction must not imply otherwise. C4–C8 carry the
+  argument or there isn't one.
 - **Constraint:** ET-BERT, YaTC, CLE-TFE, MIETT, FlowletFormer and PacketCLIP
   were **not run** — all six tokenise raw payload bytes, which our QUIC/TLS
   records do not retain. See `flowconx/baselines/WHY_NOT_RUN.md`. The claim is
@@ -89,10 +94,16 @@ Status legend: **supported** (result exists and the test passed) ·
 
 - **Evidence:** `paper/figures/enrollment_curve.pdf`, `paper/tables/cost.tex`
 - **Test:** enrollment curves with spread over repeated draws
-- **Status:** **pending**
+- **Status:** **pending, and now load-bearing.**
 - **Both halves are required.** The accuracy curve alone is not the claim; the
   cost asymmetry has to be measured in seconds and GPU-hours, or the claim is
   rhetorical.
+- **Decision rule, written down before the result arrives.** The 5G loss shows
+  the embedding does not transfer zero-shot to an unseen application, which is
+  consistent with a design that expects enrollment. **If enrollment at
+  k = 5–25 labelled flows does not close that 0.25 macro-F1 gap, the
+  architecture has no case on this dataset and the paper says so** rather than
+  reframing around whatever else happens to look good.
 
 ## C6 — Performance degrades gracefully over time and is cheaply restored
 
@@ -110,7 +121,14 @@ Status legend: **supported** (result exists and the test passed) ·
 > is not the same result as one that does it for free.
 
 - **Evidence:** `paper/figures/robustness_overhead.pdf`
-- **Status:** **pending**
+- **Status:** **supported (5G, seed 0).** Network conditions barely register:
+  25 ms jitter costs 0.025 macro-F1 and 5% packet loss 0.011. Among
+  countermeasures, only those that destroy packet-size information work, and
+  they cost 2.28x bandwidth: constant-rate padding −0.344, MTU padding −0.298.
+  The cheap defences do essentially nothing — random padding −0.0004 at 1.15x
+  overhead, dummy injection −0.010 at 1.17x, 128-byte quantisation −0.011 at
+  1.08x. Stated as a defender's result, that is the useful direction: a
+  defender deploying the cheap options is paying for nothing.
 
 ## C8 — Decisions are made from few packets, fast enough to sit inline
 

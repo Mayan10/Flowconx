@@ -1,0 +1,7 @@
+defaults:
+- ../fiveg_open_set.yaml
+name: openset_ablation_no_flow_supcon
+description: Contrastive term only removed, margin retained. The complement of the
+  row above.
+loss:
+  lambda_flow_supcon: 0.0

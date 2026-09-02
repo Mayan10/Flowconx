@@ -49,6 +49,9 @@ STAGES: Dict[str, List[str]] = {
         "configs/fiveg_open_set.yaml",
     ],
     "ablations": sorted(str(p) for p in Path("configs/ablations").glob("*.yaml")),
+    # Ablations scored on the open-set metric rather than closed-set macro-F1.
+    # Restricted to the four that could bear on C4; see the family's full.yaml.
+    "ablations_openset": sorted(str(p) for p in Path("configs/ablations_openset").glob("*.yaml")),
     # Baselines reuse the model's config for data, split and training budget,
     # and are dispatched through flowconx.baselines.run_baselines rather than
     # flowconx.run. Same results layout, so the aggregator needs no special

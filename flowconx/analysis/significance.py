@@ -292,6 +292,18 @@ FAMILIES: Dict[str, Dict[str, object]] = {
         "reference": "ablation_full",
         "members": ["ablation_classify_z_app", "ablation_classify_z_network", "ablation_classify_z_concat"],
     },
+    # The reference row is the existing flowconx_open_set run: identical
+    # settings, so a separate "full" config would be the same experiment under
+    # another name and the sweep runner would refuse to run it twice.
+    "open_set_ablations": {
+        "reference": "flowconx_open_set",
+        "members": [
+            "openset_ablation_no_flow_metric",
+            "openset_ablation_no_pair_margin",
+            "openset_ablation_no_flow_supcon",
+            "openset_ablation_no_adversarial",
+        ],
+    },
     "against_baselines": {
         "reference": "flowconx_main",
         "members": [

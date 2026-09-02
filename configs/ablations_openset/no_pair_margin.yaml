@@ -1,0 +1,7 @@
+defaults:
+- ../fiveg_open_set.yaml
+name: openset_ablation_no_pair_margin
+description: Margin term only removed, contrastive retained. Separates which of the
+  two metric objectives the rejection behaviour depends on.
+loss:
+  lambda_flow_pair_margin: 0.0

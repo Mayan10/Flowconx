@@ -1,0 +1,10 @@
+defaults:
+- ../fiveg_open_set.yaml
+name: openset_ablation_no_adversarial
+description: Adversarial nuisance removal deleted. Included because removing capture
+  identity from the embedding could plausibly help or hurt rejection of unseen applications,
+  and we have no prediction either way.
+model:
+  adversarial_head: false
+loss:
+  lambda_adversarial: 0.0

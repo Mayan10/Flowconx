@@ -1,0 +1,11 @@
+defaults:
+- ../fiveg_open_set.yaml
+name: openset_ablation_no_flow_metric
+description: THE decisive ablation for C4. Removes every metric objective on the deployed
+  embedding, leaving the field-standard z_app-only training. If prototype rejection
+  still beats softmax here, the metric objective is not what produces the open-set
+  advantage and C4's mechanism is misattributed -- which would be the last modelling
+  claim gone.
+loss:
+  lambda_flow_supcon: 0.0
+  lambda_flow_pair_margin: 0.0

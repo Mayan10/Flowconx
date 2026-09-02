@@ -49,7 +49,18 @@ STAGES: Dict[str, List[str]] = {
         "configs/fiveg_open_set.yaml",
     ],
     "ablations": sorted(str(p) for p in Path("configs/ablations").glob("*.yaml")),
+    # Baselines reuse the model's config for data, split and training budget,
+    # and are dispatched through flowconx.baselines.run_baselines rather than
+    # flowconx.run. Same results layout, so the aggregator needs no special
+    # case.
+    "baselines": [
+        "configs/cesnet_main.yaml",
+        "configs/fiveg_main.yaml",
+    ],
 }
+
+# Stages whose configs go to the baseline runner instead of the model runner.
+BASELINE_STAGES = {"baselines"}
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -82,7 +93,10 @@ def plan(args: argparse.Namespace) -> List[Dict[str, object]]:
             if not Path(config_path).exists():
                 continue
             config = load_config(config_path)
-            digest = config.hash()
+            # Namespaced by stage kind: the same config legitimately appears
+            # once for the model and once for the baselines, and those are
+            # different runs.
+            digest = f"{'baseline' if stage in BASELINE_STAGES else 'model'}:{config.hash()}"
             if digest in seen_hash:
                 jobs.append(
                     {
@@ -112,10 +126,11 @@ def plan(args: argparse.Namespace) -> List[Dict[str, object]]:
 
 
 def run_one(job: Dict[str, object], args: argparse.Namespace) -> Dict[str, object]:
+    module = "flowconx.baselines.run_baselines" if job["stage"] in BASELINE_STAGES else "flowconx.run"
     command = [
         sys.executable,
         "-m",
-        "flowconx.run",
+        module,
         "--config",
         str(job["config"]),
         "--seed",
@@ -127,7 +142,7 @@ def run_one(job: Dict[str, object], args: argparse.Namespace) -> Dict[str, objec
         command += ["--set", override]
     if args.overwrite:
         command.append("--overwrite")
-    if args.save_model:
+    if args.save_model and module == "flowconx.run":
         command.append("--save-model")
 
     started = time.perf_counter()

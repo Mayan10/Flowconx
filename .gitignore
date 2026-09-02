@@ -44,6 +44,10 @@ data/*.pcapng
 *.pt
 !outputs/flowconx_final_labeled_kpi_pass/flowconx_checkpoint.pt
 
+# `make repro-small` writes here so it cannot collide with the committed
+# full-budget results.
+results-small/
+
 # Test and build noise
 .pytest_cache/
 .ruff_cache/

@@ -60,13 +60,18 @@ test-all: lint
 repro-small:
 	@for s in $(SEEDS_SMALL); do \
 		$(PYTHON) -m flowconx.run --config configs/cesnet_main.yaml --seed $$s \
-			--set train.epochs=8 --set train.stage1_epochs=4 --overwrite; \
+			--set data.subsample_rows=40000 --set train.epochs=6 --set train.stage1_epochs=3 \
+			--output-root results-small --overwrite; \
 	done
-	$(PYTHON) -m flowconx.analysis.aggregate --results results --out results/aggregate.json
+	$(PYTHON) -m flowconx.baselines.run_baselines --config configs/cesnet_main.yaml --seed 0 \
+		--set data.subsample_rows=40000 --set train.epochs=6 --output-root results-small --overwrite
+	$(PYTHON) -m flowconx.analysis.aggregate --results results-small --out results-small/aggregate.json
 
 # repro-full: the headline table, every ablation, every evaluation mode.
 repro-full: data audit
-	$(PYTHON) scripts/run_all_experiments.py --seeds $(SEEDS_FULL)
+	$(PYTHON) scripts/run_all_experiments.py \
+		--stages headline split_contrast novelty baselines ablations \
+		--seeds $(SEEDS_FULL) --headline-seeds $(SEEDS_FULL)
 	$(PYTHON) -m flowconx.analysis.significance --results results --out results/significance.json
 	$(PYTHON) -m flowconx.analysis.aggregate --results results --out results/aggregate.json
 	$(MAKE) paper

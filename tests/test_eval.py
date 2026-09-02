@@ -265,3 +265,44 @@ def test_constant_rate_removes_all_size_and_timing_variation():
     )
     assert new_lengths.std() == pytest.approx(0.0, abs=1e-9)
     assert new_iats.std() == pytest.approx(0.0, abs=1e-9)
+
+
+# --------------------------------------------------------------------------
+# Nuisance probing
+# --------------------------------------------------------------------------
+
+
+def test_probe_recovers_a_nuisance_that_is_present():
+    """A probe must find information that is genuinely there.
+
+    If it cannot, then "the probe found nothing" carries no evidence and the
+    invariance claim is unfalsifiable.
+    """
+    from flowconx.eval.probes import probe_target
+
+    rng = np.random.default_rng(0)
+    nuisance = rng.integers(0, 3, 800)
+    offsets = rng.normal(size=(3, 12)) * 4.0
+    x = offsets[nuisance] + rng.normal(scale=0.4, size=(800, 12))
+    result = probe_target(x[:400], nuisance[:400], x[400:], nuisance[400:], seed=0)
+    assert result["status"] == "ok"
+    assert result["probes"]["linear"]["above_majority"] > 0.4
+    assert result["probes"]["mlp"]["above_majority"] > 0.4
+
+
+def test_probe_finds_nothing_when_the_nuisance_is_absent():
+    from flowconx.eval.probes import probe_target
+
+    rng = np.random.default_rng(1)
+    x = rng.normal(size=(800, 12))
+    nuisance = rng.integers(0, 3, 800)  # independent of x by construction
+    result = probe_target(x[:400], nuisance[:400], x[400:], nuisance[400:], seed=0)
+    assert abs(result["probes"]["mlp"]["above_majority"]) < 0.15
+
+
+def test_probe_skips_a_single_valued_target():
+    from flowconx.eval.probes import probe_target
+
+    x = np.random.default_rng(2).normal(size=(50, 4))
+    y = np.zeros(50, dtype=int)
+    assert probe_target(x[:25], y[:25], x[25:], y[25:], seed=0)["status"] == "skipped"

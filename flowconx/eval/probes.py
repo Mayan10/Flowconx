@@ -83,20 +83,50 @@ def evaluate_nuisance_probes(
     label_space,
     max_rows: int = 8000,
 ) -> Dict[str, object]:
-    """Probe the deployed embedding, and the raw features, for the nuisance."""
+    """Probe the deployed embedding, and the raw features, for the nuisance.
+
+    The probe is fitted and scored on an internal split of the **pooled**
+    embeddings, not on the task's train/test partition. This matters and it is
+    easy to get wrong: under a session-disjoint protocol the nuisance is
+    *defined* to be disjoint between the task's train and test sides, so a
+    probe trained on train-weeks and scored on test-weeks cannot be right about
+    anything and its accuracy collapses below chance. That would read as
+    excellent invariance while measuring nothing at all.
+
+    Pooling first and then splitting internally gives the probe a fair chance
+    to find the nuisance, which is the only way its failure to find it means
+    something.
+    """
     rng = np.random.default_rng(config.seed)
 
-    def sample(side: str):
-        n = len(splits[side].labels)
-        if n <= max_rows:
-            return np.arange(n)
-        return np.sort(rng.choice(n, size=max_rows, replace=False))
+    pooled_embeddings = np.vstack([embeddings[side] for side in ("train", "val", "test") if len(embeddings[side])])
+    pooled_flow = np.vstack(
+        [splits[side].features.flow_features for side in ("train", "val", "test") if len(splits[side].labels)]
+    )
+    pooled_nuisance = np.concatenate(
+        [splits[side].nuisance_labels for side in ("train", "val", "test") if len(splits[side].labels)]
+    )
+    pooled_task = np.concatenate(
+        [splits[side].labels for side in ("train", "val", "test") if len(splits[side].labels)]
+    )
 
-    train_idx, test_idx = sample("train"), sample("test")
+    n_pooled = len(pooled_task)
+    order = rng.permutation(n_pooled)
+    if n_pooled > 2 * max_rows:
+        order = order[: 2 * max_rows]
+    cut = len(order) // 2
+    train_idx, test_idx = np.sort(order[:cut]), np.sort(order[cut:])
     results: Dict[str, object] = {
         "status": "ok",
         "nuisance_source": label_space.nuisance_source,
         "adversarial_weight": config.loss.lambda_adversarial,
+        "protocol": (
+            "Embeddings from all three task splits are pooled and split 50/50 for the probe. The "
+            "task's own partition is not reused, because a strict protocol makes the nuisance disjoint "
+            "across it by construction."
+        ),
+        "probe_train_rows": int(len(train_idx)),
+        "probe_test_rows": int(len(test_idx)),
         "targets": {},
     }
     if label_space.nuisance_source == "none":
@@ -107,15 +137,12 @@ def evaluate_nuisance_probes(
         )
 
     views = {
-        "z_flow": (embeddings["train"][train_idx], embeddings["test"][test_idx]),
-        "raw_flow_features": (
-            splits["train"].features.flow_features[train_idx],
-            splits["test"].features.flow_features[test_idx],
-        ),
+        "z_flow": (pooled_embeddings[train_idx], pooled_embeddings[test_idx]),
+        "raw_flow_features": (pooled_flow[train_idx], pooled_flow[test_idx]),
     }
     targets = {
-        "nuisance": (splits["train"].nuisance_labels[train_idx], splits["test"].nuisance_labels[test_idx]),
-        "task": (splits["train"].labels[train_idx], splits["test"].labels[test_idx]),
+        "nuisance": (pooled_nuisance[train_idx], pooled_nuisance[test_idx]),
+        "task": (pooled_task[train_idx], pooled_task[test_idx]),
     }
     for target_name, (train_y, test_y) in targets.items():
         results["targets"][target_name] = {

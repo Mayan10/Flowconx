@@ -340,6 +340,69 @@ because a reader would take it as a claim about deployment lifetime.
 
 ---
 
+## 2026-09-02 — The split axis that matters is corpus-specific
+
+Three seeds per protocol, k-NN head, every method on the identical committed
+splits. Against `session_disjoint` as the reference.
+
+### CESNET-QUIC22
+
+| Split protocol | FlowCon-X | AppScanner | Capture-ID probe |
+| --- | --- | --- | --- |
+| Random flow | 0.7817 ± 0.0037 | 0.7675 | 0.0410 |
+| Session-disjoint | 0.7863 ± 0.0043 | 0.7718 | 0.0058 |
+| Temporal | 0.7814 ± 0.0019 | 0.7615 | 0.0107 |
+| Server-disjoint | 0.5822 ± 0.0017 | 0.5659 | 0.0277 |
+
+| Contrast | FlowCon-X | Δ vs session-disjoint | Cohen's d | Test |
+| --- | --- | --- | --- | --- |
+| `random_flow` | 0.7805 | -0.0021 | 0.23 | undetermined (3 seeds) |
+| `temporal` | 0.7820 | -0.0007 | 0.12 | undetermined (3 seeds) |
+| `server_disjoint` | 0.5913 | -0.1914 | 19.30 | undetermined (3 seeds) |
+
+**Only server-disjointness bites.** It costs 0.19 macro-F1 with Cohen's
+d = 19.3 — three seeds whose standard deviations are 0.002–0.004, so the effect
+dwarfs the noise even though a Wilcoxon test at n = 3 cannot emit a p-value and
+`results/significance.json` records it as `undetermined`. Random and temporal
+splitting cost nothing at all (d = 0.23 and 0.12).
+
+The audit's identifier probes explain why, and they confirm the split does what
+it says: `server_ip_only` scores 0.7721 under a random split and **0.0257**
+under server-disjoint — collapsing to the floor, exactly as a working
+server-disjoint grouping requires.
+
+### Restating claim C1
+
+The original claim was "random flow splitting inflates encrypted-traffic
+results". Our own two datasets say something sharper and more useful:
+
+> **The split axis that matters is whichever grouping the label is nearly a
+> function of, and that grouping differs by corpus.**
+>
+> - On a corpus of **single-session captures** (5G Traffic) it is the capture.
+>   The capture ID alone predicts the label at macro-F1 0.983, and a random
+>   split leaves AppScanner at 0.996 against 0.640 session-disjoint.
+> - On a **backbone corpus** (CESNET-QUIC22) it is the server. Session and
+>   temporal splitting change nothing; server-disjoint costs 0.19 for our model
+>   and 0.21 for AppScanner.
+>
+> Controlling the wrong axis provides no protection. A paper reporting
+> session-disjoint results on backbone traffic has controlled nothing, and a
+> paper reporting server-disjoint results on single-session captures has
+> controlled nothing either.
+
+That is testable, it is what our evidence shows, and it is more actionable for
+a reader than a blanket warning about random splits — it tells them *which*
+grouping to check on *their* data. The audit's identifier probes are the
+diagnostic: run them first and split on whatever wins.
+
+**Follow-up worth its cost:** the server-disjoint contrast is the one
+comparison in the paper that would benefit from six seeds rather than three,
+purely so the Wilcoxon test can report a p-value instead of `undetermined`.
+It is three extra runs, about an hour.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

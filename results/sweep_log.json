@@ -190,5 +190,53 @@
       "  prototype  macro-F1=0.7836 [0.7798, 0.7875]  bal-acc=0.7882  acc=0.7883",
       "  linear     macro-F1=0.7887 [0.7850, 0.7926]  bal-acc=0.7918  acc=0.7919"
     ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_server_disjoint.yaml",
+    "seed": 0,
+    "config_hash": "8266547ab97b2dfa",
+    "experiment": "flowconx_server_disjoint",
+    "dataset": "cesnet_quic22",
+    "split": "server_disjoint",
+    "status": "ok",
+    "seconds": 1348.7,
+    "summary": [
+      "  knn        macro-F1=0.5841 [0.5790, 0.5889]  bal-acc=0.6160  acc=0.6555",
+      "  prototype  macro-F1=0.5865 [0.5818, 0.5916]  bal-acc=0.6284  acc=0.6575",
+      "  linear     macro-F1=0.5892 [0.5842, 0.5944]  bal-acc=0.6243  acc=0.6595"
+    ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_server_disjoint.yaml",
+    "seed": 1,
+    "config_hash": "8266547ab97b2dfa",
+    "experiment": "flowconx_server_disjoint",
+    "dataset": "cesnet_quic22",
+    "split": "server_disjoint",
+    "status": "ok",
+    "seconds": 1339.6,
+    "summary": [
+      "  knn        macro-F1=0.5808 [0.5756, 0.5858]  bal-acc=0.6034  acc=0.6468",
+      "  prototype  macro-F1=0.5902 [0.5851, 0.5955]  bal-acc=0.6217  acc=0.6519",
+      "  linear     macro-F1=0.5911 [0.5861, 0.5964]  bal-acc=0.6197  acc=0.6530"
+    ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_server_disjoint.yaml",
+    "seed": 2,
+    "config_hash": "8266547ab97b2dfa",
+    "experiment": "flowconx_server_disjoint",
+    "dataset": "cesnet_quic22",
+    "split": "server_disjoint",
+    "status": "ok",
+    "seconds": 1309.3,
+    "summary": [
+      "  knn        macro-F1=0.5817 [0.5762, 0.5865]  bal-acc=0.6017  acc=0.6495",
+      "  prototype  macro-F1=0.5971 [0.5918, 0.6020]  bal-acc=0.6271  acc=0.6612",
+      "  linear     macro-F1=0.5975 [0.5920, 0.6023]  bal-acc=0.6193  acc=0.6606"
+    ]
   }
 ]

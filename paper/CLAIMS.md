@@ -13,13 +13,18 @@ Status legend: **supported** (result exists and the test passed) ·
 
 ---
 
-## C1 — Random flow splitting inflates encrypted-traffic results substantially
+## C1 — The split axis that matters is corpus-specific, and controlling the wrong one protects nothing
 
-> Under the split protocol standard in the literature, a 2016 statistical
-> baseline reaches macro-F1 within a few points of a modern neural model. Under
-> session-disjoint splitting on the same data, both fall sharply. The published
-> protocol is measuring memorisation of capture sessions as much as application
-> behaviour.
+> Encrypted-traffic results are inflated by splitting on the wrong axis, and
+> which axis matters depends on how the corpus was collected. On single-session
+> captures it is the capture; on backbone traffic it is the server. Controlling
+> session-disjointness on backbone traffic, or server-disjointness on
+> single-session captures, provides no protection at all.
+
+*(Superseded the original wording, "random flow splitting inflates results".
+Our own second dataset contradicts that as a general statement: on
+CESNET-QUIC22 random, session-disjoint and temporal splitting are
+indistinguishable.)*
 
 - **Evidence:** `paper/tables/split_contrast.tex`, from
   `results/audit/*/audit_summary.json` and `results/flowconx_*/`
@@ -30,11 +35,19 @@ Status legend: **supported** (result exists and the test passed) ·
   On CESNET, all three protocols agree to within one seed standard deviation
   for both the model (0.781 / 0.786 / 0.781) and the baselines
   (0.768 / 0.772 / 0.762).
-- **The claim must therefore be narrowed.** Random splitting inflates results
-  on corpora built from *single-session captures*, where a flow's capture is
-  nearly its label. It does not inflate results on a backbone corpus whose
-  flows are already independent. Stating C1 unconditionally would be
-  contradicted by our own second dataset.
+- **Full evidence.** CESNET-QUIC22, three seeds, k-NN, versus session-disjoint:
+  random −0.002 (d = 0.23), temporal −0.001 (d = 0.12), **server-disjoint
+  −0.191 (d = 19.3)**. 5G Traffic: capture ID alone predicts the label at
+  macro-F1 0.983 and AppScanner falls 0.996 → 0.640 from random to
+  session-disjoint. The audit's identifier probes are the diagnostic that tells
+  you which axis to control: `server_ip_only` scores 0.772 under a random split
+  and 0.026 under server-disjoint.
+- **Why this version is better than the original.** It is more actionable — it
+  tells a reader which grouping to check on their own data rather than issuing
+  a blanket warning — and it is the version our evidence actually supports.
+- **Open:** three seeds cannot produce a p-value. The server-disjoint contrast
+  is the one comparison worth six seeds, about an hour of compute, purely so
+  the test reports a number rather than `undetermined`.
 
 ## C2 — FlowCon-X is competitive under strict protocols, not state of the art
 

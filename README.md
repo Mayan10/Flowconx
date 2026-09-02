@@ -41,7 +41,7 @@ Three things follow, and they shape everything here:
 
 | # | Claim | Evidence | Status |
 | --- | --- | --- | --- |
-| C1 | Random flow splitting substantially inflates encrypted-traffic results | `paper/tables/split_contrast.tex` | supported on 5G, **not** on CESNET — must be narrowed |
+| C1 | The split axis that matters is corpus-specific; controlling the wrong one protects nothing | `paper/tables/split_contrast.tex` | supported (5G: capture axis; CESNET: server axis, −0.19 macro-F1) |
 | C2 | Competitive under strict protocols — **not** state of the art | `paper/tables/main_comparison_*.tex` | supported on CESNET (0.789 vs 0.772); **not supported on 5G** (0.595 vs 0.849) |
 | C3 | Identifier shortcuts do not explain the task | main comparison, shortcut tier | pending |
 | C4 | Metric-trained embedding rejects unknown applications better than softmax | `results/flowconx_open_set/` | pending |

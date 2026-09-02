@@ -193,7 +193,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     checksum = not args.no_checksum
 
     if args.source in ("fiveg", "all"):
-        config = FiveGConfig(
+        fiveg_config = FiveGConfig(
             archive=args.fiveg_archive,
             max_packets=args.max_packets,
             min_packets=args.min_packets,
@@ -203,13 +203,13 @@ def main(argv: Optional[List[str]] = None) -> int:
             max_flows_per_capture=args.max_flows_per_capture,
             seed=args.seed,
         )
-        manifest = prepare_fiveg(config, output_dir / "fiveg_traffic.csv", checksum=checksum)
+        manifest = prepare_fiveg(fiveg_config, output_dir / "fiveg_traffic.csv", checksum=checksum)
         (manifest_dir / "fiveg_traffic_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         print(f"[5g_traffic] wrote {manifest['n_rows']:,} rows -> {manifest['output']}")
         print(f"[5g_traffic] services: {manifest['service_counts']}")
 
     if args.source in ("cesnet", "all"):
-        config = CesnetConfig(
+        cesnet_config = CesnetConfig(
             archive=args.cesnet_archive,
             max_packets=30,
             min_packets=4,
@@ -218,7 +218,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             seed=args.seed,
             min_class_rows=args.min_class_rows,
         )
-        manifest = prepare_cesnet(config, output_dir / "cesnet_quic22.csv", checksum=checksum)
+        manifest = prepare_cesnet(cesnet_config, output_dir / "cesnet_quic22.csv", checksum=checksum)
         (manifest_dir / "cesnet_quic22_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         print(f"[cesnet_quic22] wrote {manifest['n_rows']:,} rows -> {manifest['output']}")
         print(f"[cesnet_quic22] services: {manifest['service_counts']}")

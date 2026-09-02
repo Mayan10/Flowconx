@@ -9,16 +9,20 @@ reported alongside so that a reader can see which class carries the loss.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 import numpy as np
+
+# Callers pass either a list of class names or an ``np.arange`` of class ids.
+# ``Sequence`` alone excludes ndarray, which every internal caller uses.
+Labels = Union[Sequence[Any], np.ndarray]
 
 
 def _labels(*arrays: np.ndarray) -> np.ndarray:
     return np.unique(np.concatenate([np.asarray(a).ravel() for a in arrays if len(a)])) if arrays else np.zeros(0)
 
 
-def confusion_matrix(pred: np.ndarray, target: np.ndarray, labels: Optional[Sequence] = None) -> np.ndarray:
+def confusion_matrix(pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None) -> np.ndarray:
     order = np.asarray(labels) if labels is not None else _labels(pred, target)
     index = {label: i for i, label in enumerate(order)}
     matrix = np.zeros((len(order), len(order)), dtype=np.int64)
@@ -28,7 +32,7 @@ def confusion_matrix(pred: np.ndarray, target: np.ndarray, labels: Optional[Sequ
     return matrix
 
 
-def per_class_f1(pred: np.ndarray, target: np.ndarray, labels: Optional[Sequence] = None) -> Dict[str, float]:
+def per_class_f1(pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None) -> Dict[str, float]:
     order = np.asarray(labels) if labels is not None else _labels(pred, target)
     out: Dict[str, float] = {}
     pred = np.asarray(pred).ravel()
@@ -42,18 +46,18 @@ def per_class_f1(pred: np.ndarray, target: np.ndarray, labels: Optional[Sequence
     return out
 
 
-def per_class_support(target: np.ndarray, labels: Optional[Sequence] = None) -> Dict[str, int]:
+def per_class_support(target: np.ndarray, labels: Optional[Labels] = None) -> Dict[str, int]:
     order = np.asarray(labels) if labels is not None else _labels(target)
     target = np.asarray(target).ravel()
     return {str(label): int(np.sum(target == label)) for label in order}
 
 
-def macro_f1(pred: np.ndarray, target: np.ndarray, labels: Optional[Sequence] = None) -> float:
+def macro_f1(pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None) -> float:
     scores = per_class_f1(pred, target, labels)
     return float(np.mean(list(scores.values()))) if scores else 0.0
 
 
-def balanced_accuracy(pred: np.ndarray, target: np.ndarray, labels: Optional[Sequence] = None) -> float:
+def balanced_accuracy(pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None) -> float:
     """Mean per-class recall. Equals accuracy only when classes are balanced."""
     order = np.asarray(labels) if labels is not None else _labels(pred, target)
     pred = np.asarray(pred).ravel()
@@ -79,7 +83,7 @@ def bootstrap_ci(
     n_resamples: int = 1000,
     alpha: float = 0.05,
     seed: int = 0,
-    labels: Optional[Sequence] = None,
+    labels: Optional[Labels] = None,
 ) -> Dict[str, float]:
     """Percentile bootstrap CI over the test set for one statistic."""
     fn = {"macro_f1": macro_f1, "balanced_accuracy": balanced_accuracy, "accuracy": lambda p, t, _labels=None: accuracy(p, t)}[
@@ -107,7 +111,7 @@ def bootstrap_ci(
 def classification_report(
     pred: np.ndarray,
     target: np.ndarray,
-    labels: Optional[Sequence] = None,
+    labels: Optional[Labels] = None,
     bootstrap: bool = True,
     seed: int = 0,
 ) -> Dict[str, object]:
@@ -129,12 +133,12 @@ def classification_report(
 
 
 def top_confusions(
-    pred: np.ndarray, target: np.ndarray, labels: Optional[Sequence] = None, k: int = 10
-) -> List[Dict[str, object]]:
+    pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None, k: int = 10
+) -> List[Dict[str, Any]]:
     """The k most frequent off-diagonal (true, predicted) pairs."""
     order = np.asarray(labels) if labels is not None else _labels(pred, target)
     matrix = confusion_matrix(pred, target, order)
-    pairs: List[Dict[str, object]] = []
+    pairs: List[Dict[str, Any]] = []
     for i in range(len(order)):
         for j in range(len(order)):
             if i != j and matrix[i, j] > 0:
@@ -147,5 +151,5 @@ def top_confusions(
                         "rate": float(matrix[i, j] / support) if support else 0.0,
                     }
                 )
-    pairs.sort(key=lambda item: -int(item["count"]))
+    pairs.sort(key=lambda item: -item["count"])
     return pairs[:k]

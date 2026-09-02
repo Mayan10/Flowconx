@@ -143,8 +143,22 @@ def encode_split(
     )
 
 
-class TensorFlowDataset:
-    """Minimal torch Dataset over the encoded arrays.
+def _torch_dataset_base():
+    """Return ``torch.utils.data.Dataset`` if torch is installed, else object.
+
+    The audit and metric layers must import this module without torch, so the
+    base class is resolved lazily rather than at import time.
+    """
+    try:
+        from torch.utils.data import Dataset
+
+        return Dataset
+    except ImportError:  # pragma: no cover
+        return object
+
+
+class TensorFlowDataset(_torch_dataset_base()):  # type: ignore[misc]
+    """Torch Dataset over the encoded arrays.
 
     Deliberately not holding a DataFrame: the arrays are contiguous and small,
     and keeping pandas out of the worker processes avoids a large fork cost.

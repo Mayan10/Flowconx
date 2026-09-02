@@ -22,7 +22,7 @@ import io
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import Any, List, Optional, Sequence
 
 
 @dataclass(frozen=True)
@@ -89,18 +89,23 @@ class text_stream:  # noqa: N801 - used as a context manager, reads as one
         self.errors = errors
         self.gunzip = member.name.endswith(".gz") if gunzip is None else gunzip
         self._zip: Optional[zipfile.ZipFile] = None
-        self._handles: List[io.IOBase] = []
+        # Heterogeneous by nature: a ZipExtFile, optionally a GzipFile, then a
+        # BufferedReader and a TextIOWrapper, closed in reverse order.
+        self._handles: List[Any] = []
 
     def __enter__(self) -> io.TextIOBase:
         self._zip = zipfile.ZipFile(self.member.archive)
-        raw = self._zip.open(self.member.name)
-        self._handles.append(raw)
+        # Typed loosely on purpose: the chain is ZipExtFile, then optionally
+        # GzipFile, and typeshed gives them unrelated types even though both
+        # are binary readers at runtime.
+        stream: Any = self._zip.open(self.member.name)
+        self._handles.append(stream)
         if self.gunzip:
-            raw = gzip.open(raw, "rb")
-            self._handles.append(raw)
+            stream = gzip.open(stream, "rb")
+            self._handles.append(stream)
         # A large buffer matters here: the outer zip and inner gzip codecs both
         # run per read, so small reads dominate the cost on the 21 GB archive.
-        buffered = io.BufferedReader(raw, buffer_size=1 << 22)
+        buffered = io.BufferedReader(stream, buffer_size=1 << 22)
         self._handles.append(buffered)
         text = io.TextIOWrapper(buffered, encoding=self.encoding, errors=self.errors)
         self._handles.append(text)

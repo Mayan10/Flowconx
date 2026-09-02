@@ -19,6 +19,23 @@ jobs:
       - name: Run ruff
         run: ruff check flowconx scripts tests
 
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      # Scoped to the data, feature, config and metric layers -- see the
+      # rationale in pyproject.toml.
+      - name: Run mypy
+        run: mypy
+
   tests:
     runs-on: ubuntu-latest
     strategy:

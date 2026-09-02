@@ -46,9 +46,9 @@ lint:
 	ruff check flowconx scripts tests
 
 typecheck:
-	mypy flowconx --ignore-missing-imports --no-strict-optional
+	mypy
 
-test: lint
+test: lint typecheck
 	$(PYTHON) -m pytest tests/ -q -m "not slow"
 
 test-all: lint

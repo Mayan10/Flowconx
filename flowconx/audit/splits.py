@@ -19,7 +19,7 @@ import hashlib
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Dict, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -351,8 +351,9 @@ def load_manifest(path: str | Path) -> SplitManifest:
     else:
         raw = target.read_text(encoding="utf-8")
     payload: Mapping[str, object] = json.loads(raw)
-    known = {f for f in SplitManifest.__dataclass_fields__}
-    return SplitManifest(**{k: v for k, v in payload.items() if k in known})
+    known = set(SplitManifest.__dataclass_fields__)
+    fields_present: Dict[str, Any] = {k: v for k, v in payload.items() if k in known}
+    return SplitManifest(**fields_present)
 
 
 def indices_from_manifest(df: pd.DataFrame, manifest: SplitManifest) -> Dict[str, np.ndarray]:

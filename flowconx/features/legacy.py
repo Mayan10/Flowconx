@@ -47,7 +47,7 @@ def row_get(row: Mapping[str, object], names: Sequence[str], default: float = 0.
         try:
             if isinstance(value, str):
                 value = value.replace(",", "")
-            number = float(value)
+            number = float(value)  # type: ignore[arg-type]
             if math.isfinite(number):
                 return number
         except (TypeError, ValueError):

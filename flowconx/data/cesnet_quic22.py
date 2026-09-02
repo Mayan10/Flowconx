@@ -142,7 +142,7 @@ def parse_timestamp(value: str) -> float:
 
 def numeric(value: object, default: float = 0.0) -> float:
     try:
-        out = float(value)
+        out = float(value)  # type: ignore[arg-type]
     except (TypeError, ValueError):
         return default
     return out if math.isfinite(out) else default
@@ -167,15 +167,15 @@ def iter_day_files(config: CesnetConfig) -> List[Tuple[ArchiveMember, str, str]]
 
 
 class _Reservoir:
-    """Seeded reservoir sample of fixed capacity, per key."""
+    """Seeded reservoir sample of fixed capacity, holding raw CSV rows."""
 
     def __init__(self, capacity: int, rng: np.random.Generator) -> None:
         self.capacity = capacity
         self.rng = rng
-        self.items: List[object] = []
+        self.items: List[List[str]] = []
         self.seen = 0
 
-    def offer(self, item: object) -> None:
+    def offer(self, item: List[str]) -> None:
         self.seen += 1
         if len(self.items) < self.capacity:
             self.items.append(item)
@@ -250,16 +250,16 @@ def extract_day(
     rows: List[Dict[str, object]] = []
     for service in sorted(reservoirs):
         for raw in reservoirs[service].items:
-            record = {name: raw[index_of[name]] for name in USE_COLUMNS}
+            record: Dict[str, str] = {name: raw[index_of[name]] for name in USE_COLUMNS}
             parsed = parse_ppi(record["PPI"])
             if parsed is None:
                 stats.rows_unparsable += 1
                 continue
-            row = _to_canonical(record, parsed, capture_id, service, len(rows), config)
-            if row is None:
+            canonical = _to_canonical(record, parsed, capture_id, service, len(rows), config)
+            if canonical is None:
                 stats.rows_unparsable += 1
                 continue
-            rows.append(row)
+            rows.append(canonical)
             stats.classes[service] = stats.classes.get(service, 0) + 1
     stats.rows_kept = len(rows)
     return rows, stats

@@ -23,7 +23,7 @@ counted, rather than having one generated from a label-seeded RNG (L7).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -155,7 +155,7 @@ def build_packet_features(
     return out
 
 
-def build_flow_features(row: Mapping[str, object], n_packets_observed: int) -> np.ndarray:
+def build_flow_features(row: Mapping[str, Any], n_packets_observed: int) -> np.ndarray:
     out = np.zeros(FLOW_FEATURE_DIM, dtype=np.float32)
     n_packets = float(row.get("total packets", n_packets_observed) or n_packets_observed)
     mean_size = float(row.get("packet length mean", 0.0) or 0.0)

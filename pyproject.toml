@@ -10,16 +10,28 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
-  "numpy>=1.26",
-  "pandas>=2.1",
+  "numpy>=1.26,<3",
+  "pandas>=2.1,<3",
   "torch>=2.2",
-  "scikit-learn>=1.4",
-  "tqdm>=4.66",
+  "scikit-learn>=1.4,<2",
+  "scipy>=1.11,<2",
+  "pyyaml>=6.0,<7",
+  "matplotlib>=3.8,<4",
+  "xgboost>=2.0,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff==0.9.9",
+  "mypy>=1.10",
 ]
 
 [project.scripts]
-flowconx-train = "flowconx.train:main"
-flowconx-eval = "flowconx.eval_cli:main"
+# One entry point. Everything else is a config file passed to it.
+flowconx = "flowconx.run:main"
+flowconx-prepare = "flowconx.data.prepare:main"
+flowconx-audit = "flowconx.audit.run_audit:main"
 
 [tool.setuptools.packages.find]
 include = ["flowconx*"]
@@ -30,6 +42,36 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]
+
+[tool.mypy]
+python_version = "3.10"
+# Scoped to the layers where a type error is a silent data bug: schema,
+# loaders, feature extraction, config, split protocols and metrics. The model
+# and evaluation layers are tensor code where a strict run produces hundreds
+# of findings nobody reads, and where a shape error surfaces immediately at
+# runtime anyway. `make typecheck` runs this scope as a real gate.
+files = [
+  "flowconx/data",
+  "flowconx/features",
+  "flowconx/audit/splits.py",
+  "flowconx/experiment.py",
+  "flowconx/determinism.py",
+  "flowconx/labels.py",
+  "flowconx/metrics.py",
+]
+ignore_missing_imports = true
+no_strict_optional = true
+# Deliberately not --strict. The value here is catching a real type error in
+# the data and config layers, not annotating every numpy operation; a strict
+# run over tensor code produces hundreds of findings that nobody reads.
+check_untyped_defs = false
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["torch.*", "sklearn.*", "xgboost.*", "scipy.*", "matplotlib.*", "yaml.*", "pandas.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

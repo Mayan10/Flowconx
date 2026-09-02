@@ -24,13 +24,17 @@ Status legend: **supported** (result exists and the test passed) ·
 - **Evidence:** `paper/tables/split_contrast.tex`, from
   `results/audit/*/audit_summary.json` and `results/flowconx_*/`
 - **Test:** paired comparison across seeds, `results/significance.json`
-- **Status:** **partially supported.** The v1 corpus showed AppScanner at
-  macro-F1 0.869 under a random flow split against FlowCon-X's recorded 0.884,
-  collapsing to 0.202 under an app-disjoint split (`AUDIT.md` §8). The
-  session-disjoint and temporal legs need the regenerated corpus.
-- **Risk if it fails:** this is the measurement contribution. If the gap turns
-  out to be small on the new corpus, the paper loses its most defensible claim
-  and we should reframe around C4/C5 rather than pretend.
+- **Status:** **supported on 5G Traffic, not supported on CESNET-QUIC22.**
+  On 5G, server IP alone reaches 0.999 under a random split and capture ID
+  alone 0.983, and AppScanner falls 0.996 → 0.640 under session-disjoint.
+  On CESNET, all three protocols agree to within one seed standard deviation
+  for both the model (0.781 / 0.786 / 0.781) and the baselines
+  (0.768 / 0.772 / 0.762).
+- **The claim must therefore be narrowed.** Random splitting inflates results
+  on corpora built from *single-session captures*, where a flow's capture is
+  nearly its label. It does not inflate results on a backbone corpus whose
+  flows are already independent. Stating C1 unconditionally would be
+  contradicted by our own second dataset.
 
 ## C2 — FlowCon-X is competitive under strict protocols, not state of the art
 
@@ -111,8 +115,14 @@ Status legend: **supported** (result exists and the test passed) ·
 > accuracy declines; refreshing prototypes from k labelled flows recovers most
 > of the loss without touching the encoder.
 
-- **Evidence:** `results/flowconx_temporal/*/metrics.json`, `drift` block
-- **Status:** **pending**
+- **Evidence:** `results/flowconx_temporal/cesnet_quic22/temporal/seed*/metrics.json`, `drift` block
+- **Status:** **withdrawn — untestable on this data.** Over the six held-out
+  days, macro-F1 *rises* from 0.7678 to 0.7910 (total change +0.0232). A
+  four-week corpus with a six-day held-out tail cannot exhibit drift, and the
+  re-enrollment remedy is equally untestable because there is nothing to
+  restore. Reporting a flat curve as drift resistance would be read as a claim
+  about deployment lifetime, which this evidence cannot support. Reinstate
+  only with a corpus spanning months.
 
 ## C7 — The model survives padding and quantisation defences better than the alternatives, at a stated overhead
 

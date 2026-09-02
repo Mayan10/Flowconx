@@ -282,6 +282,64 @@ Read as a defender's table, this is the useful result:
 
 ---
 
+## 2026-09-02 — CESNET split-protocol contrast and temporal drift
+
+**Source:** `results/flowconx_{main,random_contrast,temporal}/cesnet_quic22/*/seed*/metrics.json`,
+`results/significance.json`
+
+### Claim C1 is **not supported** on CESNET-QUIC22
+
+Macro-F1, k-NN head, three seeds each:
+
+| Split protocol | FlowCon-X | AppScanner (audit) |
+| --- | --- | --- |
+| Random flow | 0.7817 ± 0.0037 | 0.7675 |
+| Session-disjoint | 0.7863 ± 0.0043 | 0.7718 |
+| Temporal | 0.7806 ± 0.0016 | 0.7615 |
+
+The random split does **not** inflate the result on this dataset — for the
+model or for the baselines. All three protocols agree to within
+0.006 macro-F1, which is about one seed standard deviation.
+
+This is consistent and it is a real finding rather than a failure to measure:
+CESNET flows on different days are genuinely independent, so grouping by day
+buys nothing. The inflation demonstrated on 5G Traffic (server IP alone at
+0.999 under a random split) is a property of *single-session captures*, not of
+random splitting as such. **The paper must say both, or C1 is overclaimed.**
+
+Three seeds cannot test this; `results/significance.json` records the
+comparison as `undetermined` rather than assigning it a p-value.
+
+### Claim C6 (temporal drift) **cannot be tested on this dataset**
+
+Trained on the earliest ~70% of the timeline (weeks 44–46), evaluated day by
+day over the held-out tail:
+
+| Day | Flows | Macro-F1 |
+| --- | --- | --- |
+| 20221122 | 4,320 | 0.7678 |
+| 20221123 | 7,200 | 0.7747 |
+| 20221124 | 7,200 | 0.7757 |
+| 20221125 | 7,200 | 0.7790 |
+| 20221126 | 7,200 | 0.7941 |
+| 20221127 | 7,200 | 0.7910 |
+
+Accuracy over the six held-out days **rises** from 0.7678 to
+0.7910; the total change is
++0.0232. There is no measurable degradation.
+
+The honest reading is not "the method resists drift". It is that **a four-week
+corpus with a six-day held-out tail cannot exhibit the phenomenon C6 is about.**
+Application traffic patterns change over months and years; nothing here spans
+that. The prototype re-enrollment remedy is equally untestable, because there
+is nothing to restore.
+
+**Consequence:** C6 is withdrawn unless a longer corpus is obtained. Reporting
+a flat curve as evidence of drift resistance would be the more harmful error,
+because a reader would take it as a claim about deployment lifetime.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

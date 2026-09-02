@@ -100,8 +100,13 @@ constant encoder.
   access technologies, or non-QUIC traffic.
 - 5G Traffic is 15 applications; CESNET is roughly 100. Neither approaches the
   open world.
-- Both are 2022. Application traffic patterns change; the temporal experiment
-  measures four weeks of drift, not four years.
+- Both are 2022. Application traffic patterns change over months and years;
+  **the temporal experiment measures a six-day held-out tail of a four-week
+  corpus and finds no drift at all** (macro-F1 rises 0.7678 to 0.7910). That is
+  a statement about the corpus, not about the method: this data cannot exhibit
+  the phenomenon. Claim C6 is withdrawn rather than supported by a flat curve,
+  because a reader would take a flat curve as a claim about deployment
+  lifetime.
 
 ## 8. Compute and statistical power
 

@@ -182,19 +182,27 @@ def holm_bonferroni(p_values: Sequence[float], alpha: float = 0.05) -> List[Dict
     re-deriving the correction.
     """
     values = np.asarray(p_values, dtype=float)
-    order = np.argsort(values, kind="stable")
+    # NaN sorts last and, crucially, every comparison against it is False --
+    # including `value > threshold` -- so a naive step-down marks an
+    # underpowered comparison as *significant*. That is precisely the failure
+    # the Wilcoxon refusal exists to prevent, so NaN is handled explicitly.
+    order = np.argsort(np.where(np.isnan(values), np.inf, values), kind="stable")
     m = len(values)
     out: List[Dict[str, object]] = [{} for _ in range(m)]
     still_rejecting = True
     for rank, index in enumerate(order):
         threshold = alpha / (m - rank)
-        if not still_rejecting or values[index] > threshold:
+        if np.isnan(values[index]):
+            still_rejecting = False
+            rejected = False
+        elif not still_rejecting or values[index] > threshold:
             still_rejecting = False
             rejected = False
         else:
             rejected = True
         out[int(index)] = {
             "p_value": float(values[index]),
+            "undetermined": bool(np.isnan(values[index])),
             "rank": int(rank + 1),
             "adjusted_threshold": float(threshold),
             "significant": bool(rejected),
@@ -296,6 +304,34 @@ FAMILIES: Dict[str, Dict[str, object]] = {
 }
 
 
+# Claim C1's test: does the split protocol change the number? Unlike the other
+# families these compare *across* splits, so the pairing is by seed on two
+# different (experiment, split) cells rather than within one.
+SPLIT_CONTRASTS: List[Dict[str, str]] = [
+    {
+        "name": "random_flow_vs_session_disjoint",
+        "reference_experiment": "flowconx_main",
+        "reference_split": "session_disjoint",
+        "member_experiment": "flowconx_random_contrast",
+        "member_split": "random_flow",
+    },
+    {
+        "name": "temporal_vs_session_disjoint",
+        "reference_experiment": "flowconx_main",
+        "reference_split": "session_disjoint",
+        "member_experiment": "flowconx_temporal",
+        "member_split": "temporal",
+    },
+    {
+        "name": "server_disjoint_vs_session_disjoint",
+        "reference_experiment": "flowconx_main",
+        "reference_split": "session_disjoint",
+        "member_experiment": "flowconx_server_disjoint",
+        "member_split": "server_disjoint",
+    },
+]
+
+
 def _head_for(experiment: str) -> str:
     """Baselines report under 'softmax'; the model reports under 'prototype'."""
     return "softmax" if experiment.startswith("baseline_") else "prototype"
@@ -370,6 +406,58 @@ def build_significance(
                 for entry, extra in zip(family["comparisons"], metadata):  # type: ignore[index]
                     entry.update(extra)
                 out["families"].append(family)
+
+    # Split-protocol contrasts, one family per dataset.
+    for dataset in datasets:
+        comparisons: List[Tuple[str, TestResult]] = []
+        metadata: List[Dict[str, object]] = []
+        for contrast in SPLIT_CONTRASTS:
+            reference = load_seed_scores(
+                results_root,
+                contrast["reference_experiment"],
+                dataset,
+                contrast["reference_split"],
+                _head_for(contrast["reference_experiment"]),
+                metric,
+            )
+            member = load_seed_scores(
+                results_root,
+                contrast["member_experiment"],
+                dataset,
+                contrast["member_split"],
+                _head_for(contrast["member_experiment"]),
+                metric,
+            )
+            paired = paired_seed_comparison(reference, member)
+            if paired is None:
+                out["skipped"].append(
+                    {
+                        "family": "split_protocol",
+                        "dataset": dataset,
+                        "contrast": contrast["name"],
+                        "reason": f"{len(reference)} reference and {len(member)} member seed(s)",
+                    }
+                )
+                continue
+            result, effect, shared = paired
+            comparisons.append((contrast["name"], result))
+            metadata.append(
+                {
+                    "experiment": contrast["member_experiment"],
+                    "dataset": dataset,
+                    "split": contrast["member_split"],
+                    "reference": f"{contrast['reference_experiment']}@{contrast['reference_split']}",
+                    "cohens_d": effect,
+                    "shared_seeds": shared,
+                    "reference_mean": float(np.mean([reference[s] for s in shared])),
+                    "member_mean": float(np.mean([member[s] for s in shared])),
+                }
+            )
+        if comparisons:
+            family = compare_family(comparisons, alpha=alpha, family_name=f"split_protocol/{dataset}")
+            for entry, extra in zip(family["comparisons"], metadata):  # type: ignore[index]
+                entry.update(extra)
+            out["families"].append(family)
     return out
 
 

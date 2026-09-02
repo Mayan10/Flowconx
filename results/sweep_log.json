@@ -62,5 +62,101 @@
       "  prototype  macro-F1=0.5677 [0.5637, 0.5714]  bal-acc=0.6319  acc=0.6043",
       "  linear     macro-F1=0.5866 [0.5823, 0.5903]  bal-acc=0.6452  acc=0.6179"
     ]
+  },
+  {
+    "stage": "headline",
+    "config": "configs/fiveg_main.yaml",
+    "seed": 1,
+    "config_hash": "b49931447656cba3",
+    "experiment": "flowconx_main",
+    "dataset": "fiveg_traffic",
+    "split": "session_disjoint",
+    "status": "ok",
+    "seconds": 1048.5,
+    "summary": [
+      "  knn        macro-F1=0.5480 [0.5433, 0.5525]  bal-acc=0.6568  acc=0.6260",
+      "  prototype  macro-F1=0.4938 [0.4894, 0.4978]  bal-acc=0.6135  acc=0.5789",
+      "  linear     macro-F1=0.5143 [0.5102, 0.5183]  bal-acc=0.6289  acc=0.5949"
+    ]
+  },
+  {
+    "stage": "headline",
+    "config": "configs/fiveg_main.yaml",
+    "seed": 2,
+    "config_hash": "b49931447656cba3",
+    "experiment": "flowconx_main",
+    "dataset": "fiveg_traffic",
+    "split": "session_disjoint",
+    "status": "ok",
+    "seconds": 1466.2,
+    "summary": [
+      "  knn        macro-F1=0.5791 [0.5748, 0.5837]  bal-acc=0.6823  acc=0.6543",
+      "  prototype  macro-F1=0.5793 [0.5751, 0.5838]  bal-acc=0.6831  acc=0.6545",
+      "  linear     macro-F1=0.5789 [0.5748, 0.5834]  bal-acc=0.6830  acc=0.6541"
+    ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_random_contrast.yaml",
+    "seed": 0,
+    "config_hash": "de958bc772df0e24",
+    "experiment": "flowconx_random_contrast",
+    "dataset": "cesnet_quic22",
+    "split": "random_flow",
+    "status": "ok",
+    "seconds": 1101.3,
+    "summary": [
+      "  knn        macro-F1=0.7809 [0.7770, 0.7848]  bal-acc=0.7834  acc=0.7834",
+      "  prototype  macro-F1=0.7778 [0.7741, 0.7814]  bal-acc=0.7831  acc=0.7831",
+      "  linear     macro-F1=0.7859 [0.7822, 0.7896]  bal-acc=0.7888  acc=0.7888"
+    ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_random_contrast.yaml",
+    "seed": 1,
+    "config_hash": "de958bc772df0e24",
+    "experiment": "flowconx_random_contrast",
+    "dataset": "cesnet_quic22",
+    "split": "random_flow",
+    "status": "ok",
+    "seconds": 1158.8,
+    "summary": [
+      "  knn        macro-F1=0.7785 [0.7744, 0.7825]  bal-acc=0.7818  acc=0.7818",
+      "  prototype  macro-F1=0.7769 [0.7730, 0.7806]  bal-acc=0.7827  acc=0.7827",
+      "  linear     macro-F1=0.7839 [0.7800, 0.7877]  bal-acc=0.7875  acc=0.7875"
+    ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_random_contrast.yaml",
+    "seed": 2,
+    "config_hash": "de958bc772df0e24",
+    "experiment": "flowconx_random_contrast",
+    "dataset": "cesnet_quic22",
+    "split": "random_flow",
+    "status": "ok",
+    "seconds": 1124.2,
+    "summary": [
+      "  knn        macro-F1=0.7858 [0.7821, 0.7896]  bal-acc=0.7884  acc=0.7884",
+      "  prototype  macro-F1=0.7868 [0.7832, 0.7906]  bal-acc=0.7906  acc=0.7906",
+      "  linear     macro-F1=0.7917 [0.7880, 0.7955]  bal-acc=0.7943  acc=0.7943"
+    ]
+  },
+  {
+    "stage": "split_contrast",
+    "config": "configs/cesnet_temporal.yaml",
+    "seed": 0,
+    "config_hash": "03a7a513f805d2e0",
+    "experiment": "flowconx_temporal",
+    "dataset": "cesnet_quic22",
+    "split": "temporal",
+    "status": "ok",
+    "seconds": 1266.9,
+    "summary": [
+      "  knn        macro-F1=0.7817 [0.7776, 0.7857]  bal-acc=0.7848  acc=0.7849",
+      "  prototype  macro-F1=0.7812 [0.7773, 0.7848]  bal-acc=0.7872  acc=0.7874",
+      "  linear     macro-F1=0.7883 [0.7843, 0.7920]  bal-acc=0.7918  acc=0.7919"
+    ]
   }
 ]

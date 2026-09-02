@@ -1,0 +1,235 @@
+{
+  "metric": "macro_f1",
+  "alpha": 0.05,
+  "correction": "holm_bonferroni",
+  "test": "wilcoxon_signed_rank_across_seeds",
+  "families": [
+    {
+      "family": "split_protocol/cesnet_quic22",
+      "correction": "holm_bonferroni",
+      "alpha": 0.05,
+      "n_comparisons": 1,
+      "comparisons": [
+        {
+          "name": "random_flow_vs_session_disjoint",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.0021434773760871475,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.0021434773760871475,
+            "std_difference": 0.0074846738166730155,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 1,
+            "adjusted_threshold": 0.05,
+            "significant": false,
+            "family_size": 1,
+            "alpha": 0.05
+          },
+          "experiment": "flowconx_random_contrast",
+          "dataset": "cesnet_quic22",
+          "split": "random_flow",
+          "reference": "flowconx_main@session_disjoint",
+          "cohens_d": 0.23383008955880438,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.7826650057432086,
+          "member_mean": 0.7805215283671214
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "family": "component_ablations",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "component_ablations",
+      "dataset": "cesnet_quic22",
+      "split": "temporal",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "component_ablations",
+      "dataset": "cesnet_quic22",
+      "split": "random_flow",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "component_ablations",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "component_ablations",
+      "dataset": "fiveg_traffic",
+      "split": "temporal",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "component_ablations",
+      "dataset": "fiveg_traffic",
+      "split": "random_flow",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "embedding_choice",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "embedding_choice",
+      "dataset": "cesnet_quic22",
+      "split": "temporal",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "embedding_choice",
+      "dataset": "cesnet_quic22",
+      "split": "random_flow",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "embedding_choice",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "embedding_choice",
+      "dataset": "fiveg_traffic",
+      "split": "temporal",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "embedding_choice",
+      "dataset": "fiveg_traffic",
+      "split": "random_flow",
+      "reason": "reference ablation_full has 0 seed(s)"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "experiment": "baseline_deeppacket_cnn",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "experiment": "baseline_fsnet",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "experiment": "baseline_lstm_attention",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "cesnet_quic22",
+      "split": "session_disjoint",
+      "experiment": "baseline_mlp_stats",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "cesnet_quic22",
+      "split": "temporal",
+      "reason": "reference flowconx_main has 0 seed(s)"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "cesnet_quic22",
+      "split": "random_flow",
+      "reason": "reference flowconx_main has 0 seed(s)"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "experiment": "baseline_deeppacket_cnn",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "experiment": "baseline_fsnet",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "experiment": "baseline_lstm_attention",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "fiveg_traffic",
+      "split": "session_disjoint",
+      "experiment": "baseline_mlp_stats",
+      "reason": "0 seed(s) shared with the reference"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "fiveg_traffic",
+      "split": "temporal",
+      "reason": "reference flowconx_main has 0 seed(s)"
+    },
+    {
+      "family": "against_baselines",
+      "dataset": "fiveg_traffic",
+      "split": "random_flow",
+      "reason": "reference flowconx_main has 0 seed(s)"
+    },
+    {
+      "family": "split_protocol",
+      "dataset": "cesnet_quic22",
+      "contrast": "temporal_vs_session_disjoint",
+      "reason": "3 reference and 1 member seed(s)"
+    },
+    {
+      "family": "split_protocol",
+      "dataset": "cesnet_quic22",
+      "contrast": "server_disjoint_vs_session_disjoint",
+      "reason": "3 reference and 0 member seed(s)"
+    },
+    {
+      "family": "split_protocol",
+      "dataset": "fiveg_traffic",
+      "contrast": "random_flow_vs_session_disjoint",
+      "reason": "3 reference and 0 member seed(s)"
+    },
+    {
+      "family": "split_protocol",
+      "dataset": "fiveg_traffic",
+      "contrast": "temporal_vs_session_disjoint",
+      "reason": "3 reference and 0 member seed(s)"
+    },
+    {
+      "family": "split_protocol",
+      "dataset": "fiveg_traffic",
+      "contrast": "server_disjoint_vs_session_disjoint",
+      "reason": "3 reference and 0 member seed(s)"
+    }
+  ]
+}

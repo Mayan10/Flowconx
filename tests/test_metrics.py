@@ -105,3 +105,51 @@ def test_rare_class_policy_modes_are_exhaustive_and_recorded(synthetic_frame):
     assert report["action"] == "kept"
     assert "warning" in report
     assert len(kept) == len(frame)
+
+
+def test_macro_f1_excludes_classes_with_no_test_support():
+    """A class that cannot appear in the test set must not be scored as zero.
+
+    Under a strict split protocol an entire class can land on one side: 7 of
+    15 applications in 5G Traffic have a single capture file, so a
+    session-disjoint split leaves them with no test rows. Averaging them in as
+    zeros multiplies macro-F1 by 8/15 and reports a number about the split
+    rather than about the model.
+    """
+    target = np.array([0, 0, 1, 1])
+    pred = np.array([0, 0, 1, 1])
+    # Perfect on both classes that exist; two more declared but absent.
+    assert macro_f1(pred, target, labels=[0, 1, 2, 3]) == 1.0
+    # Scoring the absent classes as zero would give 0.5.
+    assert macro_f1(pred, target, labels=[0, 1, 2, 3]) != 0.5
+
+
+def test_absent_classes_are_reported_not_hidden():
+    from flowconx.metrics import classification_report as report_fn
+
+    target = np.array([0, 0, 1, 1])
+    pred = np.array([0, 0, 1, 1])
+    report = report_fn(pred, target, labels=[0, 1, 2, 3], bootstrap=False)
+    assert report["n_classes_scored"] == 2
+    assert report["classes_without_test_support"] == ["2", "3"]
+    assert "note" in report
+    # Still visible per-class, which is where a zero belongs.
+    assert report["per_class_f1"]["2"] == 0.0
+    assert set(report["per_class_f1"]) == {"0", "1", "2", "3"}
+
+
+def test_no_note_when_every_class_is_present():
+    from flowconx.metrics import classification_report as report_fn
+
+    target = np.array([0, 0, 1, 1])
+    report = report_fn(target, target, labels=[0, 1], bootstrap=False)
+    assert report["classes_without_test_support"] == []
+    assert "note" not in report
+    assert report["n_classes_scored"] == 2
+
+
+def test_balanced_accuracy_already_skipped_absent_classes():
+    """Regression guard: balanced accuracy always had the right behaviour."""
+    target = np.array([0, 0, 1, 1])
+    pred = np.array([0, 0, 1, 1])
+    assert balanced_accuracy(pred, target, labels=[0, 1, 2, 3]) == 1.0

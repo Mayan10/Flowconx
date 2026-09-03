@@ -53,8 +53,27 @@ def per_class_support(target: np.ndarray, labels: Optional[Labels] = None) -> Di
 
 
 def macro_f1(pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None) -> float:
-    scores = per_class_f1(pred, target, labels)
-    return float(np.mean(list(scores.values()))) if scores else 0.0
+    """Mean per-class F1 over classes that actually occur in ``target``.
+
+    Classes with **zero test support are excluded from the average**, not
+    scored as zero. This matters whenever a strict split protocol can put an
+    entire class on one side: under 5G Traffic's session-disjoint split, 7 of
+    15 applications have no test rows at all, because each has one capture
+    file. Averaging them in as zeros multiplies macro-F1 by 8/15 and reports a
+    number about the split rather than about the model.
+
+    The excluded classes are not hidden -- ``classification_report`` records
+    how many there were and which -- and ``per_class_f1`` still returns every
+    requested label, so a zero-support class remains visible as 0.0 in the
+    per-class table where it belongs.
+    """
+    order = np.asarray(labels) if labels is not None else _labels(pred, target)
+    target = np.asarray(target).ravel()
+    supported = [label for label in order if np.any(target == label)]
+    if not supported:
+        return 0.0
+    scores = per_class_f1(pred, target, supported)
+    return float(np.mean(list(scores.values())))
 
 
 def balanced_accuracy(pred: np.ndarray, target: np.ndarray, labels: Optional[Labels] = None) -> float:
@@ -117,15 +136,27 @@ def classification_report(
 ) -> Dict[str, object]:
     """The full metric block written into every ``metrics.json``."""
     order = np.asarray(labels) if labels is not None else _labels(pred, target)
+    support = per_class_support(target, order)
+    unsupported = [name for name, count in support.items() if count == 0]
     report: Dict[str, object] = {
         "accuracy": accuracy(pred, target),
         "macro_f1": macro_f1(pred, target, order),
         "balanced_accuracy": balanced_accuracy(pred, target, order),
         "per_class_f1": per_class_f1(pred, target, order),
-        "support": per_class_support(target, order),
+        "support": support,
         "labels": [str(label) for label in order],
         "confusion_matrix": confusion_matrix(pred, target, order).tolist(),
+        # Macro averages exclude these; they are listed so a reader can see
+        # that the denominator is not the full label space and why.
+        "n_classes_scored": len(order) - len(unsupported),
+        "classes_without_test_support": unsupported,
     }
+    if unsupported:
+        report["note"] = (
+            f"{len(unsupported)} of {len(order)} classes have no test rows under this split and are "
+            "excluded from the macro averages rather than scored as zero. They remain visible in "
+            "per_class_f1. A class absent from the test set says something about the split, not the model."
+        )
     if bootstrap:
         report["macro_f1_ci95"] = bootstrap_ci(pred, target, "macro_f1", seed=seed, labels=order)
         report["balanced_accuracy_ci95"] = bootstrap_ci(pred, target, "balanced_accuracy", seed=seed, labels=order)

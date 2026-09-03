@@ -982,6 +982,54 @@ of variations on a losing configuration.
 
 ---
 
+## 2026-09-03 — The largest effect in the paper cannot be certified at six seeds
+
+Queue 1 brought `flowconx_main` and `flowconx_server_disjoint` to six seeds on
+CESNET-QUIC22, which was enough for the Wilcoxon signed-rank test to emit a
+number for the first time:
+
+| Contrast | Mean | Δ | Cohen's d | Raw p | Holm threshold | Survives? |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `server_disjoint` vs `session_disjoint` | 0.5860 vs 0.7836 | −0.198 | **20.29** | **0.03125** | 0.01667 | **no** |
+| `random_flow` vs `session_disjoint` | 0.7805 vs 0.7827 | −0.002 | 0.23 | undetermined (3 seeds) | 0.025 | — |
+| `temporal` vs `session_disjoint` | 0.7820 vs 0.7827 | −0.001 | 0.12 | undetermined (3 seeds) | 0.05 | — |
+
+**The effect is enormous and the test cannot certify it.** That is a power
+limit, not a weak result, and the arithmetic is exact: a two-sided Wilcoxon
+signed-rank test on *n* paired seeds has a minimum achievable p-value of
+2^−(n−1), because the smallest possible rank sum still has that probability
+under the null. At six seeds the floor is 0.03125. Holm-Bonferroni at rank 1 of
+a three-comparison family demands 0.05/3 = 0.0167. **No effect size, however
+large, can clear that bar with six seeds.**
+
+| Seeds | Minimum achievable p | Clears 0.0167? |
+| --- | ---: | --- |
+| 6 | 0.03125 | no |
+| 7 | 0.01562 | yes |
+| 8 | 0.00781 | yes, with margin |
+
+### What is queued
+
+Seeds 6 and 7 for `cesnet_main` and `cesnet_server_disjoint` — four runs, about
+90 minutes — take the decisive contrast to eight seeds and a floor of 0.0078.
+
+Seeds 3–7 for `cesnet_random_contrast` and `cesnet_temporal` — ten runs — take
+the two null contrasts to eight as well. Those currently read `undetermined`
+because they have three seeds, and *undetermined is not the same as null*. With
+eight seeds a non-significant result becomes a properly powered statement that
+random and temporal splitting make no difference on this corpus, which is half
+of claim C1's restated form and currently rests on effect sizes alone.
+
+### The general point, worth a sentence in the paper
+
+A results section that reports Wilcoxon tests over five seeds — the field's
+common practice, and what this project's own brief specified as a minimum —
+**cannot report a corrected significant result at all** if more than two
+comparisons share a family. That constraint is arithmetic, independent of the
+data, and it is rarely stated.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

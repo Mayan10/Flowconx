@@ -5,6 +5,84 @@
   "test": "wilcoxon_signed_rank_across_seeds",
   "families": [
     {
+      "family": "open_set_ablations/fiveg_traffic/session_disjoint",
+      "correction": "holm_bonferroni",
+      "alpha": 0.05,
+      "n_comparisons": 2,
+      "comparisons": [
+        {
+          "name": "openset_ablation_no_flow_metric",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.02855999429297144,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.02855999429297144,
+            "std_difference": 0.011393618252377755,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 1,
+            "adjusted_threshold": 0.025,
+            "significant": false,
+            "family_size": 2,
+            "alpha": 0.05
+          },
+          "experiment": "openset_ablation_no_flow_metric",
+          "dataset": "fiveg_traffic",
+          "split": "session_disjoint",
+          "reference": "flowconx_open_set",
+          "cohens_d": 2.046684132730183,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.5048289354325465,
+          "member_mean": 0.476268941139575
+        },
+        {
+          "name": "openset_ablation_no_adversarial",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": -0.06139183714444002,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": -0.06139183714444002,
+            "std_difference": 0.06718580826457031,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 2,
+            "adjusted_threshold": 0.05,
+            "significant": false,
+            "family_size": 2,
+            "alpha": 0.05
+          },
+          "experiment": "openset_ablation_no_adversarial",
+          "dataset": "fiveg_traffic",
+          "split": "session_disjoint",
+          "reference": "flowconx_open_set",
+          "cohens_d": -0.746083531925604,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.5048289354325465,
+          "member_mean": 0.5662207725769864
+        }
+      ]
+    },
+    {
       "family": "against_baselines/cesnet_quic22/session_disjoint",
       "correction": "holm_bonferroni",
       "alpha": 0.05,
@@ -153,6 +231,154 @@
       ]
     },
     {
+      "family": "against_baselines/fiveg_traffic/session_disjoint",
+      "correction": "holm_bonferroni",
+      "alpha": 0.05,
+      "n_comparisons": 4,
+      "comparisons": [
+        {
+          "name": "baseline_deeppacket_cnn",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": -0.032699144412062064,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": -0.032699144412062064,
+            "std_difference": 0.038221950891720126,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 1,
+            "adjusted_threshold": 0.0125,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_deeppacket_cnn",
+          "dataset": "fiveg_traffic",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": -0.6985184949702367,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.546918738300043,
+          "member_mean": 0.579617882712105
+        },
+        {
+          "name": "baseline_fsnet",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": -0.04487540585499444,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": -0.04487540585499444,
+            "std_difference": 0.04412176782580437,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 2,
+            "adjusted_threshold": 0.016666666666666666,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_fsnet",
+          "dataset": "fiveg_traffic",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": -0.8304430500837267,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.546918738300043,
+          "member_mean": 0.5917941441550374
+        },
+        {
+          "name": "baseline_lstm_attention",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": -0.04862322814234419,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": -0.04862322814234419,
+            "std_difference": 0.03432243088490139,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 3,
+            "adjusted_threshold": 0.025,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_lstm_attention",
+          "dataset": "fiveg_traffic",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": -1.1566983604694898,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.546918738300043,
+          "member_mean": 0.5955419664423872
+        },
+        {
+          "name": "baseline_mlp_stats",
+          "test": "wilcoxon",
+          "statistic": NaN,
+          "p_value": NaN,
+          "n": 3,
+          "effect_size": 0.0033069513663349093,
+          "effect_size_name": "mean_difference",
+          "detail": {
+            "mean_difference": 0.0033069513663349093,
+            "std_difference": 0.04056036874506205,
+            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+          },
+          "correction": {
+            "p_value": NaN,
+            "undetermined": true,
+            "rank": 4,
+            "adjusted_threshold": 0.05,
+            "significant": false,
+            "family_size": 4,
+            "alpha": 0.05
+          },
+          "experiment": "baseline_mlp_stats",
+          "dataset": "fiveg_traffic",
+          "split": "session_disjoint",
+          "reference": "flowconx_main",
+          "cohens_d": 0.06657026470538303,
+          "shared_seeds": [
+            0,
+            1,
+            2
+          ],
+          "reference_mean": 0.546918738300043,
+          "member_mean": 0.5436117869337079
+        }
+      ]
+    },
+    {
       "family": "split_protocol/cesnet_quic22",
       "correction": "holm_bonferroni",
       "alpha": 0.05,
@@ -174,8 +400,8 @@
           "correction": {
             "p_value": NaN,
             "undetermined": true,
-            "rank": 1,
-            "adjusted_threshold": 0.016666666666666666,
+            "rank": 2,
+            "adjusted_threshold": 0.025,
             "significant": false,
             "family_size": 3,
             "alpha": 0.05
@@ -209,8 +435,8 @@
           "correction": {
             "p_value": NaN,
             "undetermined": true,
-            "rank": 2,
-            "adjusted_threshold": 0.025,
+            "rank": 3,
+            "adjusted_threshold": 0.05,
             "significant": false,
             "family_size": 3,
             "alpha": 0.05
@@ -231,21 +457,22 @@
         {
           "name": "server_disjoint_vs_session_disjoint",
           "test": "wilcoxon",
-          "statistic": NaN,
-          "p_value": NaN,
-          "n": 3,
-          "effect_size": 0.19139945324648988,
-          "effect_size_name": "mean_difference",
+          "statistic": 0.0,
+          "p_value": 0.03125,
+          "n": 6,
+          "effect_size": 1.0,
+          "effect_size_name": "rank_biserial",
           "detail": {
-            "mean_difference": 0.19139945324648988,
-            "std_difference": 0.00809766690551106,
-            "note": "3 seeds is too few for a Wilcoxon signed-rank test to reach significance at any effect size; run at least 6 seeds, and 10 for the headline table."
+            "mean_a": 0.783591076801688,
+            "mean_b": 0.5860486959988956,
+            "mean_difference": 0.19754238080279238,
+            "std_difference": 0.009736233938341603
           },
           "correction": {
-            "p_value": NaN,
-            "undetermined": true,
-            "rank": 3,
-            "adjusted_threshold": 0.05,
+            "p_value": 0.03125,
+            "undetermined": false,
+            "rank": 1,
+            "adjusted_threshold": 0.016666666666666666,
             "significant": false,
             "family_size": 3,
             "alpha": 0.05
@@ -254,14 +481,17 @@
           "dataset": "cesnet_quic22",
           "split": "server_disjoint",
           "reference": "flowconx_main@session_disjoint",
-          "cohens_d": 19.299015505421334,
+          "cohens_d": 20.289403690770424,
           "shared_seeds": [
             0,
             1,
-            2
+            2,
+            3,
+            4,
+            5
           ],
-          "reference_mean": 0.7826650057432086,
-          "member_mean": 0.5912655524967186
+          "reference_mean": 0.783591076801688,
+          "member_mean": 0.5860486959988956
         }
       ]
     },
@@ -404,13 +634,6 @@
       "family": "open_set_ablations",
       "dataset": "fiveg_traffic",
       "split": "session_disjoint",
-      "experiment": "openset_ablation_no_flow_metric",
-      "reason": "0 seed(s) shared with the reference"
-    },
-    {
-      "family": "open_set_ablations",
-      "dataset": "fiveg_traffic",
-      "split": "session_disjoint",
       "experiment": "openset_ablation_no_pair_margin",
       "reason": "0 seed(s) shared with the reference"
     },
@@ -419,14 +642,7 @@
       "dataset": "fiveg_traffic",
       "split": "session_disjoint",
       "experiment": "openset_ablation_no_flow_supcon",
-      "reason": "0 seed(s) shared with the reference"
-    },
-    {
-      "family": "open_set_ablations",
-      "dataset": "fiveg_traffic",
-      "split": "session_disjoint",
-      "experiment": "openset_ablation_no_adversarial",
-      "reason": "0 seed(s) shared with the reference"
+      "reason": "1 seed(s) shared with the reference"
     },
     {
       "family": "open_set_ablations",
@@ -451,34 +667,6 @@
       "dataset": "cesnet_quic22",
       "split": "random_flow",
       "reason": "reference flowconx_main has 0 seed(s)"
-    },
-    {
-      "family": "against_baselines",
-      "dataset": "fiveg_traffic",
-      "split": "session_disjoint",
-      "experiment": "baseline_deeppacket_cnn",
-      "reason": "0 seed(s) shared with the reference"
-    },
-    {
-      "family": "against_baselines",
-      "dataset": "fiveg_traffic",
-      "split": "session_disjoint",
-      "experiment": "baseline_fsnet",
-      "reason": "0 seed(s) shared with the reference"
-    },
-    {
-      "family": "against_baselines",
-      "dataset": "fiveg_traffic",
-      "split": "session_disjoint",
-      "experiment": "baseline_lstm_attention",
-      "reason": "0 seed(s) shared with the reference"
-    },
-    {
-      "family": "against_baselines",
-      "dataset": "fiveg_traffic",
-      "split": "session_disjoint",
-      "experiment": "baseline_mlp_stats",
-      "reason": "0 seed(s) shared with the reference"
     },
     {
       "family": "against_baselines",

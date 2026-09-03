@@ -1,338 +1,114 @@
 [
   {
-    "stage": "headline",
-    "config": "configs/cesnet_main.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_adversarial.yaml",
     "seed": 0,
-    "config_hash": "8fc88554f2c29aed",
-    "experiment": "flowconx_main",
-    "dataset": "cesnet_quic22",
+    "config_hash": "model:ac4523430d645e7b",
+    "experiment": "openset_ablation_no_adversarial",
+    "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 1265.6,
+    "seconds": 1264.2,
     "summary": [
-      "  knn        macro-F1=0.7904 [0.7868, 0.7942]  bal-acc=0.7926  acc=0.7926",
-      "  prototype  macro-F1=0.7885 [0.7848, 0.7922]  bal-acc=0.7940  acc=0.7940",
-      "  linear     macro-F1=0.7941 [0.7904, 0.7977]  bal-acc=0.7967  acc=0.7967"
+      "  knn        macro-F1=0.5756 [0.5714, 0.5800]  bal-acc=0.6397  acc=0.6558",
+      "  prototype  macro-F1=0.5729 [0.5683, 0.5779]  bal-acc=0.6305  acc=0.6540",
+      "  linear     macro-F1=0.5739 [0.5693, 0.5787]  bal-acc=0.6335  acc=0.6547"
     ]
   },
   {
-    "stage": "headline",
-    "config": "configs/cesnet_main.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_adversarial.yaml",
     "seed": 1,
-    "config_hash": "8fc88554f2c29aed",
-    "experiment": "flowconx_main",
-    "dataset": "cesnet_quic22",
+    "config_hash": "model:ac4523430d645e7b",
+    "experiment": "openset_ablation_no_adversarial",
+    "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 1113.9,
+    "seconds": 1104.2,
     "summary": [
-      "  knn        macro-F1=0.7818 [0.7781, 0.7855]  bal-acc=0.7852  acc=0.7852",
-      "  prototype  macro-F1=0.7803 [0.7768, 0.7841]  bal-acc=0.7855  acc=0.7855",
-      "  linear     macro-F1=0.7856 [0.7822, 0.7893]  bal-acc=0.7891  acc=0.7891"
+      "  knn        macro-F1=0.5419 [0.5373, 0.5459]  bal-acc=0.6105  acc=0.6233",
+      "  prototype  macro-F1=0.5413 [0.5366, 0.5455]  bal-acc=0.6043  acc=0.6190",
+      "  linear     macro-F1=0.5482 [0.5434, 0.5523]  bal-acc=0.6131  acc=0.6272"
     ]
   },
   {
-    "stage": "headline",
-    "config": "configs/cesnet_main.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_adversarial.yaml",
     "seed": 2,
-    "config_hash": "8fc88554f2c29aed",
-    "experiment": "flowconx_main",
-    "dataset": "cesnet_quic22",
+    "config_hash": "model:ac4523430d645e7b",
+    "experiment": "openset_ablation_no_adversarial",
+    "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 1103.9,
+    "seconds": 1309.8,
     "summary": [
-      "  knn        macro-F1=0.7867 [0.7831, 0.7905]  bal-acc=0.7895  acc=0.7895",
-      "  prototype  macro-F1=0.7793 [0.7757, 0.7828]  bal-acc=0.7848  acc=0.7848",
-      "  linear     macro-F1=0.7869 [0.7834, 0.7906]  bal-acc=0.7904  acc=0.7904"
+      "  knn        macro-F1=0.5830 [0.5781, 0.5875]  bal-acc=0.6094  acc=0.6237",
+      "  prototype  macro-F1=0.5844 [0.5795, 0.5890]  bal-acc=0.6071  acc=0.6232",
+      "  linear     macro-F1=0.5858 [0.5810, 0.5906]  bal-acc=0.6091  acc=0.6249"
     ]
   },
   {
-    "stage": "headline",
-    "config": "configs/fiveg_main.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_flow_metric.yaml",
     "seed": 0,
-    "config_hash": "b49931447656cba3",
-    "experiment": "flowconx_main",
+    "config_hash": "model:2386d83aca82650f",
+    "experiment": "openset_ablation_no_flow_metric",
     "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 1492.9,
+    "seconds": 571.8,
     "summary": [
-      "  knn        macro-F1=0.5953 [0.5911, 0.5999]  bal-acc=0.6721  acc=0.6461",
-      "  prototype  macro-F1=0.5677 [0.5637, 0.5714]  bal-acc=0.6319  acc=0.6043",
-      "  linear     macro-F1=0.5866 [0.5823, 0.5903]  bal-acc=0.6452  acc=0.6179"
+      "  knn        macro-F1=0.5097 [0.5047, 0.5144]  bal-acc=0.5712  acc=0.5895",
+      "  prototype  macro-F1=0.4074 [0.4035, 0.4115]  bal-acc=0.5004  acc=0.5143",
+      "  linear     macro-F1=0.4119 [0.4077, 0.4162]  bal-acc=0.5054  acc=0.5185"
     ]
   },
   {
-    "stage": "headline",
-    "config": "configs/fiveg_main.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_flow_metric.yaml",
     "seed": 1,
-    "config_hash": "b49931447656cba3",
-    "experiment": "flowconx_main",
+    "config_hash": "model:2386d83aca82650f",
+    "experiment": "openset_ablation_no_flow_metric",
     "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 1048.5,
+    "seconds": 640.7,
     "summary": [
-      "  knn        macro-F1=0.5480 [0.5433, 0.5525]  bal-acc=0.6568  acc=0.6260",
-      "  prototype  macro-F1=0.4938 [0.4894, 0.4978]  bal-acc=0.6135  acc=0.5789",
-      "  linear     macro-F1=0.5143 [0.5102, 0.5183]  bal-acc=0.6289  acc=0.5949"
+      "  knn        macro-F1=0.4607 [0.4565, 0.4645]  bal-acc=0.5396  acc=0.5562",
+      "  prototype  macro-F1=0.5317 [0.5262, 0.5364]  bal-acc=0.5814  acc=0.6027",
+      "  linear     macro-F1=0.5319 [0.5267, 0.5366]  bal-acc=0.5812  acc=0.6024"
     ]
   },
   {
-    "stage": "headline",
-    "config": "configs/fiveg_main.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_flow_metric.yaml",
     "seed": 2,
-    "config_hash": "b49931447656cba3",
-    "experiment": "flowconx_main",
+    "config_hash": "model:2386d83aca82650f",
+    "experiment": "openset_ablation_no_flow_metric",
     "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 1466.2,
+    "seconds": 703.3,
     "summary": [
-      "  knn        macro-F1=0.5791 [0.5748, 0.5837]  bal-acc=0.6823  acc=0.6543",
-      "  prototype  macro-F1=0.5793 [0.5751, 0.5838]  bal-acc=0.6831  acc=0.6545",
-      "  linear     macro-F1=0.5789 [0.5748, 0.5834]  bal-acc=0.6830  acc=0.6541"
+      "  knn        macro-F1=0.4361 [0.4326, 0.4398]  bal-acc=0.5205  acc=0.5405",
+      "  prototype  macro-F1=0.4897 [0.4847, 0.4947]  bal-acc=0.5290  acc=0.5481",
+      "  linear     macro-F1=0.4834 [0.4785, 0.4888]  bal-acc=0.5234  acc=0.5413"
     ]
   },
   {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_random_contrast.yaml",
+    "stage": "ablations_openset",
+    "config": "configs/ablations_openset/no_flow_supcon.yaml",
     "seed": 0,
-    "config_hash": "de958bc772df0e24",
-    "experiment": "flowconx_random_contrast",
-    "dataset": "cesnet_quic22",
-    "split": "random_flow",
-    "status": "ok",
-    "seconds": 1101.3,
-    "summary": [
-      "  knn        macro-F1=0.7809 [0.7770, 0.7848]  bal-acc=0.7834  acc=0.7834",
-      "  prototype  macro-F1=0.7778 [0.7741, 0.7814]  bal-acc=0.7831  acc=0.7831",
-      "  linear     macro-F1=0.7859 [0.7822, 0.7896]  bal-acc=0.7888  acc=0.7888"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_random_contrast.yaml",
-    "seed": 1,
-    "config_hash": "de958bc772df0e24",
-    "experiment": "flowconx_random_contrast",
-    "dataset": "cesnet_quic22",
-    "split": "random_flow",
-    "status": "ok",
-    "seconds": 1158.8,
-    "summary": [
-      "  knn        macro-F1=0.7785 [0.7744, 0.7825]  bal-acc=0.7818  acc=0.7818",
-      "  prototype  macro-F1=0.7769 [0.7730, 0.7806]  bal-acc=0.7827  acc=0.7827",
-      "  linear     macro-F1=0.7839 [0.7800, 0.7877]  bal-acc=0.7875  acc=0.7875"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_random_contrast.yaml",
-    "seed": 2,
-    "config_hash": "de958bc772df0e24",
-    "experiment": "flowconx_random_contrast",
-    "dataset": "cesnet_quic22",
-    "split": "random_flow",
-    "status": "ok",
-    "seconds": 1124.2,
-    "summary": [
-      "  knn        macro-F1=0.7858 [0.7821, 0.7896]  bal-acc=0.7884  acc=0.7884",
-      "  prototype  macro-F1=0.7868 [0.7832, 0.7906]  bal-acc=0.7906  acc=0.7906",
-      "  linear     macro-F1=0.7917 [0.7880, 0.7955]  bal-acc=0.7943  acc=0.7943"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_temporal.yaml",
-    "seed": 0,
-    "config_hash": "03a7a513f805d2e0",
-    "experiment": "flowconx_temporal",
-    "dataset": "cesnet_quic22",
-    "split": "temporal",
-    "status": "ok",
-    "seconds": 1266.9,
-    "summary": [
-      "  knn        macro-F1=0.7817 [0.7776, 0.7857]  bal-acc=0.7848  acc=0.7849",
-      "  prototype  macro-F1=0.7812 [0.7773, 0.7848]  bal-acc=0.7872  acc=0.7874",
-      "  linear     macro-F1=0.7883 [0.7843, 0.7920]  bal-acc=0.7918  acc=0.7919"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_temporal.yaml",
-    "seed": 1,
-    "config_hash": "03a7a513f805d2e0",
-    "experiment": "flowconx_temporal",
-    "dataset": "cesnet_quic22",
-    "split": "temporal",
-    "status": "ok",
-    "seconds": 1309.0,
-    "summary": [
-      "  knn        macro-F1=0.7794 [0.7759, 0.7831]  bal-acc=0.7821  acc=0.7822",
-      "  prototype  macro-F1=0.7811 [0.7776, 0.7845]  bal-acc=0.7864  acc=0.7865",
-      "  linear     macro-F1=0.7867 [0.7832, 0.7901]  bal-acc=0.7900  acc=0.7901"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_temporal.yaml",
-    "seed": 2,
-    "config_hash": "03a7a513f805d2e0",
-    "experiment": "flowconx_temporal",
-    "dataset": "cesnet_quic22",
-    "split": "temporal",
-    "status": "ok",
-    "seconds": 1258.6,
-    "summary": [
-      "  knn        macro-F1=0.7831 [0.7794, 0.7868]  bal-acc=0.7859  acc=0.7861",
-      "  prototype  macro-F1=0.7836 [0.7798, 0.7875]  bal-acc=0.7882  acc=0.7883",
-      "  linear     macro-F1=0.7887 [0.7850, 0.7926]  bal-acc=0.7918  acc=0.7919"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_server_disjoint.yaml",
-    "seed": 0,
-    "config_hash": "8266547ab97b2dfa",
-    "experiment": "flowconx_server_disjoint",
-    "dataset": "cesnet_quic22",
-    "split": "server_disjoint",
-    "status": "ok",
-    "seconds": 1348.7,
-    "summary": [
-      "  knn        macro-F1=0.5841 [0.5790, 0.5889]  bal-acc=0.6160  acc=0.6555",
-      "  prototype  macro-F1=0.5865 [0.5818, 0.5916]  bal-acc=0.6284  acc=0.6575",
-      "  linear     macro-F1=0.5892 [0.5842, 0.5944]  bal-acc=0.6243  acc=0.6595"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_server_disjoint.yaml",
-    "seed": 1,
-    "config_hash": "8266547ab97b2dfa",
-    "experiment": "flowconx_server_disjoint",
-    "dataset": "cesnet_quic22",
-    "split": "server_disjoint",
-    "status": "ok",
-    "seconds": 1339.6,
-    "summary": [
-      "  knn        macro-F1=0.5808 [0.5756, 0.5858]  bal-acc=0.6034  acc=0.6468",
-      "  prototype  macro-F1=0.5902 [0.5851, 0.5955]  bal-acc=0.6217  acc=0.6519",
-      "  linear     macro-F1=0.5911 [0.5861, 0.5964]  bal-acc=0.6197  acc=0.6530"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/cesnet_server_disjoint.yaml",
-    "seed": 2,
-    "config_hash": "8266547ab97b2dfa",
-    "experiment": "flowconx_server_disjoint",
-    "dataset": "cesnet_quic22",
-    "split": "server_disjoint",
-    "status": "ok",
-    "seconds": 1309.3,
-    "summary": [
-      "  knn        macro-F1=0.5817 [0.5762, 0.5865]  bal-acc=0.6017  acc=0.6495",
-      "  prototype  macro-F1=0.5971 [0.5918, 0.6020]  bal-acc=0.6271  acc=0.6612",
-      "  linear     macro-F1=0.5975 [0.5920, 0.6023]  bal-acc=0.6193  acc=0.6606"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/fiveg_random_contrast.yaml",
-    "seed": 0,
-    "config_hash": "8b0548f9f056d1b6",
-    "experiment": "flowconx_random_contrast",
-    "dataset": "fiveg_traffic",
-    "split": "random_flow",
-    "status": "ok",
-    "seconds": 1295.9,
-    "summary": [
-      "  knn        macro-F1=0.9923 [0.9913, 0.9932]  bal-acc=0.9925  acc=0.9918",
-      "  prototype  macro-F1=0.9918 [0.9908, 0.9927]  bal-acc=0.9920  acc=0.9914",
-      "  linear     macro-F1=0.9918 [0.9908, 0.9927]  bal-acc=0.9920  acc=0.9913"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/fiveg_random_contrast.yaml",
-    "seed": 1,
-    "config_hash": "8b0548f9f056d1b6",
-    "experiment": "flowconx_random_contrast",
-    "dataset": "fiveg_traffic",
-    "split": "random_flow",
-    "status": "ok",
-    "seconds": 1221.6,
-    "summary": [
-      "  knn        macro-F1=0.9930 [0.9921, 0.9939]  bal-acc=0.9930  acc=0.9925",
-      "  prototype  macro-F1=0.9915 [0.9906, 0.9925]  bal-acc=0.9915  acc=0.9909",
-      "  linear     macro-F1=0.9920 [0.9911, 0.9930]  bal-acc=0.9920  acc=0.9913"
-    ]
-  },
-  {
-    "stage": "split_contrast",
-    "config": "configs/fiveg_random_contrast.yaml",
-    "seed": 2,
-    "config_hash": "8b0548f9f056d1b6",
-    "experiment": "flowconx_random_contrast",
-    "dataset": "fiveg_traffic",
-    "split": "random_flow",
-    "status": "ok",
-    "seconds": 1154.3,
-    "summary": [
-      "  knn        macro-F1=0.9923 [0.9914, 0.9931]  bal-acc=0.9922  acc=0.9918",
-      "  prototype  macro-F1=0.9909 [0.9900, 0.9918]  bal-acc=0.9907  acc=0.9902",
-      "  linear     macro-F1=0.9910 [0.9901, 0.9919]  bal-acc=0.9908  acc=0.9903"
-    ]
-  },
-  {
-    "stage": "novelty",
-    "config": "configs/fiveg_open_set.yaml",
-    "seed": 0,
-    "config_hash": "e2e91bac24c27ee7",
-    "experiment": "flowconx_open_set",
+    "config_hash": "model:3ce5ae537cc784d4",
+    "experiment": "openset_ablation_no_flow_supcon",
     "dataset": "fiveg_traffic",
     "split": "session_disjoint",
     "status": "ok",
-    "seconds": 823.4,
+    "seconds": 1208.5,
     "summary": [
-      "  knn        macro-F1=0.5193 [0.5147, 0.5235]  bal-acc=0.5773  acc=0.5972",
-      "  prototype  macro-F1=0.4244 [0.4206, 0.4285]  bal-acc=0.5172  acc=0.5376",
-      "  linear     macro-F1=0.5196 [0.5147, 0.5243]  bal-acc=0.5777  acc=0.6012"
-    ]
-  },
-  {
-    "stage": "novelty",
-    "config": "configs/fiveg_open_set.yaml",
-    "seed": 1,
-    "config_hash": "e2e91bac24c27ee7",
-    "experiment": "flowconx_open_set",
-    "dataset": "fiveg_traffic",
-    "split": "session_disjoint",
-    "status": "ok",
-    "seconds": 1124.2,
-    "summary": [
-      "  knn        macro-F1=0.5523 [0.5474, 0.5566]  bal-acc=0.6173  acc=0.6384",
-      "  prototype  macro-F1=0.5563 [0.5512, 0.5609]  bal-acc=0.6063  acc=0.6300",
-      "  linear     macro-F1=0.5521 [0.5469, 0.5566]  bal-acc=0.6114  acc=0.6342"
-    ]
-  },
-  {
-    "stage": "novelty",
-    "config": "configs/fiveg_open_set.yaml",
-    "seed": 2,
-    "config_hash": "e2e91bac24c27ee7",
-    "experiment": "flowconx_open_set",
-    "dataset": "fiveg_traffic",
-    "split": "session_disjoint",
-    "status": "ok",
-    "seconds": 1133.6,
-    "summary": [
-      "  knn        macro-F1=0.5082 [0.5031, 0.5134]  bal-acc=0.5536  acc=0.5756",
-      "  prototype  macro-F1=0.5338 [0.5288, 0.5390]  bal-acc=0.5495  acc=0.5713",
-      "  linear     macro-F1=0.5399 [0.5347, 0.5453]  bal-acc=0.5622  acc=0.5849"
+      "  knn        macro-F1=0.5420 [0.5370, 0.5470]  bal-acc=0.5853  acc=0.6072",
+      "  prototype  macro-F1=0.5434 [0.5382, 0.5482]  bal-acc=0.5778  acc=0.6008",
+      "  linear     macro-F1=0.5320 [0.5269, 0.5367]  bal-acc=0.5802  acc=0.6026"
     ]
   }
 ]

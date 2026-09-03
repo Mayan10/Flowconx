@@ -137,6 +137,15 @@ completed, `results/aggregate.json` marks the cell and the Wilcoxon test
 **refuses to emit a p-value below six seeds** rather than reporting an
 underpowered one.
 
+**Six seeds is not enough either, and the reason is arithmetic.** A two-sided
+Wilcoxon signed-rank test on *n* paired seeds has a minimum achievable p-value
+of 2^−(n−1). At six seeds that floor is 0.03125, so a family of three
+comparisons corrected by Holm-Bonferroni — which requires 0.0167 at rank 1 —
+cannot certify *any* effect, however large. Our largest measured effect
+(server-disjoint versus session-disjoint, Cohen's d = 20.3) hits exactly this
+wall. Eight seeds are required, and are running. Any paper reporting corrected
+Wilcoxon tests over five seeds is reporting a test that could not have passed.
+
 ## 10. Ethical and privacy considerations
 
 *(Mandatory for NDSS, USENIX Security and IMC.)*

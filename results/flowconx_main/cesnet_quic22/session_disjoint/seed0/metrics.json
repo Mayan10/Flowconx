@@ -106,10 +106,10 @@
     "config_name": "flowconx_main",
     "seed": 0,
     "git": {
-      "commit": "65059e9e3d6c685a17a674355128dd874fc61fde",
+      "commit": "7a428c560ec07a3049d2535e4fe00deb758e0daa",
       "branch": "main",
-      "dirty": "no",
-      "dirty_files": ""
+      "dirty": "yes",
+      "dirty_files": "?? results/flowconx_app_task/fiveg_traffic/session_disjoint/seed2/"
     },
     "libraries": {
       "numpy": "2.1.1",
@@ -137,9 +137,9 @@
       "cuda_available": false,
       "mps_available": true
     },
-    "started_at": 1788330909.8819451,
-    "wall_clock_seconds": 1177.488,
-    "started_at_iso": "2026-09-02T06:35:09Z"
+    "started_at": 1788435984.145684,
+    "wall_clock_seconds": 1024.7,
+    "started_at_iso": "2026-09-03T11:46:24Z"
   },
   "data": {
     "csv": "data/processed/cesnet_quic22.csv",
@@ -151,6 +151,7 @@
       "val": "ec01dc29bbe389e4776b71c932ebe7b7d6de709f58053df9f03e6ae333b8deaa",
       "test": "a145b22ea98ecafc46fd19d1a296751c2b88ec9333ae89528559873a6d9e7fa2"
     },
+    "split_manifest": "splits/cesnet_quic22/session_disjoint_seed42.json.gz",
     "split_sizes": {
       "train": 136800,
       "val": 21600,
@@ -218,7 +219,7 @@
     "epochs_run": 15,
     "best_epoch": 15,
     "best_val_macro_f1": 0.7786569543789942,
-    "seconds": 1125.21,
+    "seconds": 973.51,
     "stage_boundaries": {
       "stage1_epochs": 7
     },
@@ -658,6 +659,8 @@
           2015
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.7904145336460029,
         "lo": 0.7867530322523641,
@@ -1147,6 +1150,8 @@
           2134
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.7884622905322959,
         "lo": 0.7848290362307915,
@@ -1636,6 +1641,8 @@
           2110
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.7940946549691,
         "lo": 0.7904128734310857,
@@ -1720,39 +1727,39 @@
     "observed_packets": 30,
     "device": "mps",
     "forward_batch1": {
-      "mean_ms": 5.459322336828336,
-      "p50_ms": 5.386834032833576,
-      "p95_ms": 5.897643428761511,
-      "p99_ms": 6.541311610490084,
-      "min_ms": 5.17941708676517,
-      "max_ms": 6.63512502796948,
+      "mean_ms": 5.348467496805824,
+      "p50_ms": 5.342062504496425,
+      "p95_ms": 5.439579125959426,
+      "p99_ms": 5.565082406392321,
+      "min_ms": 5.251792026683688,
+      "max_ms": 5.691375001333654,
       "n_samples": 200
     },
     "forward_batch64": {
-      "mean_ms": 0.12308906163525535,
-      "p50_ms": 0.12005468033748912,
-      "p95_ms": 0.14120758460194338,
-      "p99_ms": 0.14241439330362482,
-      "min_ms": 0.11823373461083975,
-      "max_ms": 0.14287695375969633,
+      "mean_ms": 0.11575036656722659,
+      "p50_ms": 0.1157438127847854,
+      "p95_ms": 0.11677320962917292,
+      "p99_ms": 0.117214700931072,
+      "min_ms": 0.11452929720690008,
+      "max_ms": 0.11739909496100154,
       "n_samples": 50
     },
     "end_to_end_batch1": {
-      "mean_ms": 6.300934352912009,
-      "p50_ms": 6.075375014916062,
-      "p95_ms": 7.0854353485628945,
-      "p99_ms": 8.446087155025433,
-      "min_ms": 5.852874950505793,
-      "max_ms": 22.17799995560199,
+      "mean_ms": 6.249292978900485,
+      "p50_ms": 6.058500031940639,
+      "p95_ms": 6.619981682160868,
+      "p99_ms": 9.536268733208997,
+      "min_ms": 5.779125029221177,
+      "max_ms": 21.89333306159824,
       "n_samples": 200
     },
     "throughput_batched": {
-      "flows_per_second": 7828.083920584595,
+      "flows_per_second": 8217.663524261292,
       "batch_size": 256,
       "n_flows": 43200,
-      "seconds": 5.5186
+      "seconds": 5.257
     },
-    "feature_extraction_share": 0.1133330832075391
+    "feature_extraction_share": 0.11825328442141259
   },
   "early_classification": {
     "status": "ok",
@@ -1800,43 +1807,46 @@
     "status": "ok",
     "nuisance_source": "week",
     "adversarial_weight": 0.15,
+    "protocol": "Embeddings from all three task splits are pooled and split 50/50 for the probe. The task's own partition is not reused, because a strict protocol makes the nuisance disjoint across it by construction.",
+    "probe_train_rows": 8000,
+    "probe_test_rows": 8000,
     "targets": {
       "nuisance": {
         "z_flow": {
           "status": "ok",
           "n_classes": 4,
-          "majority_class_accuracy": 0.33675,
+          "majority_class_accuracy": 0.25725,
           "probes": {
             "linear": {
-              "accuracy": 0.25675,
-              "macro_f1": 0.2457044857679271,
-              "balanced_accuracy": 0.25004267419648774,
-              "above_majority": -0.08000000000000002
+              "accuracy": 0.263625,
+              "macro_f1": 0.2618544415532379,
+              "balanced_accuracy": 0.26322173124505305,
+              "above_majority": 0.0063750000000000195
             },
             "mlp": {
-              "accuracy": 0.170375,
-              "macro_f1": 0.11857617289980234,
-              "balanced_accuracy": 0.25107992421308784,
-              "above_majority": -0.166375
+              "accuracy": 0.2535,
+              "macro_f1": 0.23032081232970403,
+              "balanced_accuracy": 0.2515730955464619,
+              "above_majority": -0.0037499999999999756
             }
           }
         },
         "raw_flow_features": {
           "status": "ok",
           "n_classes": 4,
-          "majority_class_accuracy": 0.33675,
+          "majority_class_accuracy": 0.25725,
           "probes": {
             "linear": {
-              "accuracy": 0.235375,
-              "macro_f1": 0.2252918966639794,
-              "balanced_accuracy": 0.2401850875169207,
-              "above_majority": -0.10137499999999999
+              "accuracy": 0.253375,
+              "macro_f1": 0.22522603908043506,
+              "balanced_accuracy": 0.25231398154641177,
+              "above_majority": -0.003874999999999962
             },
             "mlp": {
-              "accuracy": 0.17125,
-              "macro_f1": 0.09853477221397768,
-              "balanced_accuracy": 0.2498820038634264,
-              "above_majority": -0.16549999999999998
+              "accuracy": 0.261625,
+              "macro_f1": 0.1740342617229457,
+              "balanced_accuracy": 0.2566404347159139,
+              "above_majority": 0.004375000000000018
             }
           }
         }
@@ -1845,46 +1855,46 @@
         "z_flow": {
           "status": "ok",
           "n_classes": 18,
-          "majority_class_accuracy": 0.0595,
+          "majority_class_accuracy": 0.058375,
           "probes": {
             "linear": {
-              "accuracy": 0.7955,
-              "macro_f1": 0.7921317666052387,
-              "balanced_accuracy": 0.7949949864914614,
-              "above_majority": 0.736
+              "accuracy": 0.81325,
+              "macro_f1": 0.8081135916842695,
+              "balanced_accuracy": 0.8124411980166333,
+              "above_majority": 0.7548750000000001
             },
             "mlp": {
-              "accuracy": 0.795375,
-              "macro_f1": 0.791202357895867,
-              "balanced_accuracy": 0.7949947613105952,
-              "above_majority": 0.7358750000000001
+              "accuracy": 0.8105,
+              "macro_f1": 0.8051525832925736,
+              "balanced_accuracy": 0.8097035549430759,
+              "above_majority": 0.752125
             }
           }
         },
         "raw_flow_features": {
           "status": "ok",
           "n_classes": 18,
-          "majority_class_accuracy": 0.0595,
+          "majority_class_accuracy": 0.058375,
           "probes": {
             "linear": {
-              "accuracy": 0.166,
-              "macro_f1": 0.1313432739154758,
-              "balanced_accuracy": 0.16569635104938057,
-              "above_majority": 0.10650000000000001
+              "accuracy": 0.163625,
+              "macro_f1": 0.12196954624917969,
+              "balanced_accuracy": 0.16200629936426447,
+              "above_majority": 0.10524999999999998
             },
             "mlp": {
-              "accuracy": 0.179,
-              "macro_f1": 0.1262692043562931,
-              "balanced_accuracy": 0.1786577950564157,
-              "above_majority": 0.1195
+              "accuracy": 0.2,
+              "macro_f1": 0.14277047855224717,
+              "balanced_accuracy": 0.1984204651182741,
+              "above_majority": 0.141625
             }
           }
         }
       }
     },
     "tradeoff": {
-      "nuisance_above_majority_mlp": -0.166375,
-      "task_macro_f1_mlp": 0.791202357895867,
+      "nuisance_above_majority_mlp": -0.0037499999999999756,
+      "task_macro_f1_mlp": 0.8051525832925736,
       "reading": "Nuisance leakage is the first number and task performance the second. A method that drives the first to zero while collapsing the second has not achieved invariance, it has destroyed the representation."
     }
   }

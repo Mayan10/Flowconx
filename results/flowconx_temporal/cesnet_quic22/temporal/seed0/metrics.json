@@ -106,10 +106,10 @@
     "config_name": "flowconx_temporal",
     "seed": 0,
     "git": {
-      "commit": "1168d1fa3c8bd465085f5f976786f5bc8c5f88b4",
+      "commit": "7a428c560ec07a3049d2535e4fe00deb758e0daa",
       "branch": "main",
       "dirty": "yes",
-      "dirty_files": "M results/sweep_log.json\n?? results/flowconx_main/fiveg_traffic/session_disjoint/seed1/\n?? results/flowconx_main/fiveg_traffic/session_disjoint/seed2/\n?? results/flowconx_random_contrast/"
+      "dirty_files": "M results/flowconx_main/cesnet_quic22/session_disjoint/seed0/metrics.json\n?? results/flowconx_app_task/fiveg_traffic/session_disjoint/seed2/"
     },
     "libraries": {
       "numpy": "2.1.1",
@@ -137,9 +137,9 @@
       "cuda_available": false,
       "mps_available": true
     },
-    "started_at": 1788341787.557654,
-    "wall_clock_seconds": 1170.282,
-    "started_at_iso": "2026-09-02T09:36:27Z"
+    "started_at": 1788437090.3238919,
+    "wall_clock_seconds": 1038.984,
+    "started_at_iso": "2026-09-03T12:04:50Z"
   },
   "data": {
     "csv": "data/processed/cesnet_quic22.csv",
@@ -219,7 +219,7 @@
     "epochs_run": 15,
     "best_epoch": 15,
     "best_val_macro_f1": 0.779568389343464,
-    "seconds": 1113.05,
+    "seconds": 990.8,
     "stage_boundaries": {
       "stage1_epochs": 7
     },
@@ -659,6 +659,8 @@
           1922
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.781686525719036,
         "lo": 0.777649427834927,
@@ -1148,6 +1150,8 @@
           1968
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.7812373660700197,
         "lo": 0.7773031058745938,
@@ -1637,6 +1641,8 @@
           1967
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.7883425725618082,
         "lo": 0.7842872302851223,
@@ -1721,43 +1727,139 @@
     "observed_packets": 30,
     "device": "mps",
     "forward_batch1": {
-      "mean_ms": 5.680381671409123,
-      "p50_ms": 5.465854017529637,
-      "p95_ms": 6.692610483150928,
-      "p99_ms": 8.410047772340475,
-      "min_ms": 5.282958969473839,
-      "max_ms": 19.376249983906746,
+      "mean_ms": 5.408659782260656,
+      "p50_ms": 5.39681245572865,
+      "p95_ms": 5.507318826857954,
+      "p99_ms": 5.819037890760228,
+      "min_ms": 5.259541911073029,
+      "max_ms": 6.355250021442771,
       "n_samples": 200
     },
     "forward_batch64": {
-      "mean_ms": 0.1493533858229057,
-      "p50_ms": 0.12184797742520459,
-      "p95_ms": 0.3808215866229147,
-      "p99_ms": 0.4256289098339039,
-      "min_ms": 0.1160299543698784,
-      "max_ms": 0.4281334531697212,
+      "mean_ms": 0.11579705736949109,
+      "p50_ms": 0.11583235936996061,
+      "p95_ms": 0.11695042257997557,
+      "p99_ms": 0.11711809167536558,
+      "min_ms": 0.11410871957195923,
+      "max_ms": 0.11721028022293467,
       "n_samples": 50
     },
     "end_to_end_batch1": {
-      "mean_ms": 6.566902284976095,
-      "p50_ms": 6.176166527438909,
-      "p95_ms": 7.579568470828233,
-      "p99_ms": 8.556011214386533,
-      "min_ms": 5.922917043790221,
-      "max_ms": 29.57970800343901,
+      "mean_ms": 6.186144578969106,
+      "p50_ms": 6.072958465665579,
+      "p95_ms": 6.238328822655603,
+      "p99_ms": 7.209221277153091,
+      "min_ms": 5.846249987371266,
+      "max_ms": 21.405458101071417,
       "n_samples": 200
     },
     "throughput_batched": {
-      "flows_per_second": 6471.48045486165,
+      "flows_per_second": 7393.246028442812,
       "batch_size": 256,
       "n_flows": 40320,
-      "seconds": 6.2304
+      "seconds": 5.4536
     },
-    "feature_extraction_share": 0.11500863954259663
+    "feature_extraction_share": 0.11133717013867722
   },
   "drift": {
-    "status": "skipped",
-    "reason": "the test split spans 1 time period(s); temporal drift needs at least two. Use data.split_protocol=temporal on a dataset with a real timeline."
+    "status": "ok",
+    "granularity": "capture",
+    "train_periods": [
+      "W-2022-44",
+      "W-2022-45",
+      "W-2022-46"
+    ],
+    "test_periods": [
+      "W-2022-47/20221122",
+      "W-2022-47/20221123",
+      "W-2022-47/20221124",
+      "W-2022-47/20221125",
+      "W-2022-47/20221126",
+      "W-2022-47/20221127"
+    ],
+    "curve": [
+      {
+        "period": "W-2022-47/20221122",
+        "n_flows": 4320,
+        "macro_f1": 0.7678093409568565,
+        "balanced_accuracy": 0.7746047653877421,
+        "macro_f1_after_5shot_reenroll": 0.7501594109047214,
+        "macro_f1_after_25shot_reenroll": 0.7700588030074258,
+        "macro_f1_after_100shot_reenroll": 0.7678431102798283
+      },
+      {
+        "period": "W-2022-47/20221123",
+        "n_flows": 7200,
+        "macro_f1": 0.7718023651313032,
+        "balanced_accuracy": 0.7784722222222222,
+        "macro_f1_after_5shot_reenroll": 0.7651042081726349,
+        "macro_f1_after_25shot_reenroll": 0.7693154956646152,
+        "macro_f1_after_100shot_reenroll": 0.7730674507344066
+      },
+      {
+        "period": "W-2022-47/20221124",
+        "n_flows": 7200,
+        "macro_f1": 0.776206991138523,
+        "balanced_accuracy": 0.7829166666666665,
+        "macro_f1_after_5shot_reenroll": 0.7755808296506163,
+        "macro_f1_after_25shot_reenroll": 0.7754844037609917,
+        "macro_f1_after_100shot_reenroll": 0.7752300445516592
+      },
+      {
+        "period": "W-2022-47/20221125",
+        "n_flows": 7200,
+        "macro_f1": 0.778807952055008,
+        "balanced_accuracy": 0.78375,
+        "macro_f1_after_5shot_reenroll": 0.7647269093803786,
+        "macro_f1_after_25shot_reenroll": 0.77759993298752,
+        "macro_f1_after_100shot_reenroll": 0.7784512597644428
+      },
+      {
+        "period": "W-2022-47/20221126",
+        "n_flows": 7200,
+        "macro_f1": 0.8013748217126064,
+        "balanced_accuracy": 0.8070833333333334,
+        "macro_f1_after_5shot_reenroll": 0.7906267972782924,
+        "macro_f1_after_25shot_reenroll": 0.7996155627511526,
+        "macro_f1_after_100shot_reenroll": 0.8020639684222597
+      },
+      {
+        "period": "W-2022-47/20221127",
+        "n_flows": 7200,
+        "macro_f1": 0.7862510693546226,
+        "balanced_accuracy": 0.7918055555555557,
+        "macro_f1_after_5shot_reenroll": 0.7765932896044263,
+        "macro_f1_after_25shot_reenroll": 0.7860028601984391,
+        "macro_f1_after_100shot_reenroll": 0.7864371441033666
+      }
+    ],
+    "degradation": [
+      {
+        "period": "W-2022-47/20221122",
+        "relative_to_first": 0.0
+      },
+      {
+        "period": "W-2022-47/20221123",
+        "relative_to_first": 0.003993024174446691
+      },
+      {
+        "period": "W-2022-47/20221124",
+        "relative_to_first": 0.008397650181666494
+      },
+      {
+        "period": "W-2022-47/20221125",
+        "relative_to_first": 0.010998611098151478
+      },
+      {
+        "period": "W-2022-47/20221126",
+        "relative_to_first": 0.033565480755749943
+      },
+      {
+        "period": "W-2022-47/20221127",
+        "relative_to_first": 0.018441728397766144
+      }
+    ],
+    "total_drop_macro_f1": 0.018441728397766144
   },
   "early_classification": {
     "status": "ok",

@@ -12,41 +12,74 @@ that a reviewer can download it, run it, and try to break the claims.
 
 ---
 
-## The short version
+## Where this stands
 
-We started by trying to break our own result, and succeeded.
+**Six of the nine claims this project set out to make have failed, and the
+evidence that killed them is in this repository.** That is the honest summary
+and it is here rather than in an appendix.
 
-On 5G Traffic, the same model and the same code score **macro-F1 0.992 under
-the split protocol the encrypted-traffic literature standardly uses, and 0.574
-under a session-disjoint one.** Nothing changes but the partition. Written up,
-0.992 across six service classes would read as a strong contribution; the audit
-says precisely why it is not, because under that protocol the **server IP alone
-scores 0.999** and the **capture-session ID alone scores 0.983**.
+What survived is a **measurement** result, not a modelling one.
 
-On CESNET-QUIC22 the same experiment finds nothing — random, session-disjoint
-and temporal splitting agree to within one seed's noise — but **server-disjoint
-splitting costs 0.19 macro-F1**. The axis that carries the label differs by
-corpus, and controlling the wrong one protects nothing.
+### What holds
 
-That is not a result about a model. It is a result about a protocol, and it is
-the reason this repository leads with `AUDIT.md` rather than with a headline
-number.
+- **The split axis that matters is corpus-specific.** On 5G Traffic the same
+  model scores **macro-F1 0.992 under the split protocol the encrypted-traffic
+  literature standardly uses and 0.574 under a session-disjoint one** — nothing
+  changes but the partition. On CESNET-QUIC22 that contrast finds *nothing*
+  (0.782 vs 0.786), but **server-disjoint splitting costs 0.19**. Controlling
+  the wrong axis protects nothing, and the audit's identifier probes tell you
+  which axis to control: server IP alone scores 0.999 on 5G under a random
+  split; SNI alone scores 0.967 on CESNET under every split.
+- **Distance-based rejection of unknown applications beats softmax
+  thresholding**, accepting about half as many unknowns at matched
+  true-positive rate (FPR@95TPR 0.34 ± 0.11 vs 0.61 ± 0.14).
+- **Only countermeasures costing 2.28× bandwidth degrade the classifier**
+  meaningfully. Random padding, dummy injection and size quantisation cost the
+  defender 8–17% overhead and the attacker essentially nothing.
 
-Three things follow, and they shape everything here:
+### What failed
 
-1. **Every reported number sits next to a trivial baseline.** Destination port
-   alone, SNI alone, server IP alone, capture-session ID alone. If one of them
-   approaches the model, the benchmark is not measuring traffic analysis, and
-   the audit says so before the paper does.
-2. **The random flow split is a contrast column, never a headline.** Headline
-   numbers use session-disjoint, temporal and server-disjoint protocols.
-3. **Nothing is reported that a script did not produce.** Table cells with no
-   run behind them read `TODO`. `scripts/make_paper_assets.py` counts them.
-4. **Every model number here is a lower bound.** 13 of 16 runs stopped with
-   validation accuracy still rising — the 15-epoch budget is a compute
-   decision, not a modelling one. See `paper/THREATS.md` §8.
+- **Closed-set accuracy.** FlowCon-X beats every deep baseline we ran and
+  loses to XGBoost on both corpora — 0.783 vs 0.790 on CESNET, 0.547 vs 0.849
+  on 5G. On 5G *every* neural model lands in a 0.05 band while a tree on
+  thirteen flow scalars sits 0.25 above; it is not this architecture, it is the
+  approach.
+- **Few-shot enrollment.** The curve is flat: +0.003 macro-F1 from one labelled
+  example to a hundred. It failed a decision rule written down before the run.
+- **Temporal drift.** Accuracy *rises* over the held-out days. A four-week
+  corpus cannot exhibit the phenomenon, so the claim is withdrawn rather than
+  supported by a flat line.
+- **Adversarial nuisance removal.** The embedding leaks capture identity at the
+  same rate as its own raw input (+0.29 vs +0.28 above chance). It removes
+  nothing.
+- **"Identifier shortcuts do not explain the task."** SNI alone scores 0.967 on
+  CESNET — above every model in this repository, ours included.
+
+### The open question
+
+The model is an **application fingerprinter** being scored on a **service
+taxonomy**. On identical data, split and budget it reaches 0.701 macro-F1
+naming the application and 0.547 naming the service category; from a single
+labelled flow, 0.757 against 0.502. Whether that reframing survives contact
+with XGBoost is queued and unmeasured — four hypotheses of that shape have
+already failed here.
 
 ---
+
+## How this repository is built
+
+Every result above came from trying to break the previous one. Three rules made
+that possible and they are enforced mechanically, not by discipline:
+
+1. **Every reported number sits next to a trivial baseline.** Destination port
+   alone, SNI alone, server IP alone, capture-session ID alone. Two of those
+   beat the model.
+2. **The random flow split is a contrast column, never a headline.**
+3. **Nothing is reported that a script did not produce.** Cells with no run
+   behind them read `TODO`, and `scripts/make_paper_assets.py` counts them.
+4. **Every model number here is a lower bound.** 13 of 16 runs stopped with
+   validation accuracy still rising — the epoch budget is a compute decision,
+   not a modelling one. See `paper/THREATS.md` §8.
 
 ## Claims
 

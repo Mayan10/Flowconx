@@ -23,6 +23,25 @@ of softmax thresholding at matched TPR.
 
 **That is an IMC paper with a modelling section, not a modelling paper.**
 
+**Updated again after the probing results.** Six of nine claims have now
+failed: C2 (accuracy, loses to XGBoost on both corpora), C3 (SNI alone scores
+0.967 on CESNET, above every model here), C5 (flat enrollment curve, failed a
+pre-registered rule), C6 (four-week corpus cannot exhibit drift), C9
+(adversarial removal leaks the nuisance at the raw-input rate). C1, C4, C7 and
+C8 stand.
+
+**This is now unambiguously a measurement submission.** The architecture
+contributes one surviving result — distance-based rejection beating softmax —
+and that is a section, not a paper. Writing it as a modelling paper would
+require suppressing five negative results that are in this repository and
+reproducible from it.
+
+**Recommendation stands: IMC primary, PETS backup.** The third branch of the
+decision rule below — "do not submit to a top venue this cycle" — is not
+triggered, because C1 replicated strongly on 5G Traffic (0.992 → 0.574) and the
+identifier probes explain it mechanically. That is a genuine measurement
+contribution independent of the architecture.
+
 **Backup: PETS.**
 
 This is a change from the earlier NDSS/USENIX framing, and the reason is what

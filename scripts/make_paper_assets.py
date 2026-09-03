@@ -247,23 +247,21 @@ def table_main_comparison(index, audit, dataset: str, split: str) -> str:
 # Table 3: ablations, with significance.
 # --------------------------------------------------------------------------
 
+# Only the rows that were run. The component and hyperparameter sweeps were
+# cut deliberately -- see ABLATIONS_CUT in scripts/run_all_experiments.py and
+# paper/RESULTS.md -- and the caption declares the table partial rather than
+# letting missing rows read as uninteresting ones.
 ABLATION_ROWS = [
     ("ablation_full", "Full model"),
-    ("ablation_no_flow_metric", r"$-$ flow-level metric objective \textbf{(headline)}"),
-    ("ablation_no_dual_encoder", r"$-$ dual encoder"),
-    ("ablation_fusion_concat", r"cross-attention $\rightarrow$ concatenation"),
-    ("ablation_fusion_gated_sum", r"cross-attention $\rightarrow$ gated sum"),
-    ("ablation_fusion_late", r"cross-attention $\rightarrow$ late fusion"),
-    ("ablation_no_adversarial", r"$-$ adversarial nuisance removal"),
-    ("ablation_no_disentangle", r"$-$ disentanglement term"),
-    ("ablation_no_prototype", r"$-$ prototype alignment"),
-    ("ablation_contrastive_only", "contrastive only"),
-    ("ablation_margin_only", "margin only"),
-    ("ablation_joint_training", "joint instead of two-stage"),
     ("ablation_classify_z_app", r"classify from $z_{\mathrm{app}}$"),
     ("ablation_classify_z_network", r"classify from $z_{\mathrm{net}}$"),
     ("ablation_classify_z_concat", r"classify from $z_{\mathrm{app}} \| z_{\mathrm{net}}$"),
-    ("ablation_capacity_matched_small", "reduced width (capacity control)"),
+    ("ablation_no_adversarial", r"$-$ adversarial nuisance removal"),
+    ("ablation_adv_weight_0p0", r"$\lambda_{\mathrm{adv}} = 0$"),
+    ("ablation_adv_weight_0p01", r"$\lambda_{\mathrm{adv}} = 0.01$"),
+    ("ablation_adv_weight_0p1", r"$\lambda_{\mathrm{adv}} = 0.1$"),
+    ("ablation_adv_weight_0p5", r"$\lambda_{\mathrm{adv}} = 0.5$"),
+    ("ablation_adv_weight_1p0", r"$\lambda_{\mathrm{adv}} = 1.0$"),
 ]
 
 
@@ -301,11 +299,15 @@ def table_ablations(index, dataset: str, split: str, significance: Dict[str, Any
     return table_wrapper(
         "\n".join(rows),
         caption=(
-            "Component ablations, mean $\\pm$ std over seeds. $\\Delta$ is the change in macro-F1 against "
-            "the full model. $p$ is a Wilcoxon signed-rank test across seeds against the full model, "
-            "Holm-Bonferroni corrected across this family; $^{*}$ marks comparisons that survive the "
-            "correction at $\\alpha = 0.05$. Parameter counts are given so that a difference is not "
-            "attributable to capacity alone."
+            "\\textbf{Partial ablation family.} Embedding choice and the adversarial weight sweep, at "
+            "the reduced ablation budget (10 epochs on a seeded stratified 72{,}000-row subsample), "
+            "mean $\\pm$ std over seeds. $\\Delta$ is the change in macro-F1 against the full model. "
+            "$p$ is a Wilcoxon signed-rank test across seeds, Holm-Bonferroni corrected within this "
+            "family; $^{*}$ marks comparisons surviving the correction at $\\alpha = 0.05$. "
+            "The fusion variants, loss-term ablations, and temperature, margin and input-budget sweeps "
+            "were \\emph{not run}: they were designed to explain why the model wins the closed-set "
+            "comparison, and it does not win it. See \\texttt{paper/RESULTS.md} for the full list of "
+            "omitted configurations and the command that would run them."
         ),
         label="tab:ablation",
         columns="lcccc",

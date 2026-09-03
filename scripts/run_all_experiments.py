@@ -49,6 +49,29 @@ STAGES: Dict[str, List[str]] = {
         "configs/fiveg_open_set.yaml",
     ],
     "ablations": sorted(str(p) for p in Path("configs/ablations").glob("*.yaml")),
+    # The subset of the ablation family that can still bear on a surviving
+    # claim. See ABLATIONS_CUT below and paper/RESULTS.md for what the full
+    # family would add and why it was not run.
+    "ablations_core": sorted(
+        str(p)
+        for p in Path("configs/ablations").glob("*.yaml")
+        if p.stem in {
+            # Does the dual encoder justify itself? The only rows that speak to
+            # the architecture's one structural commitment.
+            "classify_z_app",
+            "classify_z_network",
+            "classify_z_concat",
+            "full",
+            # Why does adversarial removal fail? C9 is refuted; this says
+            # whether the weight is the reason or the mechanism is.
+            "adv_weight_0p0",
+            "adv_weight_0p01",
+            "adv_weight_0p1",
+            "adv_weight_0p5",
+            "adv_weight_1p0",
+            "no_adversarial",
+        }
+    ),
     # Ablations scored on the open-set metric rather than closed-set macro-F1.
     # Restricted to the four that could bear on C4; see the family's full.yaml.
     "ablations_openset": sorted(str(p) for p in Path("configs/ablations_openset").glob("*.yaml")),
@@ -64,6 +87,30 @@ STAGES: Dict[str, List[str]] = {
 
 # Stages whose configs go to the baseline runner instead of the model runner.
 BASELINE_STAGES = {"baselines"}
+
+# Ablations deliberately NOT run, and why. Recorded here rather than left as a
+# silent gap: a table that omits rows without saying so reads as though the
+# rows were run and were uninteresting.
+#
+# The closed-set ablation family was designed to explain *why* FlowCon-X wins.
+# It does not win -- it loses to XGBoost on both corpora (0.783 vs 0.790 on
+# CESNET, 0.547 vs 0.849 on 5G) -- so sweeping temperatures, margins, fusion
+# variants and input budgets would measure internal variation in a result that
+# is beaten either way. Cutting them takes the remaining sweep from ~22 h to
+# ~6 h on one machine.
+ABLATIONS_CUT = {
+    "fusion variants": ["fusion_concat", "fusion_gated_sum", "fusion_late", "no_dual_encoder"],
+    "loss-term ablations": [
+        "no_flow_metric", "no_disentangle", "no_prototype", "contrastive_only",
+        "margin_only", "joint_training",
+    ],
+    "temperature sweep": ["temperature_0p03", "temperature_0p05", "temperature_0p1", "temperature_0p2"],
+    "margin sweep": ["margin_0p05", "margin_0p1", "margin_0p3", "margin_0p4"],
+    "input-budget sweep": ["packets_1", "packets_3", "packets_5", "packets_10", "packets_20", "packets_30"],
+    "capacity control": ["capacity_matched_small"],
+}
+# `no_flow_metric` is cut *here* but is run in the open-set family, where it is
+# the decisive test of the only surviving modelling claim.
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:

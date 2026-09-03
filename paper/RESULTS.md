@@ -923,6 +923,65 @@ corpus.
 
 ---
 
+## 2026-09-03 — 81 ablation runs cut, and what they would have shown
+
+**Recorded because a table that omits rows without saying so reads as though
+the rows were run and were uninteresting.**
+
+The closed-set ablation family was designed to explain *why* FlowCon-X wins.
+It does not win. It loses to XGBoost on both corpora — 0.783 against 0.790 on
+CESNET-QUIC22, 0.547 against 0.849 on 5G Traffic — and on 5G every neural model
+tested lands within 0.05 of every other. Sweeping temperatures, margins, fusion
+variants and input budgets would measure internal variation in a result that is
+beaten regardless of how the internals are set.
+
+### What was cut (81 runs, 27 configs × 3 seeds)
+
+| Group | Configs |
+| --- | --- |
+| Fusion variants | `fusion_concat`, `fusion_gated_sum`, `fusion_late`, `no_dual_encoder` |
+| Loss-term ablations | `no_flow_metric`\*, `no_disentangle`, `no_prototype`, `contrastive_only`, `margin_only`, `joint_training` |
+| Temperature sweep | 0.03, 0.05, 0.1, 0.2 |
+| Margin sweep | 0.05, 0.1, 0.3, 0.4 |
+| Input-budget sweep | 1, 3, 5, 10, 20, 30 packets |
+| Capacity control | `capacity_matched_small` |
+
+\* `no_flow_metric` is cut from the *closed-set* family but **is run** in the
+open-set family, where it is the decisive test of the only surviving modelling
+claim.
+
+### What was kept (42 runs)
+
+| Group | Why it can still change a conclusion |
+| --- | --- |
+| Open-set ablations (12) | Tests whether the metric objective produces C4. If `no_flow_metric` still beats softmax at rejection, C4's mechanism is misattributed and the last modelling claim goes with it. |
+| Embedding choice (12) | `z_app` vs `z_network` vs `z_concat` vs fused. The only rows that speak to the architecture's one structural commitment — whether the dual encoder earns its place. |
+| Adversarial weight sweep (18) | C9 is refuted; λ ∈ {0, 0.01, 0.1, 0.5, 1.0} says whether the weight is the reason or the mechanism is. |
+
+### Cost of reinstating
+
+The cut configs are all present and valid in `configs/ablations/`. Running the
+full family is one command:
+
+```bash
+python scripts/run_all_experiments.py --stages ablations --seeds 0 1 2
+```
+
+At the measured ~12 min per run at the reduced ablation budget (10 epochs on a
+seeded stratified 72,000-row subsample), that is **roughly 16 hours on one
+machine**. The trimmed set is about 6 hours. Nothing about the cut is
+irreversible and no result depends on it.
+
+### The honest framing for the paper
+
+The ablation table will be **partial, and labelled partial.** It will report
+the embedding-choice rows and the adversarial sweep, and state that the
+component and hyperparameter sweeps were not run because the closed-set result
+they would explain does not hold. That is a better disclosure than a full table
+of variations on a losing configuration.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

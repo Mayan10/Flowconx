@@ -53,15 +53,15 @@ Three things follow, and they shape everything here:
 | # | Claim | Evidence | Status |
 | --- | --- | --- | --- |
 | C1 | The split axis that matters is corpus-specific; controlling the wrong one protects nothing | `paper/tables/split_contrast.tex` | supported (5G: capture axis; CESNET: server axis, −0.19 macro-F1) |
-| C2 | Competitive under strict protocols — **not** state of the art | `paper/tables/main_comparison_*.tex` | supported on CESNET (0.789 vs 0.772); **not supported on 5G** (0.595 vs 0.849) |
-| C3 | Identifier shortcuts do not explain the task | main comparison, shortcut tier | pending |
+| C2 | Competitive under strict protocols — **not** state of the art | `paper/tables/main_comparison_*.tex` | beats all deep baselines; loses to XGBoost on both corpora (0.783 vs 0.790; 0.547 vs 0.849) |
+| C3 | Identifier shortcuts do not explain the task | main comparison, shortcut tier | **not supported** — SNI alone scores 0.967 on CESNET, above every model |
 | C4 | Metric-trained embedding rejects unknown applications better than softmax | `results/flowconx_open_set/` | supported on FPR@95TPR (0.34 vs 0.61); AUROC gap within seed spread |
 | C5 | New applications enroll from a handful of flows, no retraining | `paper/figures/enrollment_curve.pdf` | **not supported on 5G** — curve flat, failed its pre-registered rule |
 | — | *Reframing:* the model is an application fingerprinter, not a service classifier | `results/flowconx_app_task/` | internal comparison holds (0.701 vs 0.547); baselines on the app task not yet run |
 | C6 | Degrades gracefully over time; cheaply restored by re-enrollment | `drift` block | **withdrawn** — 4-week corpus cannot exhibit drift |
 | C7 | Survives padding defences at a stated overhead | `paper/figures/robustness_overhead.pdf` | supported (only 2.28× -overhead defences bite) |
 | C8 | Decides from few packets, fast enough to sit inline | `paper/tables/cost.tex` | partially supported (p50 6.1 ms end-to-end, 7.8k flows/s) |
-| C9 | Adversarial removal reduces nuisance leakage without destroying the representation | `paper/figures/adversarial_tradeoff.pdf` | pending |
+| C9 | Adversarial removal reduces nuisance leakage without destroying the representation | `probes` block | **not supported** — leak equals the raw-feature control |
 
 Full statements, the test behind each, and the claims we explicitly do **not**
 make are in [`paper/CLAIMS.md`](paper/CLAIMS.md). Limitations are in

@@ -223,8 +223,23 @@ indistinguishable.)*
 > An MLP probe recovers capture session / week from `z_flow` at close to the
 > majority-class floor, while downstream task macro-F1 is retained.
 
-- **Evidence:** `paper/figures/adversarial_tradeoff.pdf`, `probes` block
-- **Status:** **pending**
+- **Evidence:** `probes` block, three seeds, `flowconx_main` on both datasets
+- **Status:** **NOT SUPPORTED.** The adversarial head removes nothing.
+
+  | Dataset | Nuisance leak from `z_flow` | From raw features |
+  | --- | ---: | ---: |
+  | CESNET (week) | +0.0006 ± 0.0006 | −0.0049 ± 0.0041 |
+  | 5G (capture session) | +0.2935 ± 0.0205 | +0.2790 ± 0.0854 |
+
+  On CESNET there was no nuisance information in the input to begin with, so
+  the near-zero leak from the embedding is vacuous. On 5G, where capture
+  identity *is* decodable from the input, the embedding leaks it at the same
+  rate after adversarial removal at λ = 0.15.
+- **The component should be removed or re-justified.** The `no_adversarial`
+  ablation is queued and will say whether it costs anything.
+- **What did work:** the probing protocol itself. The CIST score it replaced
+  would have reported 0.6409 and said nothing, being maximised by a constant
+  encoder.
 - **Scope changed since the previous draft.** The nuisance variable used to be
   `condition`, which the audit reconstructed from two model input features with
   agreement 1.000 — removing it was circular (`AUDIT.md` §3, L5). It is now

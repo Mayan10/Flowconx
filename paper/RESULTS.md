@@ -853,6 +853,76 @@ this entry records an interesting internal comparison and nothing more.
 
 ---
 
+## 2026-09-03 — C9 not supported: adversarial removal removes nothing
+
+MLP probe accuracy **above the majority-class floor**, three seeds, on the
+pooled embedding with its own 50/50 split. Higher means more nuisance
+information is decodable. The raw-feature column is the control that makes the
+embedding column readable: it says how much was there to begin with.
+
+| Dataset | Nuisance | Target | From `z_flow` | From raw features |
+| --- | --- | --- | ---: | ---: |
+| CESNET-QUIC22 | week (4) | nuisance | +0.0006 ± 0.0006 | −0.0049 ± 0.0041 |
+| CESNET-QUIC22 | week (4) | task (18 classes) | +0.7412 ± 0.0043 | +0.1201 ± 0.0031 |
+| 5G Traffic | capture session (75) | nuisance | **+0.2935 ± 0.0205** | **+0.2790 ± 0.0854** |
+| 5G Traffic | capture session (75) | task (6 classes) | +0.7362 ± 0.0056 | +0.6997 ± 0.0068 |
+
+### Two findings, both negative for C9
+
+**On CESNET the result is vacuous.** The embedding leaks +0.0006 of week
+information above chance — essentially none. But the raw features leak −0.0049,
+which is also none. **There was nothing to remove.** Week is not predictable
+from flow statistics on this corpus, consistent with the drift experiment
+finding no temporal degradation. Reporting "the adversarial head removed the
+nuisance" here would be reporting that a filter removed a substance that was
+never in the water.
+
+**On 5G the nuisance is present and the head does not remove it.** Capture
+identity is decodable from the raw features at +0.2790 ± 0.0854 above chance
+and from `z_flow`, after adversarial removal at λ = 0.15, at +0.2935 ± 0.0205.
+**The embedding leaks as much capture-session information as its own input
+does.** The gap is +0.015 with overlapping spreads, so this is not evidence of
+amplification — it is evidence of no effect.
+
+*(An earlier draft of this entry read "amplifies", from seed 1 alone, where
+raw features gave +0.1841. Three seeds put the raw figure at +0.2790 ± 0.0854
+and the difference inside the noise. The stronger claim is withdrawn; the
+refutation does not depend on it.)*
+
+### Verdict
+
+**C9 is not supported.** On the dataset where the nuisance is genuinely
+present, the adversarial head leaves it decodable at the same rate as the raw
+input; on the dataset where it is absent, the head has nothing to do. Neither
+is the claim.
+
+This is the third architectural component to fail its own test, after the
+closed-set accuracy claim (C2, lost to XGBoost on both corpora) and the
+enrollment claim (C5, flat curve against a pre-registered rule). The probing
+protocol built to replace the CIST score is what found it — the CIST score
+would have reported 0.64 and said nothing, being maximised by a constant
+encoder.
+
+### One genuine positive in the same table
+
+The task rows are worth reading. On CESNET, service identity is decodable from
+`z_flow` at +0.7412 above chance against +0.1201 from raw features — **the
+encoder builds a task representation far better than its input**, by a factor
+of six. On 5G the same comparison is +0.7362 against +0.6997: a gain of 0.037,
+which is consistent with everything else this project has measured about that
+corpus.
+
+### What must change
+
+1. The adversarial component should be **removed or re-justified.** The
+   `no_adversarial` ablation is queued and will say whether it costs anything;
+   if it does not, it should go.
+2. The λ sweep (`configs/ablations/adv_weight_*.yaml`, queued) should be read
+   as diagnosing *why* removal fails, not as drawing a trade-off curve. On this
+   evidence there may be no trade-off to draw.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

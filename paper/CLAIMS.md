@@ -161,10 +161,18 @@ indistinguishable.)*
   scored against a service taxonomy it does not encode. On CESNET that
   mismatch is small because service and application correlate; on 5G Traffic,
   where `metaverse` spans Zepeto and Roblox, it is fatal.
-- **Open question this raises, worth answering before more compute:** whether
-  application identification is the task this architecture should be evaluated
-  on. 0.74 from a single labelled example is a defensible result. 0.42 on a
-  taxonomy the embedding does not represent is not.
+- **The reframing was tested and the internal comparison holds.** A full
+  supervised run on the application label, identical split and budget, reaches
+  **0.701 macro-F1 and 0.761 balanced accuracy** over the eight applications it
+  could have learned, against **0.547 ± 0.046 and 0.643** for the service
+  taxonomy. Three applications exceed 0.89. Two independent routes — frozen
+  prototype enrollment and a full supervised run — agree.
+- **It does not yet rescue anything.** Nobody has run the baselines on the
+  application task. XGBoost reaches 0.849 on the *service* taxonomy; its score
+  on the *application* one is unmeasured. The plausible reading is that
+  application identity is where sequence structure should beat volume
+  statistics, but this project has had four hypotheses of that shape fail, and
+  the comparison is queued rather than assumed.
 - **Still unmeasured:** the cost asymmetry in seconds and GPU-hours. Without an
   accuracy result to pair it with, it is not worth measuring yet.
 

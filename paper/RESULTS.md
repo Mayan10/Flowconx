@@ -785,6 +785,74 @@ features is a well-established result, and here it is the entire story.
 
 ---
 
+## 2026-09-03 — The reframing: this is an application fingerprinter
+
+Identical architecture, split, seed and budget. Only the label column changes.
+
+| Target | Macro-F1 | Balanced acc. |
+| --- | --- | --- |
+| Service category (6 classes) | 0.5469 ± 0.0464 | 0.6428 |
+| **Application (9 with test support)** | **0.6234** | **0.7608** |
+| Application, excluding the unlearnable one | **0.7013** | — |
+
+Per-class F1 on the application task, seed 0:
+
+| Application | F1 | Test rows |
+| --- | ---: | ---: |
+| `amazon_prime` | 0.992 | 6,583 |
+| `teamfight_tactics` | 0.913 | 898 |
+| `youtube_live` | 0.893 | 7,439 |
+| `kt_gamebox` | 0.794 | 951 |
+| `geforce_now` | 0.699 | 743 |
+| `battleground` | 0.589 | 4,334 |
+| `ms_teams` | 0.539 | 5,868 |
+| `zepeto` | 0.192 | 43 |
+| `roblox` | 0.000 | 6,000 |
+
+Six of the fifteen applications — `afreecatv`, `google_meet`, `naver_now`,
+`netflix`, `youtube`, `zoom` — have **no test rows at all** under this split,
+because each has one or two capture files that all landed in training. They are
+excluded from the macro average (see the metric fix committed alongside this).
+`roblox` is the mirror image: 6,000 test rows and **zero training rows**, so its
+F1 of 0.000 is correct and unimprovable — the model has never seen the
+application it is being asked to name.
+
+### Reading
+
+**On the applications it could have learned, the model reaches
+0.701 macro-F1 and 0.761 balanced accuracy.
+On the service taxonomy over the same flows it reaches 0.547 and
+0.643.** Three applications exceed 0.89 and one reaches 0.99.
+
+That is the reframing hypothesis confirmed on its own terms. The enrollment
+experiment predicted it from a completely different direction — 0.757 ± 0.018
+identifying applications from a single labelled flow against 0.502 ± 0.070 for
+the service category — and a full supervised run on the app label agrees.
+
+### But it does not rescue the paper, and here is why
+
+The comparison that matters is against the baselines, and **it has not been
+run on this task.** XGBoost on thirteen flow scalars reaches 0.849 on the
+*service* taxonomy; nobody has yet measured what it reaches on the
+*application* one. The plausible reading is that application identity is
+exactly where sequence models should beat volume statistics — two applications
+in the same service class have similar volume and different packet structure —
+but that is a hypothesis, and this project has already had four hypotheses of
+that shape fail.
+
+**Required before any reframing is claimed:** the audit's classical tier
+re-run with `--label-column app`, and the deep baselines likewise. Until then
+this entry records an interesting internal comparison and nothing more.
+
+**Two caveats that must travel with the number:**
+
+1. Nine scored classes, of which one is structurally unlearnable and one
+   (`zepeto`) has 43 test rows. The effective comparison rests on seven
+   applications.
+2. Seed 0 only; seeds 1 and 2 are queued.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

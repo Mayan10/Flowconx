@@ -57,6 +57,7 @@ Three things follow, and they shape everything here:
 | C3 | Identifier shortcuts do not explain the task | main comparison, shortcut tier | pending |
 | C4 | Metric-trained embedding rejects unknown applications better than softmax | `results/flowconx_open_set/` | supported on FPR@95TPR (0.34 vs 0.61); AUROC gap within seed spread |
 | C5 | New applications enroll from a handful of flows, no retraining | `paper/figures/enrollment_curve.pdf` | **not supported on 5G** — curve flat, failed its pre-registered rule |
+| — | *Reframing:* the model is an application fingerprinter, not a service classifier | `results/flowconx_app_task/` | internal comparison holds (0.701 vs 0.547); baselines on the app task not yet run |
 | C6 | Degrades gracefully over time; cheaply restored by re-enrollment | `drift` block | **withdrawn** — 4-week corpus cannot exhibit drift |
 | C7 | Survives padding defences at a stated overhead | `paper/figures/robustness_overhead.pdf` | supported (only 2.28× -overhead defences bite) |
 | C8 | Decides from few packets, fast enough to sit inline | `paper/tables/cost.tex` | partially supported (p50 6.1 ms end-to-end, 7.8k flows/s) |

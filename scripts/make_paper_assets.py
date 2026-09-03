@@ -372,6 +372,78 @@ def table_cost(index, dataset: str, split: str) -> str:
 
 
 # --------------------------------------------------------------------------
+# Table 5: open-set rejection. The one surviving modelling claim.
+# --------------------------------------------------------------------------
+
+SCORER_LABEL = {
+    "prototype_cosine": r"Prototype cosine \textbf{(ours)}",
+    "softmax_msp": "Max softmax probability",
+    "energy": "Energy score",
+    "mahalanobis": "Mahalanobis distance",
+}
+
+
+def table_open_set(results_root: Path) -> str:
+    """AUROC and FPR@95TPR for every rejection rule, on one frozen embedding."""
+    import statistics
+
+    runs = _runs_with(results_root, "open_set")
+    gathered: Dict[str, Dict[str, List[float]]] = {}
+    n_known = n_unknown = 0
+    held_out: List[str] = []
+    for payload in runs:
+        block = payload["open_set"]
+        n_known, n_unknown = block["n_known_test"], block["n_unknown_test"]
+        held_out = block.get("unknown_apps", [])
+        for name, scorer in block["scorers"].items():
+            bucket = gathered.setdefault(name, {"auroc": [], "fpr": []})
+            bucket["auroc"].append(float(scorer["auroc"]))
+            bucket["fpr"].append(float(scorer["fpr_at_95tpr"]))
+
+    rows: List[str] = [r"Rejection rule & AUROC $\uparrow$ & FPR@95TPR $\downarrow$ \\", r"\midrule"]
+    if not gathered:
+        rows.append(f"All rules & {TODO} & {TODO} \\\\")
+    else:
+        for name in ("prototype_cosine", "softmax_msp", "energy", "mahalanobis"):
+            values = gathered.get(name)
+            label = SCORER_LABEL.get(name, latex_escape(name))
+            if not values:
+                rows.append(f"{label} & {TODO} & {TODO} \\\\")
+                continue
+
+            def stat(key: str) -> str:
+                series = values[key]
+                spread = statistics.stdev(series) if len(series) > 1 else None
+                return fmt(statistics.mean(series), spread)
+
+            rows.append(f"{label} & {stat('auroc')} & {stat('fpr')} \\\\")
+
+    n_seeds = len(runs)
+    detail = (
+        f"{n_unknown:,} unknown against {n_known:,} known test flows, "
+        f"held-out applications: {', '.join(latex_escape(a) for a in held_out)}. "
+        if gathered
+        else ""
+    )
+    return table_wrapper(
+        "\n".join(rows),
+        caption=(
+            "Open-set rejection of applications never seen in training, mean $\\pm$ std over "
+            f"{n_seeds} seed(s). {detail}"
+            "All four rules score the \\emph{same} frozen embedding, so the comparison isolates the "
+            "rejection rule rather than the representation. FPR@95TPR is the column to read: the AUROC "
+            "gap between prototype and softmax is within the seed spread, while the false-accept gap at "
+            "matched true-positive rate is roughly twice it. Mahalanobis on the same embedding is "
+            "statistically indistinguishable from the prototype rule, so the claim is that "
+            "\\emph{distance-based rejection beats softmax thresholding}, not that ours is the best "
+            "distance rule."
+        ),
+        label="tab:open-set",
+        columns="lcc",
+    )
+
+
+# --------------------------------------------------------------------------
 # Figures
 # --------------------------------------------------------------------------
 
@@ -590,6 +662,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         emit(f"main_comparison_{dataset}.tex", table_main_comparison(index, audit, dataset, args.main_split))
     emit("ablation.tex", table_ablations(index, "cesnet_quic22", args.main_split, significance))
     emit("cost.tex", table_cost(index, "cesnet_quic22", args.main_split))
+    emit("open_set.tex", table_open_set(results_root))
 
     figures: List[Optional[Path]] = []
     try:

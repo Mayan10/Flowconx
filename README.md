@@ -157,6 +157,7 @@ Each row is self-contained: run the command, get the asset.
 | Table 2 — main comparison | `make audit && python -m flowconx.baselines.run_baselines --config configs/cesnet_main.yaml --seed 0 && make paper` |
 | Table 3 — ablations | `python scripts/run_all_experiments.py --stages ablations --seeds 0 1 2 3 4 && python -m flowconx.analysis.significance && make paper` |
 | Table 4 — deployment cost | `python -m flowconx.run --config configs/cesnet_main.yaml --seed 0 && make paper` |
+| Table 5 — open-set rejection | `python scripts/run_all_experiments.py --stages novelty --seeds 0 1 2 && make paper` |
 | Fig. 1 — early classification | `python -m flowconx.run --config configs/cesnet_main.yaml --seed 0 --set eval.early_classification=true` |
 | Fig. 2 — enrollment curve | `python -m flowconx.run --config configs/fiveg_open_set.yaml --seed 0` |
 | Fig. 3 — robustness vs overhead | `python -m flowconx.run --config configs/fiveg_main.yaml --seed 0 --set eval.robustness=true` |

@@ -61,8 +61,42 @@ embedding measures the corpus rather than the method. On 5G the nuisance is
 genuinely present and the embedding leaks it \emph{at the same rate as its own
 input}. The component achieves nothing.
 
-The raw-feature control is what makes this readable. Without it, the CESNET row
-alone would have supported a published claim of near-perfect invariance.
+\paragraph{It is the mechanism, not the weight.} The obvious rejoinder is that
+$\lambda_{\mathrm{adv}} = 0.15$ is simply mistuned. We swept it over two orders
+of magnitude on the corpus where the nuisance exists, three seeds each:
+
+\begin{center}
+\small
+\begin{tabular}{lrr}
+\toprule
+$\lambda_{\mathrm{adv}}$ & Task macro-F1 & Capture-session leak \\
+\midrule
+0 (no head) & $0.584 \pm 0.030$ & --- \\
+0.01        & $0.576 \pm 0.022$ & $+0.319 \pm 0.015$ \\
+0.1         & $0.607 \pm 0.065$ & $+0.325 \pm 0.028$ \\
+0.5         & $0.600 \pm 0.032$ & $+0.306 \pm 0.047$ \\
+1.0         & $0.569 \pm 0.020$ & $+0.319 \pm 0.020$ \\
+2.0         & $0.562 \pm 0.033$ & $+0.290 \pm 0.010$ \\
+\midrule
+\multicolumn{2}{l}{\emph{raw flow features (control)}} & $+0.279 \pm 0.085$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Leakage is flat across the sweep and every value sits at or above the
+raw-feature control. At $\lambda = 2.0$, thirteen times the default, the
+embedding still leaks capture identity more than its own input does. There is
+no weight at which this works, and the component should be deleted rather than
+retuned.
+
+\paragraph{The control is the methodological point.} Had we run only the sweep
+on CESNET --- the corpus our main configuration uses, and therefore the sweep a
+reader would expect --- the leak column would read $+0.0001$, $-0.0023$,
+$+0.0008$, $-0.0026$, $-0.0006$ across $\lambda$: near zero everywhere, and
+readily presented as near-perfect invariance. Only the raw-feature control
+reveals that CESNET carries no such information to begin with. We would carry
+that control to any future invariance claim, and we suggest others do the
+same.
 
 \subsection{Open-set rejection: right result, wrong mechanism}
 

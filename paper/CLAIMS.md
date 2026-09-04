@@ -235,8 +235,12 @@ indistinguishable.)*
   the near-zero leak from the embedding is vacuous. On 5G, where capture
   identity *is* decodable from the input, the embedding leaks it at the same
   rate after adversarial removal at λ = 0.15.
-- **The component should be removed or re-justified.** The `no_adversarial`
-  ablation is queued and will say whether it costs anything.
+- **Settled: it is the mechanism, not the weight.** Swept λ ∈ {0.01, 0.1, 0.5,
+  1.0, 2.0} on 5G, three seeds each. Leakage is flat — +0.319, +0.325, +0.306,
+  +0.319, +0.290 — against a raw-feature control of +0.279. Every value is at
+  or above the control, including at thirteen times the default weight. Task
+  macro-F1 does not move either.
+- **The component should be deleted, not retuned.**
 - **What did work:** the probing protocol itself. The CIST score it replaced
   would have reported 0.6409 and said nothing, being maximised by a constant
   encoder.

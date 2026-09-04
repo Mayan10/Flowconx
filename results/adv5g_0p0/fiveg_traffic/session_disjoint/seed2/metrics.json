@@ -1,0 +1,768 @@
+{
+  "experiment": "adv5g_0p0",
+  "config_hash": "732b58672addfa0c",
+  "seed": 2,
+  "config": {
+    "name": "adv5g_0p0",
+    "description": "Adversarial weight 0.0 on 5G Traffic, where the capture-session nuisance is genuinely decodable from the raw features.",
+    "seed": 2,
+    "output_root": "results",
+    "data": {
+      "dataset": "fiveg_traffic",
+      "csv": "data/processed/fiveg_traffic.csv",
+      "label_column": "service",
+      "split_protocol": "session_disjoint",
+      "split_seed": 42,
+      "val_fraction": 0.1,
+      "test_fraction": 0.2,
+      "rare_class_mode": "drop",
+      "min_class_count": 100,
+      "max_packets": 32,
+      "observed_packets": null,
+      "limit": null,
+      "subsample_rows": null,
+      "unknown_apps": []
+    },
+    "model": {
+      "app_hidden_dim": 192,
+      "net_hidden_dim": 128,
+      "app_emb_dim": 256,
+      "net_emb_dim": 128,
+      "flow_emb_dim": 256,
+      "dropout": 0.1,
+      "n_conv_blocks": 3,
+      "n_heads": 6,
+      "n_transformer_layers": 1,
+      "dual_encoder": true,
+      "fusion": "cross_attention",
+      "adversarial_head": false,
+      "classify_from": "z_flow",
+      "width_multiplier": 1.0
+    },
+    "loss": {
+      "temperature": 0.07,
+      "lambda_service_supcon": 1.0,
+      "lambda_flow_supcon": 1.0,
+      "lambda_app_supcon": 0.0,
+      "lambda_prototype": 0.1,
+      "lambda_disentangle": 0.25,
+      "lambda_adversarial": 0.0,
+      "lambda_pair_margin": 0.0,
+      "lambda_flow_pair_margin": 1.0,
+      "pair_negative_margin": 0.2,
+      "pair_positive_target": 0.75,
+      "grl_warmup_epochs": 5
+    },
+    "train": {
+      "epochs": 15,
+      "batch_size": 512,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "grad_clip": 1.0,
+      "schedule": "two_stage",
+      "stage1_epochs": 7,
+      "memory_per_class": 512,
+      "num_workers": 0,
+      "device": "auto",
+      "early_stop_patience": 4,
+      "amp": false
+    },
+    "eval": {
+      "knn_k": 5,
+      "classifier_heads": [
+        "knn",
+        "prototype",
+        "linear"
+      ],
+      "max_reference_rows": 20000,
+      "bootstrap_resamples": 1000,
+      "open_set": false,
+      "few_shot": false,
+      "few_shot_k": [
+        1,
+        5,
+        10,
+        25,
+        50,
+        100
+      ],
+      "drift": false,
+      "robustness": false,
+      "early_classification": false,
+      "early_packet_budgets": [
+        1,
+        2,
+        3,
+        5,
+        10,
+        20
+      ],
+      "cost": true,
+      "probes": true
+    }
+  },
+  "provenance": {
+    "config_hash": "732b58672addfa0c",
+    "config_name": "adv5g_0p0",
+    "seed": 2,
+    "git": {
+      "commit": "1b44989d91840fc14209dbdcf10b60a1a292b609",
+      "branch": "main",
+      "dirty": "yes",
+      "dirty_files": "M results/sweep_log.json\n?? results/adv5g_0p0/"
+    },
+    "libraries": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3",
+      "scipy": "1.14.1",
+      "sklearn": "1.5.2",
+      "torch": "2.8.0.dev20250420",
+      "xgboost": "2.1.2",
+      "yaml": "6.0.2",
+      "matplotlib": "3.9.2"
+    },
+    "python": "3.13.15",
+    "platform_name": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "cpu_count": 8,
+    "seeding": {
+      "seed": 2,
+      "deterministic_requested": true,
+      "torch": "2.8.0.dev20250420",
+      "deterministic_algorithms": true,
+      "cudnn_deterministic": true
+    },
+    "device": {
+      "requested": "auto",
+      "cuda_available": false,
+      "mps_available": true
+    },
+    "started_at": 1788510936.639105,
+    "wall_clock_seconds": 1181.644,
+    "started_at_iso": "2026-09-04T08:35:36Z"
+  },
+  "data": {
+    "csv": "data/processed/fiveg_traffic.csv",
+    "n_rows": 164348,
+    "subsample_rows": null,
+    "split_protocol": "session_disjoint",
+    "split_checksums": {
+      "train": "d61bec08a89f573253fd697b18f23a71d144f259d92dcb355e2d2ba8cbf1be97",
+      "val": "c78f091c69f4097f50b2bfb159f4bf9932edd90bd1065308b914c31e526eeb34",
+      "test": "82111af0a857b6afee30eed1adc2fd4a5eb1c14a0f4d3142e2fc87927316a880"
+    },
+    "split_manifest": "splits/fiveg_traffic/session_disjoint_seed42.json.gz",
+    "split_sizes": {
+      "train": 114872,
+      "val": 16617,
+      "test": 32859
+    },
+    "label_space": {
+      "classes": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "n_apps": 15,
+      "nuisance_source": "none",
+      "n_nuisance": 1
+    },
+    "features": {
+      "n_flows": 114872,
+      "n_dropped_no_sequence": 0,
+      "observed_packets": 32,
+      "packet_features": [
+        "size_norm",
+        "log_iat",
+        "direction",
+        "signed_size",
+        "log_cum_bytes",
+        "log_cum_time",
+        "size_delta",
+        "burst_position"
+      ],
+      "flow_features": [
+        "log_n_packets",
+        "log_n_bytes",
+        "log_duration_ms",
+        "forward_ratio",
+        "log_mean_size",
+        "log_std_size",
+        "log_mean_iat",
+        "log_std_iat",
+        "log_bytes_per_s",
+        "log_packets_per_s"
+      ]
+    },
+    "held_out_apps": [],
+    "classifier_reference_rows": 19998,
+    "classifier_reference_is_subsample": true
+  },
+  "training": {
+    "n_parameters": 1372930,
+    "device": "mps",
+    "epochs_run": 15,
+    "best_epoch": 11,
+    "best_val_macro_f1": 0.9694295762783168,
+    "seconds": 1127.73,
+    "stage_boundaries": {
+      "stage1_epochs": 7
+    },
+    "active_loss_terms": {
+      "service_supcon": 1.0,
+      "flow_supcon": 1.0,
+      "prototype": 0.1,
+      "disentangle": 0.25,
+      "flow_pair_margin": 1.0
+    }
+  },
+  "closed_set": {
+    "knn": {
+      "accuracy": 0.5781977540399891,
+      "macro_f1": 0.4892664321011688,
+      "balanced_accuracy": 0.6109888580850197,
+      "per_class_f1": {
+        "game_streaming": 0.46980074719800746,
+        "live_streaming": 0.8299837045084193,
+        "metaverse": 0.010802469135802469,
+        "online_game": 0.5683646112600537,
+        "stored_streaming": 0.9547155963302753,
+        "video_conferencing": 0.10193146417445482
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          1509,
+          17,
+          159,
+          1,
+          5,
+          3
+        ],
+        [
+          104,
+          5348,
+          13,
+          391,
+          525,
+          1058
+        ],
+        [
+          2,
+          1,
+          35,
+          5321,
+          4,
+          680
+        ],
+        [
+          7,
+          2,
+          18,
+          5194,
+          4,
+          7
+        ],
+        [
+          0,
+          77,
+          2,
+          0,
+          6504,
+          0
+        ],
+        [
+          3108,
+          3,
+          210,
+          2138,
+          0,
+          409
+        ]
+      ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
+      "macro_f1_ci95": {
+        "point": 0.4892664321011688,
+        "lo": 0.48544981294624345,
+        "hi": 0.4928414421684542,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.6109888580850197,
+        "lo": 0.6076904556359067,
+        "hi": 0.6143389392349746,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5321,
+          "rate": 0.8805229190799272
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 3108,
+          "rate": 0.5296523517382413
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "online_game",
+          "count": 2138,
+          "rate": 0.3643490115882754
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 1058,
+          "rate": 0.1422234171259578
+        },
+        {
+          "true": "metaverse",
+          "predicted": "video_conferencing",
+          "count": 680,
+          "rate": 0.1125268906172431
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 525,
+          "rate": 0.07057400188197338
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "online_game",
+          "count": 391,
+          "rate": 0.05256082806828875
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "metaverse",
+          "count": 210,
+          "rate": 0.03578732106339468
+        }
+      ]
+    },
+    "prototype": {
+      "accuracy": 0.6237864816336468,
+      "macro_f1": 0.5510611847544163,
+      "balanced_accuracy": 0.6533005296344306,
+      "per_class_f1": {
+        "game_streaming": 0.4836328626444159,
+        "live_streaming": 0.8296113128815393,
+        "metaverse": 0.010168506682161535,
+        "online_game": 0.631162507608034,
+        "stored_streaming": 0.9540339780834007,
+        "video_conferencing": 0.39775794062694625
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          1507,
+          20,
+          160,
+          1,
+          4,
+          2
+        ],
+        [
+          123,
+          5368,
+          12,
+          362,
+          515,
+          1059
+        ],
+        [
+          2,
+          3,
+          35,
+          5219,
+          4,
+          780
+        ],
+        [
+          9,
+          6,
+          18,
+          5185,
+          5,
+          9
+        ],
+        [
+          1,
+          93,
+          3,
+          0,
+          6486,
+          0
+        ],
+        [
+          2896,
+          12,
+          613,
+          431,
+          0,
+          1916
+        ]
+      ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
+      "macro_f1_ci95": {
+        "point": 0.5510611847544163,
+        "lo": 0.5467525695628845,
+        "hi": 0.5557189049251459,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.6533005296344306,
+        "lo": 0.6496000961975638,
+        "hi": 0.6570429336047745,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5219,
+          "rate": 0.8636438854873407
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 2896,
+          "rate": 0.49352419904567146
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 1059,
+          "rate": 0.14235784379620917
+        },
+        {
+          "true": "metaverse",
+          "predicted": "video_conferencing",
+          "count": 780,
+          "rate": 0.12907496276683766
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "metaverse",
+          "count": 613,
+          "rate": 0.10446489434219496
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 515,
+          "rate": 0.0692297351794596
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "online_game",
+          "count": 431,
+          "rate": 0.0734492160872529
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "online_game",
+          "count": 362,
+          "rate": 0.04866245463099879
+        }
+      ]
+    },
+    "linear": {
+      "accuracy": 0.6165434127636265,
+      "macro_f1": 0.5423791124757367,
+      "balanced_accuracy": 0.6466623086057944,
+      "per_class_f1": {
+        "game_streaming": 0.48293542701490144,
+        "live_streaming": 0.8287241459446898,
+        "metaverse": 0.010332103321033211,
+        "online_game": 0.6180323963792282,
+        "stored_streaming": 0.9549602590521048,
+        "video_conferencing": 0.35929034314246255
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          1507,
+          18,
+          160,
+          3,
+          4,
+          2
+        ],
+        [
+          135,
+          5349,
+          12,
+          377,
+          504,
+          1062
+        ],
+        [
+          2,
+          2,
+          35,
+          5219,
+          4,
+          781
+        ],
+        [
+          9,
+          5,
+          15,
+          5189,
+          5,
+          9
+        ],
+        [
+          1,
+          90,
+          4,
+          0,
+          6488,
+          0
+        ],
+        [
+          2893,
+          6,
+          506,
+          772,
+          0,
+          1691
+        ]
+      ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
+      "macro_f1_ci95": {
+        "point": 0.5423791124757367,
+        "lo": 0.5379978989039744,
+        "hi": 0.5469862387530222,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.6466623086057944,
+        "lo": 0.6430232382608873,
+        "hi": 0.6502810157935568,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5219,
+          "rate": 0.8636438854873407
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 2893,
+          "rate": 0.49301295160190867
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 1062,
+          "rate": 0.1427611238069633
+        },
+        {
+          "true": "metaverse",
+          "predicted": "video_conferencing",
+          "count": 781,
+          "rate": 0.1292404434883336
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "online_game",
+          "count": 772,
+          "rate": 0.13156100886162236
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "metaverse",
+          "count": 506,
+          "rate": 0.08623040218132243
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 504,
+          "rate": 0.06775104180669445
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "online_game",
+          "count": 377,
+          "rate": 0.05067885468476946
+        }
+      ]
+    }
+  },
+  "embedding_geometry": {
+    "train": {
+      "intra_class_cosine": 0.9906221032142639,
+      "inter_class_cosine": 0.2146565020084381,
+      "separation": 0.7759655714035034,
+      "n_sampled": 4000
+    },
+    "test": {
+      "intra_class_cosine": 0.8572472929954529,
+      "inter_class_cosine": 0.41170504689216614,
+      "separation": 0.44554224610328674,
+      "n_sampled": 4000
+    }
+  },
+  "cost": {
+    "n_parameters": 1372930,
+    "model_size_bytes": 5518975,
+    "observed_packets": 32,
+    "device": "mps",
+    "forward_batch1": {
+      "mean_ms": 8.281088779331185,
+      "p50_ms": 7.498271006625146,
+      "p95_ms": 11.536264553433282,
+      "p99_ms": 12.675741086713966,
+      "min_ms": 5.075916065834463,
+      "max_ms": 13.421457959339023,
+      "n_samples": 200
+    },
+    "forward_batch64": {
+      "mean_ms": 0.1631658591213636,
+      "p50_ms": 0.16889062499103602,
+      "p95_ms": 0.20500394739428884,
+      "p99_ms": 0.2055539140565088,
+      "min_ms": 0.12394140685501043,
+      "max_ms": 0.20564387523336336,
+      "n_samples": 50
+    },
+    "end_to_end_batch1": {
+      "mean_ms": 9.109310578205623,
+      "p50_ms": 9.471375029534101,
+      "p95_ms": 13.05387143511325,
+      "p99_ms": 15.652260379865712,
+      "min_ms": 5.748083000071347,
+      "max_ms": 33.57370791491121,
+      "n_samples": 200
+    },
+    "throughput_batched": {
+      "flows_per_second": 5044.665880707885,
+      "batch_size": 256,
+      "n_flows": 32859,
+      "seconds": 6.5136
+    },
+    "feature_extraction_share": 0.20832286935701808
+  },
+  "probes": {
+    "status": "ok",
+    "nuisance_source": "none",
+    "adversarial_weight": 0.0,
+    "protocol": "Embeddings from all three task splits are pooled and split 50/50 for the probe. The task's own partition is not reused, because a strict protocol makes the nuisance disjoint across it by construction.",
+    "probe_train_rows": 8000,
+    "probe_test_rows": 8000,
+    "targets": {
+      "nuisance": {
+        "z_flow": {
+          "status": "skipped",
+          "reason": "target has 1 distinct value(s)"
+        },
+        "raw_flow_features": {
+          "status": "skipped",
+          "reason": "target has 1 distinct value(s)"
+        }
+      },
+      "task": {
+        "z_flow": {
+          "status": "ok",
+          "n_classes": 6,
+          "majority_class_accuracy": 0.217125,
+          "probes": {
+            "linear": {
+              "accuracy": 0.942125,
+              "macro_f1": 0.9416549945787412,
+              "balanced_accuracy": 0.9448990668925191,
+              "above_majority": 0.725
+            },
+            "mlp": {
+              "accuracy": 0.964625,
+              "macro_f1": 0.9655316138420548,
+              "balanced_accuracy": 0.9661022545822089,
+              "above_majority": 0.7474999999999999
+            }
+          }
+        },
+        "raw_flow_features": {
+          "status": "ok",
+          "n_classes": 6,
+          "majority_class_accuracy": 0.217125,
+          "probes": {
+            "linear": {
+              "accuracy": 0.655375,
+              "macro_f1": 0.6475733471924071,
+              "balanced_accuracy": 0.6463426984704503,
+              "above_majority": 0.43825000000000003
+            },
+            "mlp": {
+              "accuracy": 0.916875,
+              "macro_f1": 0.9215788054757121,
+              "balanced_accuracy": 0.9193992630522015,
+              "above_majority": 0.69975
+            }
+          }
+        }
+      }
+    },
+    "note": "No adversarial nuisance is configured for this run, so the probe measures how much nuisance information the embedding retains without any pressure to remove it. That is the reference point the ablation compares against."
+  }
+}

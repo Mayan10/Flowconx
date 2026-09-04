@@ -58,18 +58,27 @@ def measure_forward_latency(model, packet_seq, flow_features, packet_mask, devic
     samples: List[float] = []
     with torch.no_grad():
         for _ in range(warmup):
-            model(packet_seq, flow_features, packet_mask, grl_scale=0.0)
+            model(packet_seq, flow_features, packet_mask)
         _synchronize(device)
         for _ in range(runs):
             start = time.perf_counter()
-            model(packet_seq, flow_features, packet_mask, grl_scale=0.0)
+            model(packet_seq, flow_features, packet_mask)
             _synchronize(device)
             samples.append((time.perf_counter() - start) * 1000.0)
     return samples
 
 
 def measure_end_to_end_latency(model, frame, device, budget: int, runs: int) -> List[float]:
-    """Stored record in, decision out. Includes parsing and feature building."""
+    """Stored record in, decision out. Includes parsing and feature building.
+
+    Model-agnostic on purpose: this is the function that makes our latency
+    comparable to a baseline's, so it must not assume FlowCon-X's signature.
+    It calls ``model(packet_seq, flow_features, packet_mask)`` and consumes
+    whatever comes back -- a dict of embeddings from our model, a logits
+    tensor from a baseline. Passing ``grl_scale`` here would have made the
+    baselines uncallable and left the cost table comparing our end-to-end path
+    against their forward pass alone.
+    """
     import torch
 
     from ..features.packet import build_flow_features, build_packet_features, parse_float_series
@@ -99,9 +108,11 @@ def measure_end_to_end_latency(model, frame, device, budget: int, runs: int) -> 
                 torch.from_numpy(packet_seq).to(device),
                 torch.from_numpy(flow_features).to(device),
                 torch.from_numpy(packet_mask).to(device),
-                grl_scale=0.0,
             )
-            _ = outputs["z_flow"].cpu().numpy()
+            # A decision, not just a forward pass: pull the result back to host
+            # memory, which is what a deployment pays for.
+            tensor = outputs["z_flow"] if isinstance(outputs, dict) else outputs
+            _ = tensor.detach().cpu().numpy()
             _synchronize(device)
             samples.append((time.perf_counter() - start) * 1000.0)
     return samples

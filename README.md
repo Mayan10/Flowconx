@@ -50,8 +50,9 @@ What survived is a **measurement** result, not a modelling one.
   corpus cannot exhibit the phenomenon, so the claim is withdrawn rather than
   supported by a flat line.
 - **Adversarial nuisance removal.** The embedding leaks capture identity at the
-  same rate as its own raw input (+0.29 vs +0.28 above chance). It removes
-  nothing.
+  same rate as its own raw input (+0.29 vs +0.28 above chance), and a sweep of
+  the adversarial weight over two orders of magnitude does not change that at
+  any point. It is the mechanism, not the tuning.
 - **"Identifier shortcuts do not explain the task."** SNI alone scores 0.967 on
   CESNET — above every model in this repository, ours included.
 

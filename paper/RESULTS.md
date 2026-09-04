@@ -1030,6 +1030,58 @@ data, and it is rarely stated.
 
 ---
 
+## 2026-09-04 — No adversarial weight works. The mechanism is wrong, not the tuning.
+
+The earlier adversarial sweep ran on CESNET-QUIC22, where the nuisance is not
+present — week is undecodable from the raw features (−0.005 above chance) — so
+it could only ever produce a flat line, and did. That was a measurement taken
+where the phenomenon does not occur.
+
+This sweep runs on 5G Traffic, where the capture session **is** decodable from
+the raw flow features at **+0.2790 ± 0.0854** above the majority floor. Three
+seeds per weight, probes on the pooled embedding with its own split.
+
+| $\lambda_{\mathrm{adv}}$ | Task macro-F1 | Capture-session leak from $z_{\mathrm{flow}}$ |
+| --- | --- | --- |
+| 0 (no head) | 0.5835 $\pm$ 0.0298 | --- (no head) |
+| 0.01 | 0.5757 $\pm$ 0.0224 | $+0.3189 \pm 0.0145$ |
+| 0.1 | 0.6067 $\pm$ 0.0648 | $+0.3254 \pm 0.0282$ |
+| 0.5 | 0.6003 $\pm$ 0.0321 | $+0.3060 \pm 0.0467$ |
+| 1.0 | 0.5685 $\pm$ 0.0204 | $+0.3185 \pm 0.0195$ |
+| 2.0 | 0.5619 $\pm$ 0.0325 | $+0.2902 \pm 0.0101$ |
+
+**Leakage is flat across two orders of magnitude in $\lambda$, and every value
+sits at or above the raw-feature control.** At $\lambda = 2.0$ — thirteen times
+the default — the embedding still leaks capture identity at $+0.2902$, against
+$+0.2790$ in its own input. Task macro-F1 does not move either: every weight
+lands inside the seed spread of every other.
+
+### What this settles
+
+C9 was already not supported at the default weight. The open question was
+whether that was a tuning failure. It is not. **There is no weight at which
+gradient-reversal adversarial removal removes this nuisance**, and the
+component should be deleted rather than retuned.
+
+The finding generalises beyond our architecture, which is why it is worth
+reporting: a 75-class capture-session nuisance, a standard gradient-reversal
+head, a sweep spanning $\lambda \in [0.01, 2.0]$, and no effect on decodability
+at any point. Adversarial invariance is widely assumed to work in this setting
+and, in this setting, it does not.
+
+### Why the earlier sweep would have been reported as a success
+
+Had we run only the CESNET sweep — the one that inherits the main config, and
+therefore the one a reader would expect — the leak column would have read
+$+0.0001$, $-0.0023$, $+0.0008$, $-0.0026$, $-0.0006$ across $\lambda$. Near
+zero everywhere. Without the raw-feature control showing that CESNET has no
+such information to begin with, that table supports a claim of near-perfect
+invariance. **The control is what turns a vacuous result into a readable one**,
+and it is the single methodological point we would carry to any future
+invariance claim.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

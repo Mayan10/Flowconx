@@ -205,7 +205,7 @@ def table_main_comparison(index, audit, dataset: str, split: str) -> str:
                     f"{fmt(entry.get('balanced_accuracy'))} & --- \\\\"
                 )
                 continue
-            group = index.get((f"baseline_{family}", dataset, split))
+            group = index.get((f"flowconx_main_baseline_{family}", dataset, split))
             if group is None:
                 rows.append(f"{PRETTY.get(family, latex_escape(family))} & {TODO} & {TODO} & {TODO} \\\\")
                 continue
@@ -335,7 +335,7 @@ def table_cost(index, dataset: str, split: str) -> str:
         r"\midrule",
     ]
     candidates = [("flowconx_main", "FlowCon-X")] + [
-        (f"baseline_{name}", PRETTY.get(name, name))
+        (f"flowconx_main_baseline_{name}", PRETTY.get(name, name))
         for name in ("deeppacket_cnn", "fsnet", "lstm_attention", "mlp_stats")
     ]
     for experiment, label in candidates:

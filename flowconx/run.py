@@ -52,6 +52,14 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _existing_config_hash(path: Path) -> Optional[str]:
+    """Config hash recorded in an existing metrics.json, if it has one."""
+    try:
+        return str(json.loads(path.read_text(encoding="utf-8")).get("config_hash", "")) or None
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
 def load_frame(config: ExperimentConfig) -> pd.DataFrame:
     path = Path(config.data.csv)
     if not path.exists():
@@ -109,6 +117,19 @@ def main(argv: Optional[List[str]] = None) -> int:
     run_dir = config.run_dir
     metrics_path = run_dir / "metrics.json"
     if metrics_path.exists() and not args.overwrite:
+        # "Already present" must mean "this experiment already ran", not
+        # "a file exists here". Two configs that differ in something the path
+        # does not encode would otherwise collide silently, and the second
+        # would be skipped as though it had run.
+        existing = _existing_config_hash(metrics_path)
+        if existing is not None and existing != config.hash():
+            print(
+                f"{metrics_path} holds config {existing} but this run is {config.hash()}. "
+                "Two different experiments map to the same results path; give one of them a "
+                "distinct `name` in its config.",
+                file=sys.stderr,
+            )
+            return 4
         print(f"{metrics_path} already exists. Pass --overwrite to replace it.", file=sys.stderr)
         return 2
 

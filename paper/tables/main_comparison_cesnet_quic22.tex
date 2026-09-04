@@ -26,12 +26,12 @@ AppScanner & 0.772 & 0.775 & --- \\
 $k$-fingerprinting & 0.590 & 0.597 & --- \\
 \midrule
 \multicolumn{4}{l}{\emph{Deep, non-pretrained}} \\
-DeepPacket-style CNN & 0.652 $\pm$ 0.002 & 0.662 $\pm$ 0.001 & 270\,918 \\
-FS-Net & 0.761 $\pm$ 0.007 & 0.766 $\pm$ 0.006 & 634\,258 \\
-Bi-LSTM + attention & 0.703 $\pm$ 0.002 & 0.711 $\pm$ 0.002 & 573\,331 \\
-Flow-statistics MLP & 0.257 $\pm$ 0.003 & 0.295 $\pm$ 0.004 & 73\,234 \\
+DeepPacket-style CNN & 0.651 $\pm$ 0.002 & 0.662 $\pm$ 0.002 & 270\,918 \\
+FS-Net & 0.760 $\pm$ 0.005 & 0.765 $\pm$ 0.004 & 634\,258 \\
+Bi-LSTM + attention & 0.705 $\pm$ 0.003 & 0.713 $\pm$ 0.003 & 573\,331 \\
+Flow-statistics MLP & 0.260 $\pm$ 0.004 & 0.298 $\pm$ 0.005 & 73\,234 \\
 \midrule
-\textbf{FlowCon-X} & \textbf{0.783 $\pm$ 0.005} & 0.788 $\pm$ 0.005 & 1\,406\,342 \\
+\textbf{FlowCon-X} & \textbf{0.781 $\pm$ 0.007} & 0.787 $\pm$ 0.006 & 1\,406\,342 \\
 \bottomrule
 \end{tabular}
 \caption{Main comparison on cesnet\_quic22 under the session-disjoint protocol, mean $\pm$ std over seeds, every method on the identical committed splits. Identifier shortcuts are included deliberately: if one of them approaches the rest, the benchmark is not measuring traffic analysis. Pre-trained byte-level transformers (ET-BERT, YaTC, CLE-TFE) are absent because our records retain no payload; see \texttt{flowconx/baselines/WHY\_NOT\_RUN.md}.}

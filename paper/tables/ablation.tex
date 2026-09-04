@@ -6,16 +6,16 @@
 \toprule
 Variant & Macro-F1 & $\Delta$ & $p$ & Params \\
 \midrule
-Full model & 0.783 $\pm$ 0.005 & --- & --- & 1\,406\,342 \\
-classify from $z_{\mathrm{app}}$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-classify from $z_{\mathrm{net}}$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-classify from $z_{\mathrm{app}} \| z_{\mathrm{net}}$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-$-$ adversarial nuisance removal & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-$\lambda_{\mathrm{adv}} = 0$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-$\lambda_{\mathrm{adv}} = 0.01$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-$\lambda_{\mathrm{adv}} = 0.1$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-$\lambda_{\mathrm{adv}} = 0.5$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
-$\lambda_{\mathrm{adv}} = 1.0$ & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} \\
+Full model & 0.626 $\pm$ 0.001 & --- & --- & 1\,406\,342 \\
+classify from $z_{\mathrm{app}}$ & 0.616 $\pm$ 0.002 & -0.010 & \textsc{todo} & 1\,406\,342 \\
+classify from $z_{\mathrm{net}}$ & 0.081 $\pm$ 0.010 & -0.545 & \textsc{todo} & 1\,406\,342 \\
+classify from $z_{\mathrm{app}} \| z_{\mathrm{net}}$ & 0.613 $\pm$ 0.005 & -0.013 & \textsc{todo} & 1\,406\,342 \\
+$-$ adversarial nuisance removal & 0.624 $\pm$ 0.005 & -0.002 & \textsc{todo} & 1\,372\,930 \\
+$\lambda_{\mathrm{adv}} = 0$ & 0.624 $\pm$ 0.005 & -0.002 & \textsc{todo} & 1\,372\,930 \\
+$\lambda_{\mathrm{adv}} = 0.01$ & 0.626 $\pm$ 0.001 & -0.000 & \textsc{todo} & 1\,406\,342 \\
+$\lambda_{\mathrm{adv}} = 0.1$ & 0.626 $\pm$ 0.001 & -0.000 & \textsc{todo} & 1\,406\,342 \\
+$\lambda_{\mathrm{adv}} = 0.5$ & 0.626 $\pm$ 0.001 & +0.000 & \textsc{todo} & 1\,406\,342 \\
+$\lambda_{\mathrm{adv}} = 1.0$ & 0.626 $\pm$ 0.001 & +0.000 & \textsc{todo} & 1\,406\,342 \\
 \bottomrule
 \end{tabular}
 \caption{\textbf{Partial ablation family.} Embedding choice and the adversarial weight sweep, at the reduced ablation budget (10 epochs on a seeded stratified 72{,}000-row subsample), mean $\pm$ std over seeds. $\Delta$ is the change in macro-F1 against the full model. $p$ is a Wilcoxon signed-rank test across seeds, Holm-Bonferroni corrected within this family; $^{*}$ marks comparisons surviving the correction at $\alpha = 0.05$. The fusion variants, loss-term ablations, and temperature, margin and input-budget sweeps were \emph{not run}: they were designed to explain why the model wins the closed-set comparison, and it does not win it. See \texttt{paper/RESULTS.md} for the full list of omitted configurations and the command that would run them.}

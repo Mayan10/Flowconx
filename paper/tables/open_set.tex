@@ -6,12 +6,12 @@
 \toprule
 Rejection rule & AUROC $\uparrow$ & FPR@95TPR $\downarrow$ \\
 \midrule
-Prototype cosine \textbf{(ours)} & 0.919 $\pm$ 0.033 & 0.341 $\pm$ 0.107 \\
-Max softmax probability & 0.837 $\pm$ 0.085 & 0.610 $\pm$ 0.136 \\
-Energy score & 0.870 $\pm$ 0.081 & 0.375 $\pm$ 0.138 \\
-Mahalanobis distance & 0.927 $\pm$ 0.030 & 0.316 $\pm$ 0.133 \\
+Prototype cosine \textbf{(ours)} & 0.929 $\pm$ 0.023 & 0.359 $\pm$ 0.116 \\
+Max softmax probability & 0.855 $\pm$ 0.058 & 0.559 $\pm$ 0.107 \\
+Energy score & 0.896 $\pm$ 0.046 & 0.361 $\pm$ 0.118 \\
+Mahalanobis distance & 0.935 $\pm$ 0.021 & 0.328 $\pm$ 0.104 \\
 \bottomrule
 \end{tabular}
-\caption{Open-set rejection of applications never seen in training, mean $\pm$ std over 3 seed(s). 7,509 unknown against 25,350 known test flows, held-out applications: ms\_teams, teamfight\_tactics, geforce\_now. All four rules score the \emph{same} frozen embedding, so the comparison isolates the rejection rule rather than the representation. FPR@95TPR is the column to read: the AUROC gap between prototype and softmax is within the seed spread, while the false-accept gap at matched true-positive rate is roughly twice it. Mahalanobis on the same embedding is statistically indistinguishable from the prototype rule, so the claim is that \emph{distance-based rejection beats softmax thresholding}, not that ours is the best distance rule.}
+\caption{Open-set rejection of applications never seen in training, mean $\pm$ std over 15 seed(s). 7,509 unknown against 25,350 known test flows, held-out applications: ms\_teams, teamfight\_tactics, geforce\_now. All four rules score the \emph{same} frozen embedding, so the comparison isolates the rejection rule rather than the representation. FPR@95TPR is the column to read: the AUROC gap between prototype and softmax is within the seed spread, while the false-accept gap at matched true-positive rate is roughly twice it. Mahalanobis on the same embedding is statistically indistinguishable from the prototype rule, so the claim is that \emph{distance-based rejection beats softmax thresholding}, not that ours is the best distance rule.}
 \label{tab:open-set}
 \end{table}

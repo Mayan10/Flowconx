@@ -1,0 +1,2963 @@
+{
+  "experiment": "openset_ablation_no_pair_margin",
+  "config_hash": "c2f81053e9b883e8",
+  "seed": 2,
+  "config": {
+    "name": "openset_ablation_no_pair_margin",
+    "description": "Margin term only removed, contrastive retained. Separates which of the two metric objectives the rejection behaviour depends on.",
+    "seed": 2,
+    "output_root": "results",
+    "data": {
+      "dataset": "fiveg_traffic",
+      "csv": "data/processed/fiveg_traffic.csv",
+      "label_column": "service",
+      "split_protocol": "session_disjoint",
+      "split_seed": 42,
+      "val_fraction": 0.1,
+      "test_fraction": 0.2,
+      "rare_class_mode": "drop",
+      "min_class_count": 100,
+      "max_packets": 32,
+      "observed_packets": null,
+      "limit": null,
+      "subsample_rows": null,
+      "unknown_apps": [
+        "ms_teams",
+        "teamfight_tactics",
+        "geforce_now"
+      ]
+    },
+    "model": {
+      "app_hidden_dim": 192,
+      "net_hidden_dim": 128,
+      "app_emb_dim": 256,
+      "net_emb_dim": 128,
+      "flow_emb_dim": 256,
+      "dropout": 0.1,
+      "n_conv_blocks": 3,
+      "n_heads": 6,
+      "n_transformer_layers": 1,
+      "dual_encoder": true,
+      "fusion": "cross_attention",
+      "adversarial_head": true,
+      "classify_from": "z_flow",
+      "width_multiplier": 1.0
+    },
+    "loss": {
+      "temperature": 0.07,
+      "lambda_service_supcon": 1.0,
+      "lambda_flow_supcon": 1.0,
+      "lambda_app_supcon": 0.0,
+      "lambda_prototype": 0.1,
+      "lambda_disentangle": 0.25,
+      "lambda_adversarial": 0.15,
+      "lambda_pair_margin": 0.0,
+      "lambda_flow_pair_margin": 0.0,
+      "pair_negative_margin": 0.2,
+      "pair_positive_target": 0.75,
+      "grl_warmup_epochs": 5
+    },
+    "train": {
+      "epochs": 15,
+      "batch_size": 512,
+      "lr": 0.0003,
+      "weight_decay": 0.0001,
+      "grad_clip": 1.0,
+      "schedule": "two_stage",
+      "stage1_epochs": 7,
+      "memory_per_class": 512,
+      "num_workers": 0,
+      "device": "auto",
+      "early_stop_patience": 4,
+      "amp": false
+    },
+    "eval": {
+      "knn_k": 5,
+      "classifier_heads": [
+        "knn",
+        "prototype",
+        "linear"
+      ],
+      "max_reference_rows": 20000,
+      "bootstrap_resamples": 1000,
+      "open_set": true,
+      "few_shot": true,
+      "few_shot_k": [
+        1,
+        5,
+        10,
+        25,
+        50,
+        100
+      ],
+      "drift": false,
+      "robustness": false,
+      "early_classification": false,
+      "early_packet_budgets": [
+        1,
+        2,
+        3,
+        5,
+        10,
+        20
+      ],
+      "cost": true,
+      "probes": true
+    }
+  },
+  "provenance": {
+    "config_hash": "c2f81053e9b883e8",
+    "config_name": "openset_ablation_no_pair_margin",
+    "seed": 2,
+    "git": {
+      "commit": "4c9fb350ce4a4a28e2e5bf81060bfb7d11c6d603",
+      "branch": "main",
+      "dirty": "yes",
+      "dirty_files": "M results/sweep_log.json\n?? results/openset_ablation_no_flow_supcon/fiveg_traffic/session_disjoint/seed1/\n?? results/openset_ablation_no_flow_supcon/fiveg_traffic/session_disjoint/seed2/\n?? results/openset_ablation_no_pair_margin/"
+    },
+    "libraries": {
+      "numpy": "2.1.1",
+      "pandas": "2.2.3",
+      "scipy": "1.14.1",
+      "sklearn": "1.5.2",
+      "torch": "2.8.0.dev20250420",
+      "xgboost": "2.1.2",
+      "yaml": "6.0.2",
+      "matplotlib": "3.9.2"
+    },
+    "python": "3.13.15",
+    "platform_name": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "cpu_count": 8,
+    "seeding": {
+      "seed": 2,
+      "deterministic_requested": true,
+      "torch": "2.8.0.dev20250420",
+      "deterministic_algorithms": true,
+      "cudnn_deterministic": true
+    },
+    "device": {
+      "requested": "auto",
+      "cuda_available": false,
+      "mps_available": true
+    },
+    "started_at": 1788458629.013443,
+    "wall_clock_seconds": 659.627,
+    "started_at_iso": "2026-09-03T18:03:49Z"
+  },
+  "data": {
+    "csv": "data/processed/fiveg_traffic.csv",
+    "n_rows": 164348,
+    "subsample_rows": null,
+    "split_protocol": "session_disjoint",
+    "split_checksums": {
+      "train": "d61bec08a89f573253fd697b18f23a71d144f259d92dcb355e2d2ba8cbf1be97",
+      "val": "c78f091c69f4097f50b2bfb159f4bf9932edd90bd1065308b914c31e526eeb34",
+      "test": "82111af0a857b6afee30eed1adc2fd4a5eb1c14a0f4d3142e2fc87927316a880"
+    },
+    "split_manifest": "splits/fiveg_traffic/session_disjoint_seed42.json.gz",
+    "split_sizes": {
+      "train": 95742,
+      "val": 16308,
+      "test": 32859
+    },
+    "label_space": {
+      "classes": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "n_apps": 15,
+      "nuisance_source": "capture_id",
+      "n_nuisance": 75
+    },
+    "features": {
+      "n_flows": 95742,
+      "n_dropped_no_sequence": 0,
+      "observed_packets": 32,
+      "packet_features": [
+        "size_norm",
+        "log_iat",
+        "direction",
+        "signed_size",
+        "log_cum_bytes",
+        "log_cum_time",
+        "size_delta",
+        "burst_position"
+      ],
+      "flow_features": [
+        "log_n_packets",
+        "log_n_bytes",
+        "log_duration_ms",
+        "forward_ratio",
+        "log_mean_size",
+        "log_std_size",
+        "log_mean_iat",
+        "log_std_iat",
+        "log_bytes_per_s",
+        "log_packets_per_s"
+      ]
+    },
+    "held_out_apps": [
+      "ms_teams",
+      "teamfight_tactics",
+      "geforce_now"
+    ],
+    "classifier_reference_rows": 19998,
+    "classifier_reference_is_subsample": true
+  },
+  "training": {
+    "n_parameters": 1415501,
+    "device": "mps",
+    "epochs_run": 15,
+    "best_epoch": 15,
+    "best_val_macro_f1": 0.9770923397155263,
+    "seconds": 621.5,
+    "stage_boundaries": {
+      "stage1_epochs": 7
+    },
+    "active_loss_terms": {
+      "service_supcon": 1.0,
+      "flow_supcon": 1.0,
+      "prototype": 0.1,
+      "disentangle": 0.25,
+      "adversarial": 0.15
+    }
+  },
+  "closed_set": {
+    "knn": {
+      "accuracy": 0.5533948081195411,
+      "macro_f1": 0.4706866568629773,
+      "balanced_accuracy": 0.5413669805195668,
+      "per_class_f1": {
+        "game_streaming": 0.38461538461538464,
+        "live_streaming": 0.8678854266893642,
+        "metaverse": 0.007722813608849927,
+        "online_game": 0.536212862426918,
+        "stored_streaming": 0.9342387419585418,
+        "video_conferencing": 0.09344471187880504
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          925,
+          49,
+          161,
+          366,
+          4,
+          189
+        ],
+        [
+          89,
+          5863,
+          55,
+          119,
+          844,
+          469
+        ],
+        [
+          3,
+          5,
+          37,
+          5800,
+          2,
+          196
+        ],
+        [
+          5,
+          27,
+          673,
+          4494,
+          22,
+          11
+        ],
+        [
+          1,
+          46,
+          0,
+          1,
+          6535,
+          0
+        ],
+        [
+          2093,
+          82,
+          2613,
+          750,
+          0,
+          330
+        ]
+      ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
+      "macro_f1_ci95": {
+        "point": 0.4706866568629773,
+        "lo": 0.46653005750201737,
+        "hi": 0.47498739646365096,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.5413669805195668,
+        "lo": 0.5367835348075142,
+        "hi": 0.5458932584521422,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5800,
+          "rate": 0.9597881846764852
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "metaverse",
+          "count": 2613,
+          "rate": 0.4452965235173824
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 2093,
+          "rate": 0.3566802999318337
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 844,
+          "rate": 0.11345610969216292
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "online_game",
+          "count": 750,
+          "rate": 0.1278118609406953
+        },
+        {
+          "true": "online_game",
+          "predicted": "metaverse",
+          "count": 673,
+          "rate": 0.128631498470948
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 469,
+          "rate": 0.06304610834789623
+        },
+        {
+          "true": "game_streaming",
+          "predicted": "online_game",
+          "count": 366,
+          "rate": 0.21605667060212513
+        }
+      ]
+    },
+    "prototype": {
+      "accuracy": 0.5626464591131806,
+      "macro_f1": 0.5168055830284362,
+      "balanced_accuracy": 0.5428697780487068,
+      "per_class_f1": {
+        "game_streaming": 0.532475884244373,
+        "live_streaming": 0.8558920102152499,
+        "metaverse": 0.007539891285288445,
+        "online_game": 0.5521016863830859,
+        "stored_streaming": 0.9303088665382695,
+        "video_conferencing": 0.2225151595043501
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          828,
+          128,
+          161,
+          366,
+          10,
+          201
+        ],
+        [
+          70,
+          5865,
+          71,
+          98,
+          874,
+          461
+        ],
+        [
+          3,
+          5,
+          43,
+          5788,
+          2,
+          202
+        ],
+        [
+          6,
+          28,
+          773,
+          4387,
+          28,
+          10
+        ],
+        [
+          0,
+          61,
+          0,
+          1,
+          6521,
+          0
+        ],
+        [
+          509,
+          179,
+          4315,
+          20,
+          1,
+          844
+        ]
+      ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
+      "macro_f1_ci95": {
+        "point": 0.5168055830284362,
+        "lo": 0.511780292742444,
+        "hi": 0.5219119797800051,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.5428697780487068,
+        "lo": 0.5381059134815539,
+        "hi": 0.5477369796399848,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5788,
+          "rate": 0.9578024160185339
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "metaverse",
+          "count": 4315,
+          "rate": 0.7353442399454669
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 874,
+          "rate": 0.11748890979970426
+        },
+        {
+          "true": "online_game",
+          "predicted": "metaverse",
+          "count": 773,
+          "rate": 0.14774464831804282
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 509,
+          "rate": 0.08674164962508521
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 461,
+          "rate": 0.0619706949858852
+        },
+        {
+          "true": "game_streaming",
+          "predicted": "online_game",
+          "count": 366,
+          "rate": 0.21605667060212513
+        },
+        {
+          "true": "metaverse",
+          "predicted": "video_conferencing",
+          "count": 202,
+          "rate": 0.03342710574218104
+        }
+      ]
+    },
+    "linear": {
+      "accuracy": 0.5609726406768313,
+      "macro_f1": 0.4960026187082718,
+      "balanced_accuracy": 0.544101033421423,
+      "per_class_f1": {
+        "game_streaming": 0.429493545183714,
+        "live_streaming": 0.8573103700989373,
+        "metaverse": 0.007599506032107913,
+        "online_game": 0.5511988011988012,
+        "stored_streaming": 0.931,
+        "video_conferencing": 0.19941348973607037
+      },
+      "support": {
+        "game_streaming": 1694,
+        "live_streaming": 7439,
+        "metaverse": 6043,
+        "online_game": 5232,
+        "stored_streaming": 6583,
+        "video_conferencing": 5868
+      },
+      "labels": [
+        "game_streaming",
+        "live_streaming",
+        "metaverse",
+        "online_game",
+        "stored_streaming",
+        "video_conferencing"
+      ],
+      "confusion_matrix": [
+        [
+          865,
+          97,
+          161,
+          366,
+          9,
+          196
+        ],
+        [
+          73,
+          5849,
+          66,
+          108,
+          863,
+          480
+        ],
+        [
+          3,
+          5,
+          40,
+          5794,
+          2,
+          199
+        ],
+        [
+          6,
+          28,
+          747,
+          4414,
+          26,
+          11
+        ],
+        [
+          0,
+          65,
+          0,
+          1,
+          6517,
+          0
+        ],
+        [
+          1387,
+          162,
+          3470,
+          101,
+          0,
+          748
+        ]
+      ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
+      "macro_f1_ci95": {
+        "point": 0.4960026187082718,
+        "lo": 0.4911942700780515,
+        "hi": 0.5005263634426399,
+        "n_resamples": 1000
+      },
+      "balanced_accuracy_ci95": {
+        "point": 0.544101033421423,
+        "lo": 0.5395262995831409,
+        "hi": 0.5489346789638178,
+        "n_resamples": 1000
+      },
+      "top_confusions": [
+        {
+          "true": "metaverse",
+          "predicted": "online_game",
+          "count": 5794,
+          "rate": 0.9587953003475095
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "metaverse",
+          "count": 3470,
+          "rate": 0.5913428766189502
+        },
+        {
+          "true": "video_conferencing",
+          "predicted": "game_streaming",
+          "count": 1387,
+          "rate": 0.2363667348329925
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "stored_streaming",
+          "count": 863,
+          "rate": 0.11601021642693911
+        },
+        {
+          "true": "online_game",
+          "predicted": "metaverse",
+          "count": 747,
+          "rate": 0.14277522935779816
+        },
+        {
+          "true": "live_streaming",
+          "predicted": "video_conferencing",
+          "count": 480,
+          "rate": 0.06452480172066138
+        },
+        {
+          "true": "game_streaming",
+          "predicted": "online_game",
+          "count": 366,
+          "rate": 0.21605667060212513
+        },
+        {
+          "true": "metaverse",
+          "predicted": "video_conferencing",
+          "count": 199,
+          "rate": 0.0329306635776932
+        }
+      ]
+    }
+  },
+  "embedding_geometry": {
+    "train": {
+      "intra_class_cosine": 0.9906944036483765,
+      "inter_class_cosine": 0.4580363631248474,
+      "separation": 0.532658040523529,
+      "n_sampled": 4000
+    },
+    "test": {
+      "intra_class_cosine": 0.9140352606773376,
+      "inter_class_cosine": 0.5528035759925842,
+      "separation": 0.3612316846847534,
+      "n_sampled": 4000
+    }
+  },
+  "cost": {
+    "n_parameters": 1415501,
+    "model_size_bytes": 5690547,
+    "observed_packets": 32,
+    "device": "mps",
+    "forward_batch1": {
+      "mean_ms": 5.271125369472429,
+      "p50_ms": 5.270250025205314,
+      "p95_ms": 5.420454393606633,
+      "p99_ms": 5.482943530660123,
+      "min_ms": 5.051083047874272,
+      "max_ms": 5.74404199142009,
+      "n_samples": 200
+    },
+    "forward_batch64": {
+      "mean_ms": 0.12109091152524343,
+      "p50_ms": 0.12108853934478248,
+      "p95_ms": 0.12260947514732834,
+      "p99_ms": 0.12317404678469757,
+      "min_ms": 0.11852995157823898,
+      "max_ms": 0.12334440543781966,
+      "n_samples": 50
+    },
+    "end_to_end_batch1": {
+      "mean_ms": 6.089815431041643,
+      "p50_ms": 6.000500521622598,
+      "p95_ms": 6.138704519253224,
+      "p99_ms": 7.117891708621742,
+      "min_ms": 5.696582957170904,
+      "max_ms": 19.897291087545455,
+      "n_samples": 200
+    },
+    "throughput_batched": {
+      "flows_per_second": 8362.885714808079,
+      "batch_size": 256,
+      "n_flows": 32859,
+      "seconds": 3.9291
+    },
+    "feature_extraction_share": 0.12169826396745594
+  },
+  "open_set": {
+    "status": "ok",
+    "unknown_apps": [
+      "ms_teams",
+      "teamfight_tactics",
+      "geforce_now"
+    ],
+    "n_known_test": 25350,
+    "n_unknown_test": 7509,
+    "scorers": {
+      "prototype_cosine": {
+        "auroc": 0.9268656389452972,
+        "fpr_at_95tpr": 0.520042615528033,
+        "closed_set_accuracy_on_knowns": 0.6910848126232741,
+        "oscr": [
+          {
+            "threshold": 0.7303149755942461,
+            "ccr": 0.6910848126232741,
+            "fpr_unknown": 1.0
+          },
+          {
+            "threshold": 0.7787190445809354,
+            "ccr": 0.6910453648915187,
+            "fpr_unknown": 0.9565854308163537
+          },
+          {
+            "threshold": 0.7902348575654352,
+            "ccr": 0.6910059171597633,
+            "fpr_unknown": 0.9130376881076042
+          },
+          {
+            "threshold": 0.800479815311312,
+            "ccr": 0.6908875739644971,
+            "fpr_unknown": 0.8698894659741644
+          },
+          {
+            "threshold": 0.8109147266093736,
+            "ccr": 0.6908481262327416,
+            "fpr_unknown": 0.8275402849913437
+          },
+          {
+            "threshold": 0.820807052208028,
+            "ccr": 0.6905719921104536,
+            "fpr_unknown": 0.7861233186842456
+          },
+          {
+            "threshold": 0.8294081885079696,
+            "ccr": 0.6902169625246548,
+            "fpr_unknown": 0.7476361699294181
+          },
+          {
+            "threshold": 0.8389587694097007,
+            "ccr": 0.6897041420118343,
+            "fpr_unknown": 0.7103475829005194
+          },
+          {
+            "threshold": 0.8487957676074648,
+            "ccr": 0.6887968441814596,
+            "fpr_unknown": 0.6753229457983753
+          },
+          {
+            "threshold": 0.8591774702565911,
+            "ccr": 0.6879684418145957,
+            "fpr_unknown": 0.6418963909974698
+          },
+          {
+            "threshold": 0.871129656704416,
+            "ccr": 0.6862721893491124,
+            "fpr_unknown": 0.6111333066986283
+          },
+          {
+            "threshold": 0.8843439303059677,
+            "ccr": 0.6841025641025641,
+            "fpr_unknown": 0.5838327340524704
+          },
+          {
+            "threshold": 0.8994207574976442,
+            "ccr": 0.6811834319526627,
+            "fpr_unknown": 0.564522572912505
+          },
+          {
+            "threshold": 0.9120677803559422,
+            "ccr": 0.677120315581854,
+            "fpr_unknown": 0.5481422293248103
+          },
+          {
+            "threshold": 0.9206322181123296,
+            "ccr": 0.6729783037475345,
+            "fpr_unknown": 0.5320282327873219
+          },
+          {
+            "threshold": 0.9301541874851287,
+            "ccr": 0.6691124260355029,
+            "fpr_unknown": 0.5144493274736982
+          },
+          {
+            "threshold": 0.9386031763207215,
+            "ccr": 0.6663116370808678,
+            "fpr_unknown": 0.4931415634571847
+          },
+          {
+            "threshold": 0.9465580542229538,
+            "ccr": 0.6629980276134122,
+            "fpr_unknown": 0.471700625915568
+          },
+          {
+            "threshold": 0.9531414035520686,
+            "ccr": 0.6607495069033531,
+            "fpr_unknown": 0.44533226794513253
+          },
+          {
+            "threshold": 0.9579796068486521,
+            "ccr": 0.6588165680473372,
+            "fpr_unknown": 0.41776534824876815
+          },
+          {
+            "threshold": 0.962650275122814,
+            "ccr": 0.6560552268244576,
+            "fpr_unknown": 0.39299507257957117
+          },
+          {
+            "threshold": 0.9663598250300157,
+            "ccr": 0.6530966469428008,
+            "fpr_unknown": 0.3670262351844453
+          },
+          {
+            "threshold": 0.9696083945376074,
+            "ccr": 0.650887573964497,
+            "fpr_unknown": 0.33945931548808095
+          },
+          {
+            "threshold": 0.9727498707078756,
+            "ccr": 0.6484418145956607,
+            "fpr_unknown": 0.31096018111599416
+          },
+          {
+            "threshold": 0.9751369670204985,
+            "ccr": 0.6468244575936883,
+            "fpr_unknown": 0.28046344386735916
+          },
+          {
+            "threshold": 0.9776750832751886,
+            "ccr": 0.6444181459566075,
+            "fpr_unknown": 0.25183113597016915
+          },
+          {
+            "threshold": 0.9800523393058671,
+            "ccr": 0.641301775147929,
+            "fpr_unknown": 0.225063257424424
+          },
+          {
+            "threshold": 0.9823488436435233,
+            "ccr": 0.6380276134122288,
+            "fpr_unknown": 0.20109202290584632
+          },
+          {
+            "threshold": 0.9845228833286311,
+            "ccr": 0.6345167652859961,
+            "fpr_unknown": 0.176721267811959
+          },
+          {
+            "threshold": 0.9867098062634584,
+            "ccr": 0.6306508875739645,
+            "fpr_unknown": 0.154481289119723
+          },
+          {
+            "threshold": 0.9885751612684138,
+            "ccr": 0.626706114398422,
+            "fpr_unknown": 0.1363696897056865
+          },
+          {
+            "threshold": 0.9901780328619011,
+            "ccr": 0.6222879684418146,
+            "fpr_unknown": 0.12132108136902384
+          },
+          {
+            "threshold": 0.9914800150516647,
+            "ccr": 0.6179092702169625,
+            "fpr_unknown": 0.11013450526035425
+          },
+          {
+            "threshold": 0.9925121617156586,
+            "ccr": 0.6127416173570019,
+            "fpr_unknown": 0.10107870555333599
+          },
+          {
+            "threshold": 0.9935034525805243,
+            "ccr": 0.6056410256410256,
+            "fpr_unknown": 0.09481954987348515
+          },
+          {
+            "threshold": 0.9941248476222947,
+            "ccr": 0.598698224852071,
+            "fpr_unknown": 0.08736183246770542
+          },
+          {
+            "threshold": 0.9944848638956177,
+            "ccr": 0.5934516765285996,
+            "fpr_unknown": 0.07058196830470102
+          },
+          {
+            "threshold": 0.9948203504444953,
+            "ccr": 0.5872978303747535,
+            "fpr_unknown": 0.05393527766679984
+          },
+          {
+            "threshold": 0.9951524366562302,
+            "ccr": 0.5794871794871795,
+            "fpr_unknown": 0.042881875083233455
+          },
+          {
+            "threshold": 0.9954493807209934,
+            "ccr": 0.5710059171597633,
+            "fpr_unknown": 0.036755892928485814
+          },
+          {
+            "threshold": 0.9957199634012851,
+            "ccr": 0.5625641025641026,
+            "fpr_unknown": 0.03169529897456386
+          },
+          {
+            "threshold": 0.9959388709520285,
+            "ccr": 0.553767258382643,
+            "fpr_unknown": 0.028765481422293248
+          },
+          {
+            "threshold": 0.9961248674418682,
+            "ccr": 0.5458382642998028,
+            "fpr_unknown": 0.024903449194300174
+          },
+          {
+            "threshold": 0.9963046147327066,
+            "ccr": 0.5370808678500986,
+            "fpr_unknown": 0.023704887468371287
+          },
+          {
+            "threshold": 0.9964621802869489,
+            "ccr": 0.5290335305719921,
+            "fpr_unknown": 0.021973631642029565
+          },
+          {
+            "threshold": 0.9965887404834839,
+            "ccr": 0.5205917159763314,
+            "fpr_unknown": 0.02064189639099747
+          },
+          {
+            "threshold": 0.9967229549127344,
+            "ccr": 0.511439842209073,
+            "fpr_unknown": 0.019176987614862164
+          },
+          {
+            "threshold": 0.9968470840390399,
+            "ccr": 0.5022879684418146,
+            "fpr_unknown": 0.0182447729391397
+          },
+          {
+            "threshold": 0.9969523437029187,
+            "ccr": 0.4931755424063116,
+            "fpr_unknown": 0.017445731788520442
+          },
+          {
+            "threshold": 0.9970415226392593,
+            "ccr": 0.4835897435897436,
+            "fpr_unknown": 0.016380343587694766
+          },
+          {
+            "threshold": 0.997126631987585,
+            "ccr": 0.47396449704142013,
+            "fpr_unknown": 0.01584764948728193
+          },
+          {
+            "threshold": 0.9971991995995484,
+            "ccr": 0.4645364891518738,
+            "fpr_unknown": 0.015181781861765881
+          },
+          {
+            "threshold": 0.9972701850081352,
+            "ccr": 0.4546351084812623,
+            "fpr_unknown": 0.014515914236249833
+          },
+          {
+            "threshold": 0.9973340749093486,
+            "ccr": 0.4457593688362919,
+            "fpr_unknown": 0.014382740711146624
+          },
+          {
+            "threshold": 0.997402198720541,
+            "ccr": 0.43609467455621304,
+            "fpr_unknown": 0.013317352510320948
+          },
+          {
+            "threshold": 0.9974606292279052,
+            "ccr": 0.4263905325443787,
+            "fpr_unknown": 0.013317352510320948
+          },
+          {
+            "threshold": 0.9975178248291118,
+            "ccr": 0.4172386587771203,
+            "fpr_unknown": 0.012518311359701691
+          },
+          {
+            "threshold": 0.9975736581493876,
+            "ccr": 0.40812623274161736,
+            "fpr_unknown": 0.011719270209082434
+          },
+          {
+            "threshold": 0.9976298461498675,
+            "ccr": 0.3988560157790927,
+            "fpr_unknown": 0.011186576108669596
+          },
+          {
+            "threshold": 0.9976820370479508,
+            "ccr": 0.3899408284023669,
+            "fpr_unknown": 0.011053402583566387
+          },
+          {
+            "threshold": 0.9977305696124529,
+            "ccr": 0.38051282051282054,
+            "fpr_unknown": 0.011053402583566387
+          },
+          {
+            "threshold": 0.9977753938525221,
+            "ccr": 0.3714792899408284,
+            "fpr_unknown": 0.010520708483153549
+          },
+          {
+            "threshold": 0.9978223429894975,
+            "ccr": 0.3619329388560158,
+            "fpr_unknown": 0.010387534958050339
+          },
+          {
+            "threshold": 0.9978674028779906,
+            "ccr": 0.35270216962524653,
+            "fpr_unknown": 0.01012118790784392
+          },
+          {
+            "threshold": 0.997915773441181,
+            "ccr": 0.343629191321499,
+            "fpr_unknown": 0.009854840857637501
+          },
+          {
+            "threshold": 0.9979542048640767,
+            "ccr": 0.3346351084812623,
+            "fpr_unknown": 0.009721667332534292
+          },
+          {
+            "threshold": 0.9979939172905299,
+            "ccr": 0.32532544378698225,
+            "fpr_unknown": 0.009588493807431082
+          },
+          {
+            "threshold": 0.998030586170623,
+            "ccr": 0.31617357001972385,
+            "fpr_unknown": 0.009322146757224663
+          },
+          {
+            "threshold": 0.9980679613951181,
+            "ccr": 0.30714003944773177,
+            "fpr_unknown": 0.008789452656811825
+          },
+          {
+            "threshold": 0.9981074767870415,
+            "ccr": 0.29731755424063117,
+            "fpr_unknown": 0.008523105606605406
+          },
+          {
+            "threshold": 0.9981501386075515,
+            "ccr": 0.2883234714003945,
+            "fpr_unknown": 0.007857237981089359
+          },
+          {
+            "threshold": 0.9981914944818587,
+            "ccr": 0.2792110453648915,
+            "fpr_unknown": 0.0075908909308829405
+          },
+          {
+            "threshold": 0.9982288939805102,
+            "ccr": 0.2700197238658777,
+            "fpr_unknown": 0.007457717405779731
+          },
+          {
+            "threshold": 0.9982736503517077,
+            "ccr": 0.261301775147929,
+            "fpr_unknown": 0.007191370355573312
+          },
+          {
+            "threshold": 0.9983175475618212,
+            "ccr": 0.2528205128205128,
+            "fpr_unknown": 0.006925023305366893
+          },
+          {
+            "threshold": 0.9983628725240312,
+            "ccr": 0.24433925049309665,
+            "fpr_unknown": 0.0059928086296444265
+          },
+          {
+            "threshold": 0.9984129292995624,
+            "ccr": 0.23625246548323472,
+            "fpr_unknown": 0.0054601145292315885
+          },
+          {
+            "threshold": 0.9984573928774215,
+            "ccr": 0.22824457593688363,
+            "fpr_unknown": 0.0049274204288187505
+          },
+          {
+            "threshold": 0.9985039387676771,
+            "ccr": 0.2193293885601578,
+            "fpr_unknown": 0.004527899853509122
+          },
+          {
+            "threshold": 0.9985540097843365,
+            "ccr": 0.2111242603550296,
+            "fpr_unknown": 0.0041283792781994936
+          },
+          {
+            "threshold": 0.9986007269198308,
+            "ccr": 0.2032741617357002,
+            "fpr_unknown": 0.003862032227993075
+          },
+          {
+            "threshold": 0.9986477424897351,
+            "ccr": 0.19534516765285995,
+            "fpr_unknown": 0.0034625116526834465
+          },
+          {
+            "threshold": 0.9987054189135521,
+            "ccr": 0.18729783037475345,
+            "fpr_unknown": 0.003329338127580237
+          },
+          {
+            "threshold": 0.9987639703141473,
+            "ccr": 0.17857988165680475,
+            "fpr_unknown": 0.0029298175522706085
+          },
+          {
+            "threshold": 0.9988278980274136,
+            "ccr": 0.16974358974358975,
+            "fpr_unknown": 0.0023971234518577705
+          },
+          {
+            "threshold": 0.9988922307054586,
+            "ccr": 0.16126232741617358,
+            "fpr_unknown": 0.0017312558263417232
+          },
+          {
+            "threshold": 0.9989606678115657,
+            "ccr": 0.15305719921104535,
+            "fpr_unknown": 0.0011985617259288853
+          },
+          {
+            "threshold": 0.9990303778077679,
+            "ccr": 0.14351084812623274,
+            "fpr_unknown": 0.0007990411506192569
+          },
+          {
+            "threshold": 0.9990809858888007,
+            "ccr": 0.13321499013806706,
+            "fpr_unknown": 0.0005326941004128379
+          },
+          {
+            "threshold": 0.9991229445946013,
+            "ccr": 0.12165680473372781,
+            "fpr_unknown": 0.0005326941004128379
+          },
+          {
+            "threshold": 0.999174172645889,
+            "ccr": 0.1101775147928994,
+            "fpr_unknown": 0.0005326941004128379
+          },
+          {
+            "threshold": 0.9992208294614443,
+            "ccr": 0.09861932938856016,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 0.9992773204063777,
+            "ccr": 0.08674556213017752,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9993584578735397,
+            "ccr": 0.07522682445759368,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9994278915928893,
+            "ccr": 0.06343195266272189,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9994883324436349,
+            "ccr": 0.05120315581854044,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995478951560723,
+            "ccr": 0.03850098619329389,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995984687665523,
+            "ccr": 0.025798816568047337,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996712401319897,
+            "ccr": 0.012899408284023669,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9998666751383198,
+            "ccr": 3.944773175542406e-05,
+            "fpr_unknown": 0.0
+          }
+        ]
+      },
+      "softmax_msp": {
+        "auroc": 0.9256486955955286,
+        "fpr_at_95tpr": 0.45585297642828604,
+        "closed_set_accuracy_on_knowns": 0.6893096646942801,
+        "oscr": [
+          {
+            "threshold": 0.31048521757166825,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 1.0
+          },
+          {
+            "threshold": 0.4177568297777417,
+            "ccr": 0.6890729783037476,
+            "fpr_unknown": 0.9584498601677987
+          },
+          {
+            "threshold": 0.45757562302981625,
+            "ccr": 0.6886390532544379,
+            "fpr_unknown": 0.9166333732853909
+          },
+          {
+            "threshold": 0.487748308872162,
+            "ccr": 0.6881656804733728,
+            "fpr_unknown": 0.8758822746038087
+          },
+          {
+            "threshold": 0.5126761523690568,
+            "ccr": 0.6873767258382643,
+            "fpr_unknown": 0.8384605140498069
+          },
+          {
+            "threshold": 0.5380771991990378,
+            "ccr": 0.686232741617357,
+            "fpr_unknown": 0.8022373152217339
+          },
+          {
+            "threshold": 0.5640213099233784,
+            "ccr": 0.6850493096646942,
+            "fpr_unknown": 0.766679984019177
+          },
+          {
+            "threshold": 0.5925204286952855,
+            "ccr": 0.6837475345167653,
+            "fpr_unknown": 0.732321214542549
+          },
+          {
+            "threshold": 0.6240515639430895,
+            "ccr": 0.6824457593688363,
+            "fpr_unknown": 0.6974297509655081
+          },
+          {
+            "threshold": 0.6576423126459616,
+            "ccr": 0.6807889546351085,
+            "fpr_unknown": 0.6654681049407378
+          },
+          {
+            "threshold": 0.6894165395703438,
+            "ccr": 0.6787376725838264,
+            "fpr_unknown": 0.635104541217206
+          },
+          {
+            "threshold": 0.7276156092256281,
+            "ccr": 0.6763313609467455,
+            "fpr_unknown": 0.6066054068451192
+          },
+          {
+            "threshold": 0.7635843928179648,
+            "ccr": 0.6742406311637081,
+            "fpr_unknown": 0.5765081901717939
+          },
+          {
+            "threshold": 0.800799429543238,
+            "ccr": 0.6723076923076923,
+            "fpr_unknown": 0.5468104940737781
+          },
+          {
+            "threshold": 0.8367291541964733,
+            "ccr": 0.6700986193293885,
+            "fpr_unknown": 0.517512318551072
+          },
+          {
+            "threshold": 0.8649057803189855,
+            "ccr": 0.668086785009862,
+            "fpr_unknown": 0.48781462245305635
+          },
+          {
+            "threshold": 0.8915633583136624,
+            "ccr": 0.6658382642998028,
+            "fpr_unknown": 0.45984818218138235
+          },
+          {
+            "threshold": 0.9121800402379074,
+            "ccr": 0.663629191321499,
+            "fpr_unknown": 0.4310827007590891
+          },
+          {
+            "threshold": 0.9276582197360256,
+            "ccr": 0.6614201183431953,
+            "fpr_unknown": 0.40351578106272473
+          },
+          {
+            "threshold": 0.9401704684682876,
+            "ccr": 0.6596844181459566,
+            "fpr_unknown": 0.3726195232387801
+          },
+          {
+            "threshold": 0.9503044714925283,
+            "ccr": 0.65767258382643,
+            "fpr_unknown": 0.34225595951524834
+          },
+          {
+            "threshold": 0.9587244681198297,
+            "ccr": 0.6559763313609468,
+            "fpr_unknown": 0.31016113996537487
+          },
+          {
+            "threshold": 0.9650227970860878,
+            "ccr": 0.6540433925049309,
+            "fpr_unknown": 0.27793314689039816
+          },
+          {
+            "threshold": 0.9707122314716857,
+            "ccr": 0.6520710059171597,
+            "fpr_unknown": 0.24690371554135038
+          },
+          {
+            "threshold": 0.9757804296082504,
+            "ccr": 0.6497041420118344,
+            "fpr_unknown": 0.21827140764416034
+          },
+          {
+            "threshold": 0.9801559626042795,
+            "ccr": 0.6465877712031558,
+            "fpr_unknown": 0.1923025702490345
+          },
+          {
+            "threshold": 0.984061129721574,
+            "ccr": 0.6429585798816568,
+            "fpr_unknown": 0.1673991210547343
+          },
+          {
+            "threshold": 0.9870124690893574,
+            "ccr": 0.6388165680473373,
+            "fpr_unknown": 0.14409375416167267
+          },
+          {
+            "threshold": 0.9893985471381413,
+            "ccr": 0.633293885601578,
+            "fpr_unknown": 0.12718071647356505
+          },
+          {
+            "threshold": 0.9911959127976353,
+            "ccr": 0.6272189349112426,
+            "fpr_unknown": 0.11359701691303768
+          },
+          {
+            "threshold": 0.9924253491819142,
+            "ccr": 0.6219723865877712,
+            "fpr_unknown": 0.1025436143294713
+          },
+          {
+            "threshold": 0.9934703627776759,
+            "ccr": 0.6153846153846154,
+            "fpr_unknown": 0.09335464109734985
+          },
+          {
+            "threshold": 0.9943089944174833,
+            "ccr": 0.6071400394477318,
+            "fpr_unknown": 0.08403249434012518
+          },
+          {
+            "threshold": 0.9949054710110019,
+            "ccr": 0.5977514792899409,
+            "fpr_unknown": 0.07630842988413904
+          },
+          {
+            "threshold": 0.9953391890486277,
+            "ccr": 0.5876528599605523,
+            "fpr_unknown": 0.07071514182980423
+          },
+          {
+            "threshold": 0.9956993686483033,
+            "ccr": 0.5773175542406311,
+            "fpr_unknown": 0.06472233320015981
+          },
+          {
+            "threshold": 0.9959211934615093,
+            "ccr": 0.5670611439842209,
+            "fpr_unknown": 0.06125982154747636
+          },
+          {
+            "threshold": 0.9960288501919231,
+            "ccr": 0.5569625246548323,
+            "fpr_unknown": 0.05966173924623785
+          },
+          {
+            "threshold": 0.9961181541196493,
+            "ccr": 0.5460749506903353,
+            "fpr_unknown": 0.058063656944999334
+          },
+          {
+            "threshold": 0.996222811916705,
+            "ccr": 0.5342406311637081,
+            "fpr_unknown": 0.05713144226927687
+          },
+          {
+            "threshold": 0.9963316615521737,
+            "ccr": 0.5227218934911243,
+            "fpr_unknown": 0.055666533493141566
+          },
+          {
+            "threshold": 0.9964458940739652,
+            "ccr": 0.51069033530572,
+            "fpr_unknown": 0.05446797176721268
+          },
+          {
+            "threshold": 0.9965623025854715,
+            "ccr": 0.49842209072978305,
+            "fpr_unknown": 0.053003062991077377
+          },
+          {
+            "threshold": 0.9966897406286666,
+            "ccr": 0.4863510848126233,
+            "fpr_unknown": 0.05153815421494207
+          },
+          {
+            "threshold": 0.9967887245006829,
+            "ccr": 0.47388560157790927,
+            "fpr_unknown": 0.05073911306432281
+          },
+          {
+            "threshold": 0.9968828672482936,
+            "ccr": 0.46142011834319524,
+            "fpr_unknown": 0.05033959248901319
+          },
+          {
+            "threshold": 0.9970022379342398,
+            "ccr": 0.4493491124260355,
+            "fpr_unknown": 0.050206418963909975
+          },
+          {
+            "threshold": 0.9971036779488093,
+            "ccr": 0.43684418145956605,
+            "fpr_unknown": 0.04994007191370355
+          },
+          {
+            "threshold": 0.9971843376913292,
+            "ccr": 0.4243392504930966,
+            "fpr_unknown": 0.04994007191370355
+          },
+          {
+            "threshold": 0.9972503548716583,
+            "ccr": 0.41159763313609465,
+            "fpr_unknown": 0.04980689838860035
+          },
+          {
+            "threshold": 0.9973362380000576,
+            "ccr": 0.3990138067061144,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 0.9974364316180332,
+            "ccr": 0.3864694280078895,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 0.9975268724565176,
+            "ccr": 0.3738856015779093,
+            "fpr_unknown": 0.049407377813290715
+          },
+          {
+            "threshold": 0.9976121377817083,
+            "ccr": 0.36138067061143986,
+            "fpr_unknown": 0.049407377813290715
+          },
+          {
+            "threshold": 0.9976826871082023,
+            "ccr": 0.34883629191321497,
+            "fpr_unknown": 0.049407377813290715
+          },
+          {
+            "threshold": 0.9977328095886735,
+            "ccr": 0.33621301775147927,
+            "fpr_unknown": 0.04927420428818751
+          },
+          {
+            "threshold": 0.9977818472874312,
+            "ccr": 0.32362919132149903,
+            "fpr_unknown": 0.04927420428818751
+          },
+          {
+            "threshold": 0.9978278678858514,
+            "ccr": 0.3108481262327416,
+            "fpr_unknown": 0.0491410307630843
+          },
+          {
+            "threshold": 0.9978846103259613,
+            "ccr": 0.29814595660749504,
+            "fpr_unknown": 0.0491410307630843
+          },
+          {
+            "threshold": 0.997983842741124,
+            "ccr": 0.2858777120315582,
+            "fpr_unknown": 0.04900785723798109
+          },
+          {
+            "threshold": 0.998136528180113,
+            "ccr": 0.2740039447731755,
+            "fpr_unknown": 0.04887468371287788
+          },
+          {
+            "threshold": 0.9982759065114576,
+            "ccr": 0.26220907297830376,
+            "fpr_unknown": 0.04887468371287788
+          },
+          {
+            "threshold": 0.9983915044329819,
+            "ccr": 0.25037475345167653,
+            "fpr_unknown": 0.04874151018777467
+          },
+          {
+            "threshold": 0.9984829139927862,
+            "ccr": 0.23794871794871794,
+            "fpr_unknown": 0.04874151018777467
+          },
+          {
+            "threshold": 0.9985630055867978,
+            "ccr": 0.22579881656804734,
+            "fpr_unknown": 0.048208816087361835
+          },
+          {
+            "threshold": 0.9986334358004213,
+            "ccr": 0.21479289940828403,
+            "fpr_unknown": 0.04328139565854308
+          },
+          {
+            "threshold": 0.9986850033443573,
+            "ccr": 0.20702169625246547,
+            "fpr_unknown": 0.027034225595951526
+          },
+          {
+            "threshold": 0.9987444363059783,
+            "ccr": 0.19956607495069034,
+            "fpr_unknown": 0.010653882008256758
+          },
+          {
+            "threshold": 0.998927410149511,
+            "ccr": 0.1927810650887574,
+            "fpr_unknown": 0.0006658676255160474
+          },
+          {
+            "threshold": 0.99916896751922,
+            "ccr": 0.18599605522682447,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 0.999267195053924,
+            "ccr": 0.17617357001972386,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 0.9993194187496184,
+            "ccr": 0.16548323471400395,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 0.9993618796930991,
+            "ccr": 0.15502958579881657,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 0.9993962190063034,
+            "ccr": 0.14512820512820512,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 0.999427556443943,
+            "ccr": 0.13455621301775147,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9994561088720935,
+            "ccr": 0.1245759368836292,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9994837077951949,
+            "ccr": 0.11554240631163708,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995068781798372,
+            "ccr": 0.10702169625246548,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995246403242439,
+            "ccr": 0.09956607495069034,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995406005949472,
+            "ccr": 0.09207100591715976,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995532874561419,
+            "ccr": 0.08552268244575936,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995637707140697,
+            "ccr": 0.07857988165680474,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995733184332606,
+            "ccr": 0.07222879684418146,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995813788154951,
+            "ccr": 0.06599605522682446,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9995895888165519,
+            "ccr": 0.06023668639053254,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.999596319504622,
+            "ccr": 0.05514792899408284,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996029322680835,
+            "ccr": 0.050335305719921106,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.999608892459309,
+            "ccr": 0.04611439842209073,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.999614073818585,
+            "ccr": 0.04145956607495069,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996196883439145,
+            "ccr": 0.03708086785009862,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996250617996271,
+            "ccr": 0.03289940828402367,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996305540927297,
+            "ccr": 0.029033530571992112,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.999635370000394,
+            "ccr": 0.025009861932938856,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996403506172954,
+            "ccr": 0.021183431952662722,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996460121050511,
+            "ccr": 0.016765285996055226,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996514504406077,
+            "ccr": 0.01282051282051282,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996578022564976,
+            "ccr": 0.008875739644970414,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9996658360921766,
+            "ccr": 0.00650887573964497,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.99967733006212,
+            "ccr": 0.00378698224852071,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 0.9997275719114179,
+            "ccr": 3.944773175542406e-05,
+            "fpr_unknown": 0.0
+          }
+        ]
+      },
+      "energy": {
+        "auroc": 0.9370551052083982,
+        "fpr_at_95tpr": 0.31615394859501933,
+        "closed_set_accuracy_on_knowns": 0.6893096646942801,
+        "oscr": [
+          {
+            "threshold": 2.058617946255104,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 1.0
+          },
+          {
+            "threshold": 2.8041314527986603,
+            "ccr": 0.6891124260355029,
+            "fpr_unknown": 0.9599147689439339
+          },
+          {
+            "threshold": 2.9357130620672853,
+            "ccr": 0.6888757396449704,
+            "fpr_unknown": 0.9178319350113198
+          },
+          {
+            "threshold": 3.0319600293819455,
+            "ccr": 0.688560157790927,
+            "fpr_unknown": 0.8761486216540152
+          },
+          {
+            "threshold": 3.1175016206492105,
+            "ccr": 0.6882051282051282,
+            "fpr_unknown": 0.8344653082967106
+          },
+          {
+            "threshold": 3.1903547094839095,
+            "ccr": 0.6876923076923077,
+            "fpr_unknown": 0.794646424290851
+          },
+          {
+            "threshold": 3.2706587482311082,
+            "ccr": 0.6870216962524655,
+            "fpr_unknown": 0.7562924490611267
+          },
+          {
+            "threshold": 3.3482804198274967,
+            "ccr": 0.6862721893491124,
+            "fpr_unknown": 0.719003862032228
+          },
+          {
+            "threshold": 3.4381300246560564,
+            "ccr": 0.685207100591716,
+            "fpr_unknown": 0.6819816220535357
+          },
+          {
+            "threshold": 3.528599432757087,
+            "ccr": 0.6844970414201184,
+            "fpr_unknown": 0.6438939938740178
+          },
+          {
+            "threshold": 3.622527121871871,
+            "ccr": 0.6834319526627219,
+            "fpr_unknown": 0.6086030097216674
+          },
+          {
+            "threshold": 3.720721946056265,
+            "ccr": 0.6823668639053254,
+            "fpr_unknown": 0.5717139432680783
+          },
+          {
+            "threshold": 3.8299469534366026,
+            "ccr": 0.6811439842209073,
+            "fpr_unknown": 0.536556132640831
+          },
+          {
+            "threshold": 3.9484945119624446,
+            "ccr": 0.678974358974359,
+            "fpr_unknown": 0.5049940071913703
+          },
+          {
+            "threshold": 4.080523727657619,
+            "ccr": 0.6776331360946746,
+            "fpr_unknown": 0.4702357171394327
+          },
+          {
+            "threshold": 4.199733501146278,
+            "ccr": 0.6757790927021696,
+            "fpr_unknown": 0.4392062857903849
+          },
+          {
+            "threshold": 4.323585547174427,
+            "ccr": 0.6733333333333333,
+            "fpr_unknown": 0.4101744573178852
+          },
+          {
+            "threshold": 4.437345573217857,
+            "ccr": 0.6707692307692308,
+            "fpr_unknown": 0.38100945532028235
+          },
+          {
+            "threshold": 4.551158656095771,
+            "ccr": 0.668284023668639,
+            "fpr_unknown": 0.35437475029964044
+          },
+          {
+            "threshold": 4.6475407609153185,
+            "ccr": 0.6661143984220907,
+            "fpr_unknown": 0.32507657477693436
+          },
+          {
+            "threshold": 4.74192168917177,
+            "ccr": 0.6639842209072978,
+            "fpr_unknown": 0.29697696098015713
+          },
+          {
+            "threshold": 4.8513785772907925,
+            "ccr": 0.662051282051282,
+            "fpr_unknown": 0.26701291783193504
+          },
+          {
+            "threshold": 4.971606090480307,
+            "ccr": 0.6598816568047338,
+            "fpr_unknown": 0.23891330403515781
+          },
+          {
+            "threshold": 5.084380636251394,
+            "ccr": 0.6573570019723866,
+            "fpr_unknown": 0.2133439872153416
+          },
+          {
+            "threshold": 5.218173358889211,
+            "ccr": 0.6545956607495069,
+            "fpr_unknown": 0.1883073644959382
+          },
+          {
+            "threshold": 5.346590317126227,
+            "ccr": 0.6516370808678501,
+            "fpr_unknown": 0.16327074177653483
+          },
+          {
+            "threshold": 5.487644123949002,
+            "ccr": 0.6482051282051282,
+            "fpr_unknown": 0.140498068983886
+          },
+          {
+            "threshold": 5.6521162188851015,
+            "ccr": 0.6432347140039447,
+            "fpr_unknown": 0.12278599014515915
+          },
+          {
+            "threshold": 5.798828057099926,
+            "ccr": 0.6375542406311637,
+            "fpr_unknown": 0.10906911705952857
+          },
+          {
+            "threshold": 5.905482266916188,
+            "ccr": 0.6321499013806706,
+            "fpr_unknown": 0.09934744972699427
+          },
+          {
+            "threshold": 5.9989558470598245,
+            "ccr": 0.6255621301775148,
+            "fpr_unknown": 0.09069117059528566
+          },
+          {
+            "threshold": 6.107213834193163,
+            "ccr": 0.6181854043392505,
+            "fpr_unknown": 0.07937142096151285
+          },
+          {
+            "threshold": 6.178991171595975,
+            "ccr": 0.6109664694280079,
+            "fpr_unknown": 0.07138100945532028
+          },
+          {
+            "threshold": 6.237400620862076,
+            "ccr": 0.6036686390532544,
+            "fpr_unknown": 0.06618724197629511
+          },
+          {
+            "threshold": 6.298295161041305,
+            "ccr": 0.5944378698224853,
+            "fpr_unknown": 0.060727127447063524
+          },
+          {
+            "threshold": 6.360223981201294,
+            "ccr": 0.583629191321499,
+            "fpr_unknown": 0.05686509521907045
+          },
+          {
+            "threshold": 6.389107861971075,
+            "ccr": 0.5713609467455621,
+            "fpr_unknown": 0.05526701291783193
+          },
+          {
+            "threshold": 6.415724099578467,
+            "ccr": 0.5590927021696253,
+            "fpr_unknown": 0.05420162471700626
+          },
+          {
+            "threshold": 6.441758115232949,
+            "ccr": 0.5470611439842209,
+            "fpr_unknown": 0.052869889465974165
+          },
+          {
+            "threshold": 6.4722754663988304,
+            "ccr": 0.5353057199211045,
+            "fpr_unknown": 0.05127180716473565
+          },
+          {
+            "threshold": 6.505233995473727,
+            "ccr": 0.5229585798816568,
+            "fpr_unknown": 0.05073911306432281
+          },
+          {
+            "threshold": 6.532862008560811,
+            "ccr": 0.5107297830374753,
+            "fpr_unknown": 0.050073245438806764
+          },
+          {
+            "threshold": 6.558236377193751,
+            "ccr": 0.4982642998027613,
+            "fpr_unknown": 0.04994007191370355
+          },
+          {
+            "threshold": 6.57651979579758,
+            "ccr": 0.4857199211045365,
+            "fpr_unknown": 0.04994007191370355
+          },
+          {
+            "threshold": 6.5990796030096,
+            "ccr": 0.47285996055226825,
+            "fpr_unknown": 0.04994007191370355
+          },
+          {
+            "threshold": 6.6286969873468715,
+            "ccr": 0.4603550295857988,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.654974896334067,
+            "ccr": 0.44777120315581853,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.681176677071372,
+            "ccr": 0.4352268244575937,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.704527274283228,
+            "ccr": 0.4222485207100592,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.719404955327558,
+            "ccr": 0.40946745562130177,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.740212199372845,
+            "ccr": 0.3968836291913215,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.764841369523013,
+            "ccr": 0.3842603550295858,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.784752884570726,
+            "ccr": 0.37171597633136094,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.80432784362038,
+            "ccr": 0.3588954635108481,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.817802883019722,
+            "ccr": 0.3463116370808679,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.831322536587061,
+            "ccr": 0.3336094674556213,
+            "fpr_unknown": 0.049540551338393926
+          },
+          {
+            "threshold": 6.846856998393345,
+            "ccr": 0.3211045364891519,
+            "fpr_unknown": 0.04927420428818751
+          },
+          {
+            "threshold": 6.868271787590566,
+            "ccr": 0.3085207100591716,
+            "fpr_unknown": 0.0491410307630843
+          },
+          {
+            "threshold": 6.920735332075961,
+            "ccr": 0.29660749506903356,
+            "fpr_unknown": 0.04900785723798109
+          },
+          {
+            "threshold": 6.977500613102948,
+            "ccr": 0.28418145956607493,
+            "fpr_unknown": 0.04887468371287788
+          },
+          {
+            "threshold": 7.026069253440896,
+            "ccr": 0.2717948717948718,
+            "fpr_unknown": 0.04887468371287788
+          },
+          {
+            "threshold": 7.068556383102322,
+            "ccr": 0.2596844181459566,
+            "fpr_unknown": 0.04860833666267146
+          },
+          {
+            "threshold": 7.104444289643382,
+            "ccr": 0.2472189349112426,
+            "fpr_unknown": 0.04847516313756825
+          },
+          {
+            "threshold": 7.137713416497111,
+            "ccr": 0.23491124260355029,
+            "fpr_unknown": 0.04847516313756825
+          },
+          {
+            "threshold": 7.170646893279325,
+            "ccr": 0.22232741617357002,
+            "fpr_unknown": 0.04834198961246504
+          },
+          {
+            "threshold": 7.207348790669815,
+            "ccr": 0.20978303747534516,
+            "fpr_unknown": 0.04834198961246504
+          },
+          {
+            "threshold": 7.266815487217397,
+            "ccr": 0.19810650887573963,
+            "fpr_unknown": 0.048208816087361835
+          },
+          {
+            "threshold": 7.343857565037005,
+            "ccr": 0.19447731755424064,
+            "fpr_unknown": 0.022772672792648822
+          },
+          {
+            "threshold": 7.495148142587916,
+            "ccr": 0.19151873767258382,
+            "fpr_unknown": 0.0006658676255160474
+          },
+          {
+            "threshold": 7.682828049196832,
+            "ccr": 0.18366863905325445,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 7.778837266231306,
+            "ccr": 0.17400394477317555,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 7.852864849837159,
+            "ccr": 0.16315581854043393,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": 7.90059437093056,
+            "ccr": 0.15242603550295858,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 7.94222909024957,
+            "ccr": 0.14134122287968442,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 7.97802242393717,
+            "ccr": 0.13072978303747534,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.013469602335473,
+            "ccr": 0.12047337278106508,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.047585147348045,
+            "ccr": 0.1101775147928994,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.081796698457014,
+            "ccr": 0.10153846153846154,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.111801236987876,
+            "ccr": 0.09270216962524655,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.141964102221344,
+            "ccr": 0.0852465483234714,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.16822090682476,
+            "ccr": 0.07861932938856016,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.191559861790658,
+            "ccr": 0.0727810650887574,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.210623538357188,
+            "ccr": 0.0665483234714004,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.227132729429878,
+            "ccr": 0.06102564102564102,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.24230171406996,
+            "ccr": 0.05542406311637081,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.255990408219613,
+            "ccr": 0.05037475345167653,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.269341813910982,
+            "ccr": 0.04516765285996055,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.28109812763558,
+            "ccr": 0.04043392504930966,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.292265365727356,
+            "ccr": 0.03613412228796844,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.303267728691877,
+            "ccr": 0.03211045364891519,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.313538061111451,
+            "ccr": 0.02816568047337278,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.32524955488417,
+            "ccr": 0.02378698224852071,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.335595710478115,
+            "ccr": 0.020078895463510847,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.346869865430838,
+            "ccr": 0.015818540433925048,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.358989066736152,
+            "ccr": 0.012071005917159764,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.373111213621126,
+            "ccr": 0.009349112426035503,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.388885911618232,
+            "ccr": 0.0073767258382643,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.40923190439773,
+            "ccr": 0.004930966469428008,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.43410260561557,
+            "ccr": 0.002998027613412229,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": 8.586169730277295,
+            "ccr": 3.944773175542406e-05,
+            "fpr_unknown": 0.0
+          }
+        ]
+      },
+      "mahalanobis": {
+        "auroc": 0.9377809718410228,
+        "fpr_at_95tpr": 0.4521241177253962,
+        "closed_set_accuracy_on_knowns": 0.6893096646942801,
+        "oscr": [
+          {
+            "threshold": -326.4287265928406,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 1.0
+          },
+          {
+            "threshold": -289.39470592985504,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 0.9557863896657345
+          },
+          {
+            "threshold": -272.6963257708503,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 0.9115727793314689
+          },
+          {
+            "threshold": -257.2036010890294,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 0.8674923425223066
+          },
+          {
+            "threshold": -241.9279232014632,
+            "ccr": 0.6893096646942801,
+            "fpr_unknown": 0.823944599813557
+          },
+          {
+            "threshold": -226.51498714770543,
+            "ccr": 0.6892702169625247,
+            "fpr_unknown": 0.7810627247303236
+          },
+          {
+            "threshold": -212.94182212682665,
+            "ccr": 0.6892702169625247,
+            "fpr_unknown": 0.7399121054734319
+          },
+          {
+            "threshold": -200.36412509037442,
+            "ccr": 0.6891913214990139,
+            "fpr_unknown": 0.7010254361432947
+          },
+          {
+            "threshold": -186.14136825150737,
+            "ccr": 0.6889151873767259,
+            "fpr_unknown": 0.6652017578905314
+          },
+          {
+            "threshold": -171.13666996557433,
+            "ccr": 0.6881656804733728,
+            "fpr_unknown": 0.6327074177653482
+          },
+          {
+            "threshold": -154.7244933066869,
+            "ccr": 0.6869033530571992,
+            "fpr_unknown": 0.6030097216673326
+          },
+          {
+            "threshold": -133.66914630481605,
+            "ccr": 0.6853648915187377,
+            "fpr_unknown": 0.5771740577973099
+          },
+          {
+            "threshold": -113.06095703332129,
+            "ccr": 0.682879684418146,
+            "fpr_unknown": 0.5549340791050739
+          },
+          {
+            "threshold": -96.56066594786448,
+            "ccr": 0.6803155818540434,
+            "fpr_unknown": 0.5340258356638701
+          },
+          {
+            "threshold": -82.58088631748092,
+            "ccr": 0.6775147928994083,
+            "fpr_unknown": 0.5109868158210148
+          },
+          {
+            "threshold": -71.71039902662918,
+            "ccr": 0.6750295857988166,
+            "fpr_unknown": 0.4860833666267146
+          },
+          {
+            "threshold": -62.793373551030705,
+            "ccr": 0.6729783037475345,
+            "fpr_unknown": 0.45811692635504064
+          },
+          {
+            "threshold": -55.680066244981624,
+            "ccr": 0.6716370808678501,
+            "fpr_unknown": 0.4274870155813024
+          },
+          {
+            "threshold": -49.92872737164867,
+            "ccr": 0.6691518737672584,
+            "fpr_unknown": 0.40085231056066056
+          },
+          {
+            "threshold": -45.29152170308736,
+            "ccr": 0.6664299802761341,
+            "fpr_unknown": 0.37634838194167
+          },
+          {
+            "threshold": -41.630280946488796,
+            "ccr": 0.6638658777120315,
+            "fpr_unknown": 0.3521108003728859
+          },
+          {
+            "threshold": -37.90949641613284,
+            "ccr": 0.661025641025641,
+            "fpr_unknown": 0.32787321880410175
+          },
+          {
+            "threshold": -34.931031827450006,
+            "ccr": 0.6585798816568047,
+            "fpr_unknown": 0.30017312558263415
+          },
+          {
+            "threshold": -32.08054254072519,
+            "ccr": 0.6568047337278107,
+            "fpr_unknown": 0.2699427353842056
+          },
+          {
+            "threshold": -29.09498495041676,
+            "ccr": 0.6544378698224852,
+            "fpr_unknown": 0.2427753362631509
+          },
+          {
+            "threshold": -26.298036745904845,
+            "ccr": 0.6516765285996056,
+            "fpr_unknown": 0.21720601944333467
+          },
+          {
+            "threshold": -23.384371536701437,
+            "ccr": 0.6482051282051282,
+            "fpr_unknown": 0.1937674790251698
+          },
+          {
+            "threshold": -20.660593022287788,
+            "ccr": 0.6452859960552269,
+            "fpr_unknown": 0.17086163270741778
+          },
+          {
+            "threshold": -17.941170542766912,
+            "ccr": 0.6414990138067062,
+            "fpr_unknown": 0.1516846450925556
+          },
+          {
+            "threshold": -15.53588560600649,
+            "ccr": 0.6377120315581855,
+            "fpr_unknown": 0.13277400452789986
+          },
+          {
+            "threshold": -13.080371081537415,
+            "ccr": 0.633214990138067,
+            "fpr_unknown": 0.11852443734185644
+          },
+          {
+            "threshold": -11.372632937505747,
+            "ccr": 0.628560157790927,
+            "fpr_unknown": 0.1080037288587029
+          },
+          {
+            "threshold": -9.668391581856177,
+            "ccr": 0.6237869822485207,
+            "fpr_unknown": 0.10094553202823278
+          },
+          {
+            "threshold": -8.211455710801246,
+            "ccr": 0.6182642998027613,
+            "fpr_unknown": 0.09308829404714343
+          },
+          {
+            "threshold": -7.164749393775626,
+            "ccr": 0.6121499013806706,
+            "fpr_unknown": 0.08682913836729259
+          },
+          {
+            "threshold": -6.370484209035751,
+            "ccr": 0.605207100591716,
+            "fpr_unknown": 0.08203489146357704
+          },
+          {
+            "threshold": -5.945473063771558,
+            "ccr": 0.5996844181459566,
+            "fpr_unknown": 0.0659208949260887
+          },
+          {
+            "threshold": -5.571578982601338,
+            "ccr": 0.594043392504931,
+            "fpr_unknown": 0.048208816087361835
+          },
+          {
+            "threshold": -5.193804974170583,
+            "ccr": 0.5874950690335305,
+            "fpr_unknown": 0.03662271940338261
+          },
+          {
+            "threshold": -4.8749474126798855,
+            "ccr": 0.5797238658777121,
+            "fpr_unknown": 0.031428951924357434
+          },
+          {
+            "threshold": -4.620457555031809,
+            "ccr": 0.571913214990138,
+            "fpr_unknown": 0.026368357970435477
+          },
+          {
+            "threshold": -4.381705968051726,
+            "ccr": 0.5647337278106509,
+            "fpr_unknown": 0.02330536689306166
+          },
+          {
+            "threshold": -4.202549850318696,
+            "ccr": 0.5574358974358974,
+            "fpr_unknown": 0.02037554934079105
+          },
+          {
+            "threshold": -4.044318719650042,
+            "ccr": 0.5491518737672584,
+            "fpr_unknown": 0.0182447729391397
+          },
+          {
+            "threshold": -3.869387835242222,
+            "ccr": 0.5403155818540434,
+            "fpr_unknown": 0.016779864163004393
+          },
+          {
+            "threshold": -3.7398831683934537,
+            "ccr": 0.531163708086785,
+            "fpr_unknown": 0.015980823012385136
+          },
+          {
+            "threshold": -3.6244680096027073,
+            "ccr": 0.5219723865877712,
+            "fpr_unknown": 0.015181781861765881
+          },
+          {
+            "threshold": -3.5073040178124972,
+            "ccr": 0.5127810650887574,
+            "fpr_unknown": 0.014515914236249833
+          },
+          {
+            "threshold": -3.4010871490500474,
+            "ccr": 0.5028007889546351,
+            "fpr_unknown": 0.014249567186043414
+          },
+          {
+            "threshold": -3.311641015548367,
+            "ccr": 0.49333333333333335,
+            "fpr_unknown": 0.013850046610733786
+          },
+          {
+            "threshold": -3.232194193842296,
+            "ccr": 0.48445759368836294,
+            "fpr_unknown": 0.013184178985217739
+          },
+          {
+            "threshold": -3.1536069365304384,
+            "ccr": 0.47424063116370807,
+            "fpr_unknown": 0.01278465840990811
+          },
+          {
+            "threshold": -3.0800824935462403,
+            "ccr": 0.4641025641025641,
+            "fpr_unknown": 0.011985617259288853
+          },
+          {
+            "threshold": -3.0139356270548827,
+            "ccr": 0.4544378698224852,
+            "fpr_unknown": 0.011719270209082434
+          },
+          {
+            "threshold": -2.9547231173174553,
+            "ccr": 0.4445759368836292,
+            "fpr_unknown": 0.011319749633772806
+          },
+          {
+            "threshold": -2.904130262485305,
+            "ccr": 0.4341222879684418,
+            "fpr_unknown": 0.011319749633772806
+          },
+          {
+            "threshold": -2.8539648508446525,
+            "ccr": 0.42355029585798815,
+            "fpr_unknown": 0.010920229058463177
+          },
+          {
+            "threshold": -2.8085654562985254,
+            "ccr": 0.41357001972386587,
+            "fpr_unknown": 0.00998801438274071
+          },
+          {
+            "threshold": -2.7627618697282106,
+            "ccr": 0.40370808678500986,
+            "fpr_unknown": 0.009588493807431082
+          },
+          {
+            "threshold": -2.720802282564398,
+            "ccr": 0.3940828402366864,
+            "fpr_unknown": 0.009322146757224663
+          },
+          {
+            "threshold": -2.678424243082487,
+            "ccr": 0.38394477317554243,
+            "fpr_unknown": 0.009188973232121454
+          },
+          {
+            "threshold": -2.639424650789593,
+            "ccr": 0.373491124260355,
+            "fpr_unknown": 0.008789452656811825
+          },
+          {
+            "threshold": -2.5995883484817104,
+            "ccr": 0.3631163708086785,
+            "fpr_unknown": 0.008656279131708616
+          },
+          {
+            "threshold": -2.5587725797051375,
+            "ccr": 0.35285996055226826,
+            "fpr_unknown": 0.008523105606605406
+          },
+          {
+            "threshold": -2.521161615147294,
+            "ccr": 0.3429585798816568,
+            "fpr_unknown": 0.008389932081502197
+          },
+          {
+            "threshold": -2.4827620849378054,
+            "ccr": 0.33313609467455624,
+            "fpr_unknown": 0.008256758556398987
+          },
+          {
+            "threshold": -2.4431493127287003,
+            "ccr": 0.32256410256410256,
+            "fpr_unknown": 0.00772406445598615
+          },
+          {
+            "threshold": -2.4001418596780644,
+            "ccr": 0.3132938856015779,
+            "fpr_unknown": 0.007457717405779731
+          },
+          {
+            "threshold": -2.3575038991417476,
+            "ccr": 0.30382642998027615,
+            "fpr_unknown": 0.007191370355573312
+          },
+          {
+            "threshold": -2.3144938101880816,
+            "ccr": 0.29463510848126234,
+            "fpr_unknown": 0.0067918497802636835
+          },
+          {
+            "threshold": -2.2637036039289797,
+            "ccr": 0.28575936883629194,
+            "fpr_unknown": 0.0067918497802636835
+          },
+          {
+            "threshold": -2.215521257084272,
+            "ccr": 0.27680473372781067,
+            "fpr_unknown": 0.0062591556798508455
+          },
+          {
+            "threshold": -2.1656497210658663,
+            "ccr": 0.26729783037475346,
+            "fpr_unknown": 0.005859635104541217
+          },
+          {
+            "threshold": -2.1197770548531256,
+            "ccr": 0.2583826429980276,
+            "fpr_unknown": 0.0051937674790251695
+          },
+          {
+            "threshold": -2.074139552549465,
+            "ccr": 0.24954635108481263,
+            "fpr_unknown": 0.0046610733786123315
+          },
+          {
+            "threshold": -2.021671272573731,
+            "ccr": 0.24110453648915187,
+            "fpr_unknown": 0.004527899853509122
+          },
+          {
+            "threshold": -1.9692706387641912,
+            "ccr": 0.2326232741617357,
+            "fpr_unknown": 0.004527899853509122
+          },
+          {
+            "threshold": -1.9140243723104386,
+            "ccr": 0.22449704142011834,
+            "fpr_unknown": 0.003995205753096284
+          },
+          {
+            "threshold": -1.86037922482811,
+            "ccr": 0.21593688362919133,
+            "fpr_unknown": 0.003329338127580237
+          },
+          {
+            "threshold": -1.799516998260365,
+            "ccr": 0.20761341222879684,
+            "fpr_unknown": 0.003329338127580237
+          },
+          {
+            "threshold": -1.74820886593288,
+            "ccr": 0.19925049309664694,
+            "fpr_unknown": 0.0026634705020641895
+          },
+          {
+            "threshold": -1.6877870446857433,
+            "ccr": 0.19167652859960552,
+            "fpr_unknown": 0.00253029697696098
+          },
+          {
+            "threshold": -1.615358840003326,
+            "ccr": 0.18402366863905326,
+            "fpr_unknown": 0.0021307764016513515
+          },
+          {
+            "threshold": -1.542001237376256,
+            "ccr": 0.17676528599605523,
+            "fpr_unknown": 0.0018644293514449327
+          },
+          {
+            "threshold": -1.4469728283390138,
+            "ccr": 0.16879684418145957,
+            "fpr_unknown": 0.0013317352510320948
+          },
+          {
+            "threshold": -1.3612882713452146,
+            "ccr": 0.1608284023668639,
+            "fpr_unknown": 0.0009322146757224664
+          },
+          {
+            "threshold": -1.2808062040799721,
+            "ccr": 0.15254437869822485,
+            "fpr_unknown": 0.0007990411506192569
+          },
+          {
+            "threshold": -1.2173088372070107,
+            "ccr": 0.14303747534516764,
+            "fpr_unknown": 0.00039952057530962844
+          },
+          {
+            "threshold": -1.172009225267874,
+            "ccr": 0.1316370808678501,
+            "fpr_unknown": 0.00026634705020641894
+          },
+          {
+            "threshold": -1.1244910620965658,
+            "ccr": 0.12007889546351085,
+            "fpr_unknown": 0.00026634705020641894
+          },
+          {
+            "threshold": -1.0543046687334687,
+            "ccr": 0.10942800788954635,
+            "fpr_unknown": 0.00013317352510320947
+          },
+          {
+            "threshold": -0.9684858387337135,
+            "ccr": 0.09877712031558185,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.8721144412894656,
+            "ccr": 0.08749506903353058,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.7788823095936088,
+            "ccr": 0.07625246548323471,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.6885601871961035,
+            "ccr": 0.06390532544378698,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.6263922229691956,
+            "ccr": 0.0516370808678501,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.5649956264921577,
+            "ccr": 0.038816568047337276,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.4880672322764778,
+            "ccr": 0.025956607495069034,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.38789542248307834,
+            "ccr": 0.01301775147928994,
+            "fpr_unknown": 0.0
+          },
+          {
+            "threshold": -0.15967257605625362,
+            "ccr": 3.944773175542406e-05,
+            "fpr_unknown": 0.0
+          }
+        ]
+      }
+    }
+  },
+  "few_shot": {
+    "status": "ok",
+    "encoder": "frozen",
+    "shots": [
+      1,
+      5,
+      10,
+      25,
+      50,
+      100
+    ],
+    "service_enrollment": [
+      {
+        "shots": 1,
+        "repeats": 5,
+        "macro_f1_mean": 0.5191476159451185,
+        "macro_f1_std": 0.004262893049120355,
+        "balanced_accuracy_mean": 0.5425682376067594,
+        "balanced_accuracy_std": 0.0027457193782479063
+      },
+      {
+        "shots": 5,
+        "repeats": 5,
+        "macro_f1_mean": 0.5160022109760385,
+        "macro_f1_std": 0.00432762993628534,
+        "balanced_accuracy_mean": 0.5421646256395232,
+        "balanced_accuracy_std": 0.0007949971542823719
+      },
+      {
+        "shots": 10,
+        "repeats": 5,
+        "macro_f1_mean": 0.5131236468109742,
+        "macro_f1_std": 0.010066127988311599,
+        "balanced_accuracy_mean": 0.5423580194366412,
+        "balanced_accuracy_std": 0.0018656217548354234
+      },
+      {
+        "shots": 25,
+        "repeats": 5,
+        "macro_f1_mean": 0.5168789996040758,
+        "macro_f1_std": 0.002035911111464804,
+        "balanced_accuracy_mean": 0.54316800873322,
+        "balanced_accuracy_std": 0.0005527405161258324
+      },
+      {
+        "shots": 50,
+        "repeats": 5,
+        "macro_f1_mean": 0.5166889711663334,
+        "macro_f1_std": 0.0012919517501175728,
+        "balanced_accuracy_mean": 0.5423329301240108,
+        "balanced_accuracy_std": 0.00031881779811888407
+      },
+      {
+        "shots": 100,
+        "repeats": 5,
+        "macro_f1_mean": 0.5163055711422857,
+        "macro_f1_std": 0.0008951765484521537,
+        "balanced_accuracy_mean": 0.5426853300240239,
+        "balanced_accuracy_std": 0.00032712227705055676
+      }
+    ],
+    "app_enrollment": [
+      {
+        "shots": 1,
+        "repeats": 5,
+        "macro_f1_mean": 0.7743762716678245,
+        "macro_f1_std": 0.004607889087378482,
+        "balanced_accuracy_mean": 0.8947160511542691,
+        "balanced_accuracy_std": 0.003933329882285373
+      },
+      {
+        "shots": 5,
+        "repeats": 5,
+        "macro_f1_mean": 0.7742816597035043,
+        "macro_f1_std": 0.003732073056986199,
+        "balanced_accuracy_mean": 0.8927128068775374,
+        "balanced_accuracy_std": 0.004022139159665394
+      },
+      {
+        "shots": 10,
+        "repeats": 5,
+        "macro_f1_mean": 0.7753851092310012,
+        "macro_f1_std": 0.0027424900368699036,
+        "balanced_accuracy_mean": 0.8939512669039159,
+        "balanced_accuracy_std": 0.003860281567091031
+      },
+      {
+        "shots": 25,
+        "repeats": 5,
+        "macro_f1_mean": 0.7757447811420409,
+        "macro_f1_std": 0.001064812094000298,
+        "balanced_accuracy_mean": 0.8949524433795746,
+        "balanced_accuracy_std": 0.0009218131557731835
+      },
+      {
+        "shots": 50,
+        "repeats": 5,
+        "macro_f1_mean": 0.7753108153977852,
+        "macro_f1_std": 0.0012125222278138482,
+        "balanced_accuracy_mean": 0.8944950363692772,
+        "balanced_accuracy_std": 0.0010936908730823593
+      },
+      {
+        "shots": 100,
+        "repeats": 5,
+        "macro_f1_mean": 0.7749929429656459,
+        "macro_f1_std": 0.0012820236523955687,
+        "balanced_accuracy_mean": 0.8942770305321546,
+        "balanced_accuracy_std": 0.0010720845893037786
+      }
+    ],
+    "app_enrollment_n_apps": 5
+  },
+  "probes": {
+    "status": "ok",
+    "nuisance_source": "capture_id",
+    "adversarial_weight": 0.15,
+    "protocol": "Embeddings from all three task splits are pooled and split 50/50 for the probe. The task's own partition is not reused, because a strict protocol makes the nuisance disjoint across it by construction.",
+    "probe_train_rows": 8000,
+    "probe_test_rows": 8000,
+    "targets": {
+      "nuisance": {
+        "z_flow": {
+          "status": "ok",
+          "n_classes": 58,
+          "majority_class_accuracy": 0.0435,
+          "probes": {
+            "linear": {
+              "accuracy": 0.316125,
+              "macro_f1": 0.186884717435802,
+              "balanced_accuracy": 0.258739083813149,
+              "above_majority": 0.272625
+            },
+            "mlp": {
+              "accuracy": 0.395625,
+              "macro_f1": 0.17091749975429416,
+              "balanced_accuracy": 0.21761400429659436,
+              "above_majority": 0.352125
+            }
+          }
+        },
+        "raw_flow_features": {
+          "status": "ok",
+          "n_classes": 58,
+          "majority_class_accuracy": 0.0435,
+          "probes": {
+            "linear": {
+              "accuracy": 0.2185,
+              "macro_f1": 0.12597264792581123,
+              "balanced_accuracy": 0.19515956329695358,
+              "above_majority": 0.175
+            },
+            "mlp": {
+              "accuracy": 0.406,
+              "macro_f1": 0.1770963062569698,
+              "balanced_accuracy": 0.2239159955041238,
+              "above_majority": 0.36250000000000004
+            }
+          }
+        }
+      },
+      "task": {
+        "z_flow": {
+          "status": "ok",
+          "n_classes": 6,
+          "majority_class_accuracy": 0.247375,
+          "probes": {
+            "linear": {
+              "accuracy": 0.9275,
+              "macro_f1": 0.9244720882691718,
+              "balanced_accuracy": 0.9275515352821313,
+              "above_majority": 0.680125
+            },
+            "mlp": {
+              "accuracy": 0.958625,
+              "macro_f1": 0.9557665696122286,
+              "balanced_accuracy": 0.9530015827676904,
+              "above_majority": 0.7112499999999999
+            }
+          }
+        },
+        "raw_flow_features": {
+          "status": "ok",
+          "n_classes": 6,
+          "majority_class_accuracy": 0.247375,
+          "probes": {
+            "linear": {
+              "accuracy": 0.712125,
+              "macro_f1": 0.715355259693632,
+              "balanced_accuracy": 0.7412195630879109,
+              "above_majority": 0.46475
+            },
+            "mlp": {
+              "accuracy": 0.91125,
+              "macro_f1": 0.9136390133646612,
+              "balanced_accuracy": 0.9070824265340892,
+              "above_majority": 0.663875
+            }
+          }
+        }
+      }
+    },
+    "tradeoff": {
+      "nuisance_above_majority_mlp": 0.352125,
+      "task_macro_f1_mlp": 0.9557665696122286,
+      "reading": "Nuisance leakage is the first number and task performance the second. A method that drives the first to zero while collapsing the second has not achieved invariance, it has destroyed the representation."
+    }
+  }
+}

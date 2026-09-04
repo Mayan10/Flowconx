@@ -235,3 +235,30 @@ def test_open_set_holdout_is_viable():
         "removing the held-out apps empties a service class from training, which makes the "
         "closed-set half of the open-set metric meaningless"
     )
+
+
+def test_configs_differing_only_in_label_column_get_different_run_dirs():
+    """A results path must encode everything that distinguishes an experiment.
+
+    `results/baseline_<model>/<dataset>/<split>/seed<n>` did not encode the
+    label column, so the application-task baselines wrote to the same path as
+    the service-task ones and all twelve were skipped as "already present".
+    Nothing reported it; the app-task comparison simply did not exist while
+    appearing to.
+    """
+    service = load_config("configs/fiveg_main.yaml")
+    app = load_config("configs/fiveg_app_task.yaml")
+    assert service.data.label_column != app.data.label_column
+    assert service.hash() != app.hash(), "different label columns must change the config hash"
+    assert service.run_dir != app.run_dir, "different experiments must not share a results path"
+
+
+def test_run_dir_distinguishes_every_axis_it_should():
+    base = from_dict({"name": "x", "seed": 0})
+    for override in (
+        {"name": "y"},
+        {"seed": 1},
+        {"data": {"dataset": "other"}},
+        {"data": {"split_protocol": "random_flow"}},
+    ):
+        assert from_dict({"name": "x", "seed": 0, **override}).run_dir != base.run_dir, override

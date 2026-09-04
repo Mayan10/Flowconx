@@ -88,15 +88,30 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     exit_code = 0
     for name in args.baselines:
+        # The experiment name is part of the path. Without it, two configs
+        # that differ in something the path does not encode -- the label
+        # column, most importantly -- write to the same directory, and the
+        # "already present" check below skips the second one silently. That
+        # happened: twelve application-task baseline runs were skipped because
+        # they collided with the service-task runs at the same path.
         run_dir = (
             Path(config.output_root)
-            / f"baseline_{name}"
+            / f"{config.name}_baseline_{name}"
             / config.data.dataset
             / config.data.split_protocol
             / f"seed{args.seed}"
         )
         metrics_path = run_dir / "metrics.json"
         if metrics_path.exists() and not args.overwrite:
+            existing = _existing_config_hash(metrics_path)
+            if existing is not None and existing != config.hash():
+                print(
+                    f"  {name:18s} REFUSING: {metrics_path} holds config {existing}, this run is "
+                    f"{config.hash()}. Two different experiments map to one path.",
+                    file=sys.stderr,
+                )
+                exit_code = 4
+                continue
             print(f"  {name:18s} already present, skipping")
             continue
 
@@ -185,6 +200,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             f"params={metrics['training']['n_parameters']:,}  {train_seconds:.0f}s"
         )
     return exit_code
+
+
+def _existing_config_hash(path: Path) -> Optional[str]:
+    """Config hash recorded in an existing metrics.json, if it has one.
+
+    Used to distinguish "this exact run already happened" from "a different
+    experiment already wrote to this path", which are very different things and
+    were previously conflated.
+    """
+    try:
+        return str(json.loads(path.read_text(encoding="utf-8")).get("config_hash", "")) or None
+    except (OSError, json.JSONDecodeError):
+        return None
 
 
 def _baseline_cost(model, split, device) -> Dict[str, object]:

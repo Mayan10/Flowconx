@@ -307,10 +307,19 @@ FAMILIES: Dict[str, Dict[str, object]] = {
     "against_baselines": {
         "reference": "flowconx_main",
         "members": [
-            "baseline_deeppacket_cnn",
-            "baseline_fsnet",
-            "baseline_lstm_attention",
-            "baseline_mlp_stats",
+            "flowconx_main_baseline_deeppacket_cnn",
+            "flowconx_main_baseline_fsnet",
+            "flowconx_main_baseline_lstm_attention",
+            "flowconx_main_baseline_mlp_stats",
+        ],
+    },
+    "against_baselines_app_task": {
+        "reference": "flowconx_app_task",
+        "members": [
+            "flowconx_app_task_baseline_deeppacket_cnn",
+            "flowconx_app_task_baseline_fsnet",
+            "flowconx_app_task_baseline_lstm_attention",
+            "flowconx_app_task_baseline_mlp_stats",
         ],
     },
 }
@@ -346,7 +355,7 @@ SPLIT_CONTRASTS: List[Dict[str, str]] = [
 
 def _head_for(experiment: str) -> str:
     """Baselines report under 'softmax'; the model reports under 'prototype'."""
-    return "softmax" if experiment.startswith("baseline_") else "prototype"
+    return "softmax" if "_baseline_" in experiment else "prototype"
 
 
 def build_significance(

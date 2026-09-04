@@ -231,13 +231,59 @@ def _baseline_cost(model, split, device) -> Dict[str, object]:
     model.eval()
     with torch.no_grad():
         forward = measure_callable_latency(lambda: model(packet_seq, flow_features, packet_mask), runs=200)
+
+    # End-to-end, measured exactly as for the model: stored record in, decision
+    # out, including parsing and feature construction. Without this the cost
+    # table would compare our end-to-end latency against a baseline's forward
+    # pass alone, which is the same error the earlier version of this work made
+    # in its own favour.
+    from ..eval.cost import measure_end_to_end_latency, percentiles
+
+    end_to_end = percentiles(measure_end_to_end_latency(model, split.frame, device, budget, 200))
+    throughput = measure_throughput_baseline(model, split, device)
     return {
         "n_parameters": int(sum(p.numel() for p in model.parameters())),
         "model_size_bytes": model_size_bytes(model),
         "observed_packets": int(budget),
         "device": str(device),
         "forward_batch1": forward,
-        "note": "Forward pass only. The end-to-end path is measured for the model in flowconx/eval/cost.py.",
+        "end_to_end_batch1": end_to_end,
+        "throughput_batched": throughput,
+    }
+
+
+def measure_throughput_baseline(model, split, device, batch_size: int = 256) -> Dict[str, float]:
+    """Flows per second, batched, matching the model's measurement."""
+    import time
+
+    import torch
+
+    from ..eval.cost import _synchronize
+
+    packet_seq = torch.from_numpy(split.features.packet_seq)
+    packet_mask = torch.from_numpy(split.features.packet_mask)
+    flow_features = torch.from_numpy(split.features.flow_features)
+    n = len(split)
+    if n == 0:
+        return {"flows_per_second": float("nan"), "n_flows": 0}
+    model.eval()
+    _synchronize(device)
+    started = time.perf_counter()
+    with torch.no_grad():
+        for start in range(0, n, batch_size):
+            stop = start + batch_size
+            model(
+                packet_seq[start:stop].to(device),
+                flow_features[start:stop].to(device),
+                packet_mask[start:stop].to(device),
+            )
+    _synchronize(device)
+    elapsed = time.perf_counter() - started
+    return {
+        "flows_per_second": float(n / elapsed) if elapsed > 0 else float("nan"),
+        "batch_size": int(batch_size),
+        "n_flows": int(n),
+        "seconds": round(elapsed, 4),
     }
 
 

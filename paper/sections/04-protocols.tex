@@ -1,0 +1,72 @@
+\section{Split Protocols and Identifier Probes}
+\label{sec:protocols}
+
+\subsection{Protocols}
+
+We implement six partitions and report four. \textbf{Random flow} is stratified
+random assignment of individual flows, the protocol we take to be standard in
+this literature; we report it only as a contrast. \textbf{Session-disjoint}
+assigns whole capture sessions --- a capture file for 5G Traffic, a capture day
+for CESNET --- to exactly one side. \textbf{Temporal} sorts by first-packet
+timestamp and takes the earliest flows for training. \textbf{Server-disjoint}
+assigns whole server addresses to one side. Every protocol is materialised as a
+committed manifest carrying per-side row indices and a SHA256 over the flow
+identifiers, so a reader can verify that a reported number was produced on the
+released partition.
+
+\subsection{Identifier probes}
+
+Before training anything, we fit a depth-limited decision tree on a
+\emph{single} identifier column and score it under each protocol. The
+identifiers are destination port, SNI string, server address and \texttt{/24}
+prefix, destination AS, capture-session identifier, and transport protocol. A
+probe whose column is absent or constant in a corpus reports
+\emph{unavailable}, never a degenerate number --- a dataset with no SNI must
+not be reported as one where SNI does not help.
+
+\input{tables/split_contrast}
+
+\subsection{What the probes find}
+
+\paragraph{5G Traffic: the capture is the label.} Under a random split the
+server address alone reaches macro-F1 0.999 and the capture-session identifier
+alone 0.983. A classifier that learned nothing except which recording a flow
+came from would score in the range published work reports for this corpus.
+Under session-disjoint splitting the capture probe falls to \textbf{exactly
+0.000} --- the grouping doing precisely what it claims --- and AppScanner falls
+from 0.996 to 0.640. Under temporal splitting every method falls below 0.31;
+these captures span five months, so a temporal split also separates application
+versions and network conditions.
+
+\paragraph{CESNET-QUIC22: the server is the label.} Random, session-disjoint and
+temporal splitting are indistinguishable: AppScanner scores 0.768, 0.772 and
+0.762. Server-disjoint splitting takes it to 0.566, and takes the server-address
+probe from 0.772 to \textbf{0.026} --- the floor, confirming the partition does
+what it says.
+
+\paragraph{The labelling ceiling.} The SNI probe reaches 0.967 on CESNET under
+every protocol except server-disjoint, where it still reaches 0.791. This is
+expected, since that corpus's labels are derived from SNI, and it is the most
+important number in this section: no result on CESNET-QUIC22 can be read as
+matching ground truth, because the ground truth \emph{is} a name-based
+heuristic and a decision tree recovers it at 0.967.
+
+\subsection{The rule we propose}
+
+The two corpora fail on different axes, and neither protocol protects against
+the other's failure mode. We propose that the axis be chosen by measurement
+rather than convention:
+
+\begin{quote}
+Before reporting any classifier result, fit a single-identifier probe for each
+identifier the corpus retains, under each candidate protocol. Adopt the
+protocol under which every identifier probe collapses toward the majority-class
+floor. Report the probe table alongside the results.
+\end{quote}
+
+This costs seconds and it is falsifiable: if no protocol collapses the probes,
+the corpus cannot support the claim being made of it. On 5G Traffic the rule
+selects session-disjoint or temporal; on CESNET-QUIC22 it selects
+server-disjoint. Adopting session-disjoint splitting on CESNET --- the choice a
+practitioner following current best practice would make --- controls nothing
+there, and our measurements say so.

@@ -1,0 +1,13 @@
+defaults: [fiveg_main.yaml]
+name: flowconx_temporal
+description: >
+  Train on the earliest 5G captures, test on the latest. The corpus spans May
+  to October 2022, so this separates application versions and network
+  conditions as well as time -- which is why the audit's baselines fall further
+  under it than under any other protocol on this dataset.
+data:
+  split_protocol: temporal
+eval:
+  probes: false
+  early_classification: false
+  robustness: false

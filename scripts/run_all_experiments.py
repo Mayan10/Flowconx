@@ -44,6 +44,8 @@ STAGES: Dict[str, List[str]] = {
         "configs/cesnet_temporal.yaml",
         "configs/cesnet_server_disjoint.yaml",
         "configs/fiveg_random_contrast.yaml",
+        "configs/fiveg_temporal.yaml",
+        "configs/fiveg_server_disjoint.yaml",
     ],
     "novelty": [
         "configs/fiveg_open_set.yaml",
@@ -75,6 +77,9 @@ STAGES: Dict[str, List[str]] = {
     # Ablations scored on the open-set metric rather than closed-set macro-F1.
     # Restricted to the four that could bear on C4; see the family's full.yaml.
     "ablations_openset": sorted(str(p) for p in Path("configs/ablations_openset").glob("*.yaml")),
+    # The adversarial sweep on the dataset where the nuisance actually exists.
+    # The closed-set sweep ran on CESNET, where it does not.
+    "ablations_adv5g": sorted(str(p) for p in Path("configs/ablations_adv5g").glob("*.yaml")),
     # Baselines reuse the model's config for data, split and training budget,
     # and are dispatched through flowconx.baselines.run_baselines rather than
     # flowconx.run. Same results layout, so the aggregator needs no special

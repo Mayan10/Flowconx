@@ -28,6 +28,11 @@ import numpy as np  # noqa: E402
 from flowconx.analysis.aggregate import aggregate  # noqa: E402
 
 TODO = r"\textsc{todo}"
+# A probe whose source column is absent or constant in a corpus *cannot* be
+# run. That is different from a cell whose run has not happened yet, and
+# rendering both as TODO tells the reader the wrong thing: it implies the
+# number is coming.
+NOT_APPLICABLE = r"---"
 
 # Colourblind-safe (Okabe-Ito). Used for every figure so the paper reads as
 # one document rather than as a collection of default matplotlib styles.
@@ -119,15 +124,18 @@ def table_split_contrast(index, datasets: Sequence[str], audit: Dict[str, Any]) 
         for split in SPLIT_ORDER:
             cells = []
             for dataset in datasets:
-                value = (
+                entry = (
                     audit.get(dataset, {})
                     .get("splits", {})
                     .get(split, {})
                     .get("baselines", {})
                     .get("appscanner", {})
-                    .get("macro_f1")
                 )
-                cells.append(fmt(value) if isinstance(value, (int, float)) else TODO)
+                value = entry.get("macro_f1")
+                if entry.get("status") == "unavailable":
+                    cells.append(NOT_APPLICABLE)
+                else:
+                    cells.append(fmt(value) if isinstance(value, (int, float)) else TODO)
             rows.append(f"{SPLIT_LABEL[split]} & " + " & ".join(cells) + r" \\")
 
     return table_wrapper(
@@ -200,6 +208,13 @@ def table_main_comparison(index, audit, dataset: str, split: str) -> str:
         for family in families:
             if family in audit_split:
                 entry = audit_split[family]
+                if entry.get("status") == "unavailable":
+                    # The column this probe reads is absent or constant here.
+                    rows.append(
+                        f"{PRETTY.get(family, latex_escape(family))} & {NOT_APPLICABLE} & "
+                        f"{NOT_APPLICABLE} & --- \\\\"
+                    )
+                    continue
                 rows.append(
                     f"{PRETTY.get(family, latex_escape(family))} & {fmt(entry.get('macro_f1'))} & "
                     f"{fmt(entry.get('balanced_accuracy'))} & --- \\\\"
@@ -350,6 +365,8 @@ def table_cost(index, dataset: str, split: str) -> str:
             if not stats or not np.isfinite(stats.get("mean", float("nan"))):
                 return TODO
             return f"{stats['mean'] * scale:.{places}f}"
+
+        _ = value
 
         params = extras.get("n_parameters", {}).get("mean")
         # The cost asymmetry the paper's enrollment claim rests on.

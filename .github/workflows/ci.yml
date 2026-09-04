@@ -73,6 +73,14 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+      # The paper source is checked like code: missing \input targets,
+      # unbalanced environments, undefined refs and citations, and generated
+      # tables containing TODO cells. --allow-todo keeps it a warning while the
+      # draft is in progress; drop the flag before submission so a TODO cell
+      # reaching the paper fails the build.
+      - name: Check paper source
+        run: python scripts/check_paper.py --allow-todo
+
       # End-to-end audit run on a generated table with the canonical schema.
       # The 87 MB training CSV is not committed, so CI cannot audit it; this
       # asserts the pipeline itself still runs and writes its artifacts.

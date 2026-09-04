@@ -1,0 +1,101 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Encrypted traffic classification has a reproducibility problem that is easy to
+state. Papers report macro-F1 and accuracy above 95\%, sometimes above 99\%,
+on datasets assembled from packet captures. Those numbers are real in the sense
+that the code produces them. They are not results about traffic analysis.
+
+We demonstrate this directly. Table~\ref{tab:split-contrast} reports the same
+model, the same code, the same hyperparameters and the same data, evaluated
+under four ways of partitioning the flows into training and test sets. On the
+5G Traffic corpus the model scores macro-F1 \textbf{0.992} under a stratified
+random split over flows --- the protocol used, to our reading, by the large
+majority of published work in this area --- and \textbf{0.574} when flows from
+one packet capture are constrained to a single side of the split. A 2016
+statistical baseline behaves identically: 0.996 and 0.640.
+
+The obvious diagnosis, that random splitting inflates results, is wrong, or at
+least incomplete. On CESNET-QUIC22, a month of QUIC traffic from a national
+backbone, random, session-disjoint and temporal splitting agree to within one
+seed's standard deviation for every method we ran. What costs 0.19 macro-F1
+there is \emph{server}-disjoint splitting: testing only on flows to servers
+never seen in training.
+
+\subsection*{The axis that matters is corpus-specific}
+
+The two corpora fail in different places because they were collected
+differently. 5G Traffic is a set of single-application packet captures: one
+recording, one app, one device. A flow's capture is therefore nearly its label,
+and a classifier that identifies the capture scores as well as one that
+identifies the application. CESNET-QUIC22 is backbone traffic from many hosts
+to many servers; its flows are already independent across days, so grouping by
+day buys nothing, but the label correlates strongly with the destination, so
+holding out servers bites.
+
+Neither protocol protects against the other's failure. A paper reporting
+session-disjoint results on backbone traffic has controlled nothing. A paper
+reporting server-disjoint results on single-session captures has controlled
+nothing either.
+
+\subsection*{A diagnostic that runs before the model}
+
+The right axis can be identified without training anything. We fit a decision
+tree on a \emph{single} identifier column and report its macro-F1 under each
+candidate protocol. On 5G Traffic the server address alone reaches 0.999 under
+a random split and the capture-session identifier alone reaches 0.983; under
+session-disjoint splitting the latter falls to exactly 0.000, which is the
+grouping doing precisely what it claims. On CESNET-QUIC22 the SNI string alone
+reaches 0.967 under every split --- unsurprising, since that dataset's labels
+are derived from SNI, and it therefore measures the ceiling of the labelling
+process rather than of any classifier.
+
+These probes cost seconds. We argue they should precede any reported number in
+this area, and we release them as a package that runs on any corpus in our
+schema.
+
+\subsection*{What survives under strict evaluation}
+
+Having established the protocol, we use it. We evaluate a metric-trained
+flow-level embedding against eight classical and four deep baselines on
+identical committed splits, and we report five of our own architectural claims
+failing their own pre-registered tests. Most notably, distance-based rejection
+of unknown applications beats softmax thresholding by a wide margin --- 0.34
+against 0.61 false-accept rate at matched true-positive rate --- but ablating
+\emph{every} metric objective from the training makes rejection \emph{better},
+not worse. The advantage belongs to the rejection rule, not to the
+representation learning we introduced to produce it. We report this because a
+reviewer would otherwise find it, and because the corrected claim is more
+useful: it applies to anyone's embedding.
+
+\subsection*{Contributions}
+
+\begin{enumerate}
+\item A measurement of how much the split protocol determines the reported
+      result, on two corpora with opposite structure, with every method on
+      identical committed splits (\S\ref{sec:protocols}). The effect is 0.418
+      macro-F1 on one corpus and 0.002 on the other, for the same change.
+\item Single-identifier probes as a pre-training diagnostic for which axis a
+      corpus requires, with the mechanism made explicit
+      (\S\ref{sec:protocols}).
+\item An evaluation of thirteen methods under strict protocols
+      (\S\ref{sec:results}), including the finding that on a
+      volume-defined taxonomy four independent neural architectures fall within
+      0.05 macro-F1 of each other while gradient-boosted trees on thirteen flow
+      statistics sit 0.25 above all of them.
+\item Five negative architectural results, each with the test that produced it
+      (\S\ref{sec:negative}), including a representation-probing protocol that
+      shows an adversarial nuisance-removal component leaving the nuisance as
+      decodable as it is in the raw input.
+\item An artifact containing every split manifest, every result, and the
+      failed experiments (\S\ref{sec:threats}).
+\end{enumerate}
+
+\subsection*{What we do not claim}
+
+We do not claim state-of-the-art accuracy. On the corpus where our model is
+strongest it is within one seed's noise of gradient-boosted trees on twenty
+packet sizes, which train in three seconds. We did not run ET-BERT or the other
+pre-trained byte-level transformers, because they tokenise payload bytes that
+QUIC does not expose and our records do not retain; we say so rather than
+citing their published numbers alongside ours.

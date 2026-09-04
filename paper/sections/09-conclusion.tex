@@ -1,0 +1,30 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+The evaluation protocol, not the model, determines what an encrypted-traffic
+classification number means. On one corpus we measure a swing of 0.418 macro-F1
+--- from 0.992 to 0.574 --- with nothing changed but the partition, and we show
+the mechanism directly: under the standard protocol, a decision tree on the
+server address alone scores 0.999.
+
+The correction is not simply ``stop splitting randomly''. On our second corpus
+random splitting costs nothing, and what costs 0.19 is holding out servers. The
+axis that matters is whichever grouping the label is nearly a function of, and
+that depends on how the corpus was collected in a way invisible from its label
+space or schema. We propose that the axis be chosen by measurement --- fit a
+single-identifier probe per identifier per candidate protocol, and adopt the
+protocol under which they all collapse --- and we release that diagnostic.
+
+Evaluated this way, the field looks different. A 2016 statistical baseline sits
+within 0.01 macro-F1 of our neural model on one corpus. On the other, four
+independent neural architectures fall within 0.05 of each other while
+gradient-boosted trees on thirteen flow statistics sit 0.23 above all of them.
+Five of our own architectural claims fail their own pre-registered tests,
+including one whose result held while its explanation did not: distance-based
+rejection of unknown applications does beat softmax thresholding, but ablating
+the metric training that we introduced to produce that advantage makes it
+better, so the advantage belongs to the scoring rule and applies to any
+encoder.
+
+We release all splits, all results, the failed experiments, and the audit that
+found them.

@@ -1,0 +1,62 @@
+\section{Model and Evaluation Setup}
+\label{sec:model}
+
+The classifier is a vehicle for the protocol comparison, and we describe it
+briefly. Its architectural claims are examined --- and largely refuted --- in
+\S\ref{sec:negative}.
+
+\subsection{Architecture}
+
+Two encoders read two views of a flow. The \emph{sequence encoder} consumes
+eight per-packet channels: normalised size, log inter-arrival, direction,
+signed size, log cumulative bytes, log cumulative time, size delta, and
+position within the current same-direction run. All eight vary within a flow;
+none is a flow-level constant broadcast across positions. It applies three
+gated depthwise-separable convolutions and one transformer layer with
+sinusoidal positions, then attention pooling. The \emph{context encoder} reads
+ten flow-level aggregates through a small MLP. Cross-attention fuses them into
+a 256-dimensional embedding $z_{\mathrm{flow}}$.
+
+Training combines a supervised contrastive objective~\cite{khosla2020supcon}
+with a pairwise margin term on $z_{\mathrm{flow}}$, a prototype alignment loss,
+a cross-covariance disentanglement penalty between the two views, and a
+gradient-reversal head~\cite{ganin2015grl} predicting a nuisance variable drawn
+from provenance the model never sees. Every term is independently switchable
+from configuration, which is what makes \S\ref{sec:negative} possible.
+
+\paragraph{Causality of the cumulative channels.} The two cumulative channels
+are normalised by fixed constants rather than by the observation window's
+total. Normalising by the total would make the value at packet 1 depend on
+packets not yet observed --- harmless for full-flow scoring, but it silently
+inflates early-classification curves. A test asserts that truncating a sequence
+is exactly equal to observing fewer packets.
+
+\subsection{Evaluation}
+
+Embeddings are scored with four heads on the same representation: cosine
+$k$-NN, nearest class prototype, a logistic probe, and a linear SVM. Headline
+metrics are macro-F1 and balanced accuracy with per-class F1 reported
+alongside; a majority-class predictor scores 0.006 macro-F1 on CESNET, so
+accuracy alone is uninformative. Macro averages exclude classes with zero test
+support rather than scoring them as zero, and report how many were excluded ---
+under 5G session-disjoint splitting, six of fifteen applications have no test
+rows at all, and averaging them in as zeros would report a number about the
+split rather than about the model.
+
+\subsection{Reproducibility}
+
+Every run seeds Python, NumPy and PyTorch, requests deterministic algorithms,
+and records into its result file the seed, a hash of the resolved
+configuration, the git commit and whether the working tree was dirty, library
+versions, the device, and wall-clock time. We verified that deterministic
+kernels are genuinely in force on our accelerator rather than silently falling
+back: two same-seed runs produce bitwise-identical losses.
+
+\paragraph{Budget, stated because it bounds the numbers.} Runs use fifteen
+epochs at batch 512. Thirteen of sixteen headline runs ended with validation
+macro-F1 still rising, so \textbf{every figure we report for our own model is a
+lower bound}, and the comparison against classical baselines is unfair in our
+own disfavour --- those are trained to their own convergence criteria. This is
+a compute decision, not a modelling one, and it does not change any conclusion:
+the largest gap we report is 0.30 macro-F1 and the per-epoch gain at epoch 15
+is 0.008.

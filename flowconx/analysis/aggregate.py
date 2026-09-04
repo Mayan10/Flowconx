@@ -138,6 +138,7 @@ def _collect_extras(bucket: Dict[str, List[float]], metrics: Dict[str, Any]) -> 
     push("latency_p99_ms", cost.get("end_to_end_batch1", {}).get("p99_ms"))
     push("throughput_flows_per_s", cost.get("throughput_batched", {}).get("flows_per_second"))
     push("model_size_bytes", cost.get("model_size_bytes"))
+    push("forward_p50_ms", cost.get("forward_batch1", {}).get("p50_ms"))
     for name, scorer in (metrics.get("open_set", {}) or {}).get("scorers", {}).items():
         push(f"open_set_auroc_{name}", scorer.get("auroc"))
         push(f"open_set_fpr95_{name}", scorer.get("fpr_at_95tpr"))

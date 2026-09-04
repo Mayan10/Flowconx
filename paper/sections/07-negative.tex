@@ -1,0 +1,106 @@
+\section{Five Claims That Failed}
+\label{sec:negative}
+
+We designed this model around four mechanisms and wrote down what each should
+produce before testing it. All four failed, and so did a fifth claim we
+expected to survive. We report them with the tests that produced them, because
+each is informative about the problem rather than only about our design, and
+because a reviewer with our artifact would find them in an afternoon.
+
+\subsection{Few-shot enrollment: the curve is flat}
+
+The deployed embedding is trained with the same metric objective used at
+inference, which should let a new application be enrolled from a handful of
+labelled flows by averaging them into a prototype. We pre-registered the test:
+\emph{if enrollment at $k = 5$--$25$ does not close the gap to the best
+baseline, the architecture has no case on this dataset.}
+
+Service-level macro-F1 moves from 0.502 $\pm$ 0.070 at $k=1$ to 0.505 $\pm$
+0.070 at $k=100$: $+0.003$ across two orders of magnitude in labelled data,
+against a seed spread twenty times larger. The gap does not close.
+
+The flat curve is not a mechanical failure. The prototype is \emph{already
+converged at $k=1$}, which says the embedding places same-class flows tightly.
+The problem is where it places them. Cheap enrollment of a weak classifier is
+not a contribution.
+
+\subsection{Temporal drift: nothing to measure}
+
+Trained on the earliest 70\% of CESNET-QUIC22 and evaluated day by day over the
+held-out tail, macro-F1 \emph{rises} from 0.768 to 0.791. There is no
+degradation. The honest reading is not that the method resists drift; it is
+that a four-week corpus with a six-day held-out tail cannot exhibit the
+phenomenon. Reporting a flat curve as drift resistance would be read as a claim
+about deployment lifetime, which this evidence cannot support. The claim is
+withdrawn pending a corpus spanning months.
+
+\subsection{Adversarial nuisance removal: it removes nothing}
+
+We replaced an earlier invariance score --- which we found was maximised by a
+constant encoder, and whose nuisance label was a threshold on two of the
+model's own input features, reconstructible with agreement 1.000 --- with
+standard representation probing: freeze the embedding, train linear and MLP
+probes to predict the nuisance, and report accuracy above the majority-class
+floor against a raw-feature control.
+
+\begin{center}
+\small
+\begin{tabular}{llrr}
+\toprule
+Corpus & Nuisance & From $z_{\mathrm{flow}}$ & From raw features \\
+\midrule
+CESNET & week & $+0.0006 \pm 0.0006$ & $-0.0049 \pm 0.0041$ \\
+5G & capture session & $+0.2935 \pm 0.0205$ & $+0.2790 \pm 0.0854$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+On CESNET the result is vacuous: week is not decodable from the raw features
+either, so there was nothing to remove, and the near-zero leak from the
+embedding measures the corpus rather than the method. On 5G the nuisance is
+genuinely present and the embedding leaks it \emph{at the same rate as its own
+input}. The component achieves nothing.
+
+The raw-feature control is what makes this readable. Without it, the CESNET row
+alone would have supported a published claim of near-perfect invariance.
+
+\subsection{Open-set rejection: right result, wrong mechanism}
+
+\input{tables/open_set}
+
+This is the claim we expected to survive, and half of it does. Rejecting
+unknown applications by distance to the nearest class prototype accepts roughly
+half as many unknowns as maximum-softmax-probability thresholding at matched
+true-positive rate --- 0.34 against 0.61 --- and the effect holds across every
+variant we tried.
+
+We attributed that to the metric training. We pre-registered the test that
+would falsify the attribution: ablate every metric objective on the deployed
+embedding, leaving the field-standard configuration, and check whether
+prototype rejection still beats softmax.
+
+\textbf{It does, and it does so better.} Removing all metric objectives moves
+prototype AUROC from 0.919 $\pm$ 0.033 to 0.949 $\pm$ 0.011 and the false-accept
+rate from 0.341 to 0.252. The rejection advantage is a property of the scoring
+rule, not of the representation learning we introduced to produce it. On the
+same embedding, Mahalanobis distance is statistically indistinguishable from
+the prototype rule.
+
+The corrected claim is narrower and more useful than the original: \emph{on
+encrypted-traffic embeddings, distance-based rejection substantially outperforms
+softmax thresholding for unknown-application detection.} It requires no special
+training and applies to anyone's encoder.
+
+\subsection{What did survive of the architecture}
+
+Two things. First, the fused embedding beats its parts: 0.626 $\pm$ 0.001
+against 0.616 $\pm$ 0.002 for the sequence embedding alone and 0.613 $\pm$
+0.005 for an unlearned concatenation of both. The cross-attention fusion earns
+roughly a point of macro-F1, and --- more tellingly --- naive concatenation is
+\emph{worse} than the sequence embedding alone, so the learned fusion is doing
+something a join does not. Second, the encoder builds a genuinely better task
+representation than its input: on CESNET the label is decodable from
+$z_{\mathrm{flow}}$ at $+0.741$ above chance against $+0.120$ from raw
+features.
+
+Neither is a paper. Both are honest.

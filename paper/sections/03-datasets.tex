@@ -1,0 +1,68 @@
+\section{Datasets}
+\label{sec:datasets}
+
+We use two public corpora with deliberately opposite collection structure. They
+are processed independently and never merged; \S\ref{sec:threats} explains why
+merging them was itself a source of leakage in an earlier version of this work.
+
+\subsection{5G Traffic}
+
+Seventy-five Wireshark packet captures across fifteen applications in six
+service categories, recorded on a commercial 5G network. One capture contains
+one application. We read all 330 million packet rows directly from the
+distributed archive and extract \emph{conversation segments}: packets between
+the capture's client host and one server over one transport, bounded by a
+10-second idle timeout and a 10-second active timeout. This yields
+164{,}348 flows.
+
+The service label is the dataset's own directory taxonomy
+(\texttt{Game\_Streaming}, \texttt{Online\_Game}, \texttt{Live\_Streaming},
+\texttt{Stored\_Streaming}, \texttt{Metaverse}, \texttt{Video\_Conferencing}),
+so no hand-written mapping intervenes between the collectors' intent and our
+labels.
+
+\paragraph{The structural property that matters.} Several applications have only
+one or two capture files. Grouping by capture therefore places an entire
+application on one side of the split: in our seed-42 session-disjoint partition
+the whole of \texttt{roblox} lands in test while training sees only
+\texttt{zepeto} for the \texttt{metaverse} class. The 5G session-disjoint
+number is consequently a hybrid of session- and application-disjointness. We
+report it as such rather than presenting it as a clean session-disjoint result.
+
+\subsection{CESNET-QUIC22}
+
+Twenty-eight daily flow files spanning four consecutive weeks of QUIC traffic
+from a national research backbone~\cite{luxemburk2023cesnet}. Each record is
+already a bidirectional flow with the first thirty packets as
+(inter-arrival, direction, size) triples, plus addresses, ports, destination AS
+and the SNI string. We scan all 153 million rows and retain a seeded reservoir
+of 400 flows per service category per day, giving 201{,}600 flows across
+eighteen categories, perfectly balanced by construction.
+
+\paragraph{Labels come from SNI.} The publishers derive the application and
+category fields from the TLS/QUIC server name. Our task is therefore
+\emph{predict what SNI would have said, without seeing SNI} --- the right task
+for a world with Encrypted Client Hello~\cite{rescorla2024ech}, and one whose
+ceiling is set by how well SNI itself categorises traffic. We quantify that
+ceiling directly in \S\ref{sec:protocols}.
+
+\subsection{Schema and what the model may see}
+
+Both corpora are reduced to one schema separating \emph{behaviour} from
+\emph{provenance}. Behaviour --- per-packet sizes, directions and inter-arrival
+times, plus flow-level aggregates --- is what a model may consume. Provenance
+--- flow identifier, capture identifier, timestamp, client and server address,
+destination port, SNI, AS number, transport protocol --- is retained but
+excluded from model inputs, and exists so that the split protocols can group on
+it and the probes of \S\ref{sec:protocols} can measure it.
+
+The transport protocol number is provenance rather than input, which is not
+obvious and is worth stating. In an earlier merged version of these corpora,
+\texttt{protocol} took the value 0 on 11{,}985 rows of which 99.9\% belonged to
+one class --- because 0 meant ``the preprocessing script could not parse this
+field'', and only one script produced it. The column recorded which pipeline
+had run. We now treat it as provenance and probe it like any other identifier.
+
+A test suite asserts mechanically that no provenance column reaches a feature
+extractor, and that every split is a partition with no identifier spanning
+train and test. It runs in continuous integration and fails the build.

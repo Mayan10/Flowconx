@@ -1,0 +1,13 @@
+defaults: [fiveg_main.yaml]
+name: flowconx_server_disjoint
+description: >
+  Test only on flows to server addresses never seen in training. Close to
+  degenerate on this corpus -- several captures contact a single server -- and
+  reported so the split-contrast table is complete on both datasets rather than
+  only on the one where the protocol is well posed.
+data:
+  split_protocol: server_disjoint
+eval:
+  probes: false
+  early_classification: false
+  robustness: false

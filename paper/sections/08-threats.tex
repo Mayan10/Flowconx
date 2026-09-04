@@ -1,0 +1,90 @@
+\section{Threats to Validity and Ethics}
+\label{sec:threats}
+
+\subsection{Labelling}
+
+Both corpora label by a proxy. 5G Traffic inherits its label from the capture
+directory, so background OS traffic, DNS and shared CDN fetches recorded during
+a session are labelled as the foreground application; we do not filter them,
+because a filter would need ground truth we lack. CESNET-QUIC22 derives its
+labels from SNI, which makes the task \emph{predict what SNI would have said}
+and caps the achievable ceiling at how well SNI itself categorises traffic. We
+measure that ceiling rather than assuming it: 0.967 macro-F1 from the SNI
+string alone.
+
+Encrypted Client Hello~\cite{rescorla2024ech} removes this labelling mechanism.
+That strengthens the motivation for traffic analysis without name resolution
+and weakens future data collection in the same movement; corpora of this kind
+may not be reproducible in kind.
+
+\subsection{Residual dependence}
+
+Our protocols control one axis each and leave others uncontrolled. On 5G
+Traffic, segments from different captures of the same application share a
+device and access network. On CESNET, we group by capture day but not by
+client; a client-disjoint protocol is possible, since \texttt{SRC\_IP} is
+retained, and is the obvious next control. We report what each protocol does
+and does not separate rather than implying a partition is clean.
+
+As noted in \S\ref{sec:datasets}, 5G session-disjoint splitting is partly
+application-disjoint by accident, because several applications have a single
+capture file. Six of fifteen applications have no test rows under that split
+and one has no training rows. We exclude zero-support classes from macro
+averages and report how many were excluded.
+
+\subsection{Sampling and budget}
+
+CESNET rows are a seeded reservoir of 400 flows per class per day over all 28
+days: every row is considered, but 201{,}600 of roughly 100 million are
+retained, and class balance is imposed at read time. Reported class priors are
+therefore ours, not the network's, and no claim about base rates follows from
+this work. Ablations run at a reduced budget shared by every row of their
+family, and the ablation table declares itself partial: the component and
+hyperparameter sweeps were not run, because the closed-set result they would
+explain does not hold.
+
+\subsection{Statistical power}
+
+Our largest effect --- server-disjoint versus session-disjoint, Cohen's
+$d = 20.3$ --- reaches $p = 0.031$ at six seeds and does not survive
+Holm-Bonferroni correction across its three-comparison family, which requires
+$p \le 0.017$. This is arithmetic, not weakness: a two-sided Wilcoxon
+signed-rank test on $n$ paired seeds has a minimum achievable $p$-value of
+$2^{-(n-1)}$, so six seeds cannot certify \emph{any} effect in a family of
+three. Eight seeds are required and were run. We note that a results section
+reporting corrected Wilcoxon tests over five seeds --- a common protocol ---
+cannot report a corrected significant result at all.
+
+\subsection{Generalisation}
+
+Two corpora, two networks, one protocol family. Fifteen applications on one and
+roughly a hundred on the other; neither approaches the open world. Both are
+from 2022.
+
+\subsection{Ethics}
+
+\paragraph{Dual use.} This work concerns identifying applications from
+encrypted traffic metadata. The capability serves network operations and it
+serves censorship and surveillance. We take that seriously rather than treating
+it as incidental. Our principal findings cut \emph{against} an operational use:
+we show these classifiers are far less reliable than the literature reports
+once evaluation controls for how the data was collected, and we quantify the
+padding overhead that defeats them. Overstating their reliability would be the
+more harmful error.
+
+\paragraph{Data.} We collected nothing. Both corpora are public and published
+for research under CC BY 4.0. CESNET-QUIC22 is anonymised at source by its
+publishers under an institutional data-handling policy. The 5G captures are of
+the original authors' own devices. We retain client addresses solely as
+split-grouping keys, never as model inputs, and a continuous-integration test
+asserts that mechanically. No raw capture is redistributed; our released
+artifacts are split manifests, metric files and code.
+
+\paragraph{Defender-facing disclosure.} Our countermeasure evaluation reports
+accuracy degradation against the overhead each defence imposes, so that the
+cost of defeating this class of classifier is stated publicly. We find that the
+cheap defences --- random padding, dummy injection, size quantisation --- cost
+a defender 8--17\% overhead and cost an attacker essentially nothing, while
+only defences costing 2.28$\times$ bandwidth degrade classification
+meaningfully. A defender deploying the cheap options is paying for nothing, and
+that is information defenders need.

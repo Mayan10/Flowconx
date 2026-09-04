@@ -1,0 +1,13 @@
+defaults:
+- ../fiveg_main.yaml
+name: adv5g_0p0
+description: Adversarial weight 0.0 on 5G Traffic, where the capture-session nuisance
+  is genuinely decodable from the raw features.
+model:
+  adversarial_head: false
+loss:
+  lambda_adversarial: 0.0
+eval:
+  probes: true
+  early_classification: false
+  robustness: false

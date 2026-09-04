@@ -1,0 +1,64 @@
+\section{Background and Related Work}
+\label{sec:background}
+
+\subsection{Classical fingerprinting}
+
+Traffic analysis without payload inspection has a long line of work built on
+packet sizes, directions and inter-arrival times. CUMUL~\cite{panchenko2016website}
+interpolates the cumulative signed-size curve to a fixed-length vector.
+AppScanner~\cite{taylor2016appscanner} computes eighteen summary statistics over
+the incoming, outgoing and combined size series and fits a random forest.
+$k$-fingerprinting~\cite{hayes2016kfingerprinting} adds burst structure and
+concentration features. All three predate the deep-learning literature in this
+area by several years, and we find in \S\ref{sec:results} that AppScanner
+remains within 0.02 macro-F1 of a modern neural model on one of our corpora.
+
+\subsection{Neural classifiers}
+
+Deep Packet~\cite{lotfollahi2020deeppacket} applies a 1D convolutional network
+to the first 1500 payload bytes. FS-Net~\cite{liu2019fsnet} encodes discretised
+packet lengths with a stacked bidirectional GRU. More recently, pre-trained
+transformers such as ET-BERT~\cite{lin2022etbert} tokenise raw datagram bytes
+and report macro-F1 above 98\% on several standard benchmarks.
+
+\paragraph{Why we do not compare against ET-BERT.} Its input is the hexadecimal
+byte string of the packet payload, tokenised as bigrams over a 65{,}536-entry
+vocabulary. Our corpora are QUIC and TLS, where the payload is encrypted, and
+our records retain sizes, directions and inter-arrival times but no bytes.
+Feeding it header-derived features would not be ET-BERT; it would be a
+differently-sized transformer carrying the name. Its published pre-training
+corpus is also not redistributed. We therefore do not report a number for it,
+rather than reporting one we could not obtain fairly. The same reasoning
+applies to YaTC, CLE-TFE, MIETT, FlowletFormer and PacketCLIP; the artifact
+documents each case individually.
+
+This is a real limitation and it bounds our claims: we do not assert
+state-of-the-art accuracy, and \S\ref{sec:results} does not contain the
+strongest published models.
+
+\subsection{Evaluation protocol}
+
+The methodological question we raise is not new in machine learning generally.
+Group-aware cross-validation is standard wherever observations cluster, and
+tree-based models are known to outperform neural networks on tabular
+features~\cite{grinsztajn2022trees} --- a result we reproduce in
+\S\ref{sec:results} in a setting where it is rarely tested.
+
+What is specific to encrypted traffic is \emph{which} grouping matters, and
+that this differs by corpus in a way that is not visible from the label space.
+A dataset of per-application packet captures and a dataset of backbone flows
+can carry the same label taxonomy, the same feature schema and the same class
+balance, and require entirely different partitions to be evaluated honestly.
+We are not aware of prior work that measures this contrast directly on two
+corpora, or that provides a pre-training diagnostic for choosing the axis.
+
+\subsection{Open-set recognition}
+
+Deployments encounter applications absent from training. Rejection by maximum
+softmax probability is the usual baseline; energy scores~\cite{liu2020energy}
+and Mahalanobis distance to class-conditional Gaussians are common
+alternatives. We evaluate all of these on a single frozen embedding
+(\S\ref{sec:results}), which isolates the scoring rule from the representation
+and produces the negative result in \S\ref{sec:negative}: the rejection
+advantage we measured is a property of the rule, not of the metric training we
+added to produce it.

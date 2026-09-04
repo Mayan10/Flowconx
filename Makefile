@@ -6,6 +6,7 @@
 #   make repro-small  reduced end-to-end pipeline, under 30 minutes on one GPU
 #   make repro-full   every experiment behind every number in the paper
 #   make paper        regenerate all tables and figures from results/
+#   make paper-pdf    regenerate assets, then build paper/main.pdf
 #   make test         lint, type check, unit tests, leakage tests
 #
 # Every target writes into results/ and splits/; neither is ever hand-edited.
@@ -15,7 +16,7 @@ SEEDS_SMALL ?= 0 1 2
 SEEDS_FULL ?= 0 1 2 3 4 5 6 7 8 9
 DATASETS ?= cesnet_quic22 fiveg_traffic
 
-.PHONY: setup data audit test lint typecheck repro-small repro-full paper clean-results help
+.PHONY: setup data audit test lint typecheck repro-small repro-full paper paper-pdf clean-results help
 
 help:
 	@grep -E '^#   ' Makefile | sed 's/^#   //'
@@ -81,6 +82,12 @@ repro-full: data audit
 
 paper:
 	$(PYTHON) scripts/make_paper_assets.py --results results --out paper
+	$(PYTHON) scripts/check_paper.py --allow-todo
+
+# Build the PDF. Regenerates every table and figure first, so the PDF can
+# never be newer than the numbers it reports.
+paper-pdf: paper
+	$(MAKE) -C paper
 
 clean-results:
 	@echo "This deletes every committed number. Ctrl-C now if that is not what you meant."

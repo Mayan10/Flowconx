@@ -288,6 +288,19 @@ FAMILIES: Dict[str, Dict[str, object]] = {
             "ablation_capacity_matched_small",
         ],
     },
+    # The weight sweep, against the default. Included so the ablation table's
+    # lambda rows carry a comparison rather than an empty cell -- even though
+    # at three seeds every one of them will correctly come back undetermined.
+    "adversarial_weight": {
+        "reference": "ablation_full",
+        "members": [
+            "ablation_adv_weight_0p0",
+            "ablation_adv_weight_0p01",
+            "ablation_adv_weight_0p1",
+            "ablation_adv_weight_0p5",
+            "ablation_adv_weight_1p0",
+        ],
+    },
     "embedding_choice": {
         "reference": "ablation_full",
         "members": ["ablation_classify_z_app", "ablation_classify_z_network", "ablation_classify_z_concat"],

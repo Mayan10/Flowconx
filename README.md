@@ -23,9 +23,10 @@ What survived is a **measurement** result, not a modelling one.
 ### What holds
 
 - **The split axis that matters is corpus-specific.** On 5G Traffic the same
-  model scores **macro-F1 0.992 under the split protocol the encrypted-traffic
-  literature standardly uses and 0.574 under a session-disjoint one** — nothing
-  changes but the partition. On CESNET-QUIC22 that contrast finds *nothing*
+  model scores **macro-F1 0.991 under the split protocol the encrypted-traffic
+  literature standardly uses, 0.547 under a session-disjoint one, and 0.391
+  under a temporal one** — a 0.600 swing with nothing changed but the
+  partition. On CESNET-QUIC22 that contrast finds *nothing*
   (0.782 vs 0.786), but **server-disjoint splitting costs 0.19**. Controlling
   the wrong axis protects nothing, and the audit's identifier probes tell you
   which axis to control: server IP alone scores 0.999 on 5G under a random

@@ -75,11 +75,11 @@ jobs:
           pip install -r requirements-dev.txt
       # The paper source is checked like code: missing \input targets,
       # unbalanced environments, undefined refs and citations, and generated
-      # tables containing TODO cells. --allow-todo keeps it a warning while the
-      # draft is in progress; drop the flag before submission so a TODO cell
-      # reaching the paper fails the build.
+      # tables containing TODO cells. Every table is now fully populated, so
+      # this runs without --allow-todo: a TODO cell reaching the paper fails
+      # the build, because it would mean a cited number does not exist.
       - name: Check paper source
-        run: python scripts/check_paper.py --allow-todo
+        run: python scripts/check_paper.py
 
       # End-to-end audit run on a generated table with the canonical schema.
       # The 87 MB training CSV is not committed, so CI cannot audit it; this

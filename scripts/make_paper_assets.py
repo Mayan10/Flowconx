@@ -33,6 +33,11 @@ TODO = r"\textsc{todo}"
 # rendering both as TODO tells the reader the wrong thing: it implies the
 # number is coming.
 NOT_APPLICABLE = r"---"
+# A comparison the test declined to make: too few seeds for a Wilcoxon
+# signed-rank test to have any power. Distinct from TODO (no run) and from
+# NOT_APPLICABLE (cannot be run at all), and the distinction matters because
+# `undetermined` is not the same as `not significant`.
+UNDETERMINED = r"\emph{n.d.}"
 
 # Colourblind-safe (Okabe-Ito). Used for every figure so the paper reads as
 # one document rather than as a collection of default matplotlib styles.
@@ -99,6 +104,15 @@ SPLIT_LABEL = {
     "server_disjoint": "Server-disjoint",
 }
 
+# Which experiment supplies each protocol's row. Explicit, so a new experiment
+# whose name happens to share a prefix cannot displace the intended one.
+SPLIT_EXPERIMENT = {
+    "random_flow": "flowconx_random_contrast",
+    "session_disjoint": "flowconx_main",
+    "temporal": "flowconx_temporal",
+    "server_disjoint": "flowconx_server_disjoint",
+}
+
 
 def table_split_contrast(index, datasets: Sequence[str], audit: Dict[str, Any]) -> str:
     """How much the field's usual protocol inflates a published-style number."""
@@ -107,14 +121,15 @@ def table_split_contrast(index, datasets: Sequence[str], audit: Dict[str, Any]) 
     rows.append(" & ".join(header) + r" \\")
     rows.append(r"\midrule")
     rows.append(r"\multicolumn{%d}{l}{\emph{FlowCon-X (prototype head)}} \\" % (len(datasets) + 1))
+    # Exact experiment names per protocol. A prefix match on "flowconx_" was
+    # enough until baseline runs were renamed to flowconx_main_baseline_*:
+    # those also match the prefix, carry a `softmax` head rather than
+    # `prototype`, and silently replaced this table's headline row with TODO.
+    # Prefix matching over an experiment namespace is a trap; name them.
     for split in SPLIT_ORDER:
         cells = []
         for dataset in datasets:
-            group = None
-            for (experiment, ds, sp), candidate in index.items():
-                if ds == dataset and sp == split and experiment.startswith("flowconx_"):
-                    group = candidate
-                    break
+            group = index.get((SPLIT_EXPERIMENT[split], dataset, split))
             cells.append(_cell(group, "prototype") if group else TODO)
         rows.append(f"{SPLIT_LABEL[split]} & " + " & ".join(cells) + r" \\")
 
@@ -302,11 +317,19 @@ def table_ablations(index, dataset: str, split: str, significance: Dict[str, Any
         )
         entry = lookup.get((experiment, dataset, split))
         if entry is None:
-            p_cell = "---" if experiment == "ablation_full" else TODO
+            p_cell = NOT_APPLICABLE if experiment == "ablation_full" else TODO
         else:
-            marker = r"$^{*}$" if entry.get("correction", {}).get("significant") else ""
+            correction = entry.get("correction", {})
             p_value = entry.get("p_value")
-            p_cell = (f"{p_value:.3g}" + marker) if p_value is not None and np.isfinite(p_value) else TODO
+            if p_value is not None and np.isfinite(p_value):
+                marker = r"$^{*}$" if correction.get("significant") else ""
+                p_cell = f"{p_value:.3g}{marker}"
+            elif correction.get("undetermined"):
+                # The test ran and declined: too few seeds for it to have power.
+                # Rendering this as TODO would claim the run had not happened.
+                p_cell = UNDETERMINED
+            else:
+                p_cell = TODO
         params = group.get("extras", {}).get("n_parameters", {}).get("mean")
         params_cell = f"{int(params):,}".replace(",", r"\,") if params else TODO
         rows.append(f"{label} & {fmt(mean, stats.get('std'))} & {delta} & {p_cell} & {params_cell} \\\\")
@@ -318,7 +341,10 @@ def table_ablations(index, dataset: str, split: str, significance: Dict[str, Any
             "the reduced ablation budget (10 epochs on a seeded stratified 72{,}000-row subsample), "
             "mean $\\pm$ std over seeds. $\\Delta$ is the change in macro-F1 against the full model. "
             "$p$ is a Wilcoxon signed-rank test across seeds, Holm-Bonferroni corrected within this "
-            "family; $^{*}$ marks comparisons surviving the correction at $\\alpha = 0.05$. "
+            "family; $^{*}$ marks comparisons surviving the correction at $\\alpha = 0.05$, and "
+            "\\emph{n.d.} marks comparisons the test declined to make --- at three seeds its minimum "
+            "achievable $p$-value is $0.25$, so it has no power at any effect size. Those rows are "
+            "reported with effect sizes and seed spreads instead, and are not claimed as significant. "
             "The fusion variants, loss-term ablations, and temperature, margin and input-budget sweeps "
             "were \\emph{not run}: they were designed to explain why the model wins the closed-set "
             "comparison, and it does not win it. See \\texttt{paper/RESULTS.md} for the full list of "

@@ -109,10 +109,10 @@
     "config_name": "baseline_fsnet",
     "seed": 0,
     "git": {
-      "commit": "014263a0e698991b47bbc0b08cf60a1ffbcfb9c5",
+      "commit": "688402803c8447bec3d34f4154970277473cd89f",
       "branch": "main",
       "dirty": "yes",
-      "dirty_files": "?? results/baseline_deeppacket_cnn/"
+      "dirty_files": "M results/flowconx_main_baseline_deeppacket_cnn/cesnet_quic22/session_disjoint/seed0/metrics.json"
     },
     "libraries": {
       "numpy": "2.1.1",
@@ -140,9 +140,9 @@
       "cuda_available": false,
       "mps_available": true
     },
-    "started_at": 1788363572.484658,
-    "wall_clock_seconds": 755.375,
-    "started_at_iso": "2026-09-02T15:39:32Z"
+    "started_at": 1788535221.320003,
+    "wall_clock_seconds": 1080.134,
+    "started_at_iso": "2026-09-04T15:20:21Z"
   },
   "data": {
     "csv": "data/processed/cesnet_quic22.csv",
@@ -187,7 +187,7 @@
     "n_parameters": 634258,
     "device": "mps",
     "epochs_run": 15,
-    "seconds": 748.63,
+    "seconds": 1070.89,
     "enrollment_requires_retraining": true
   },
   "closed_set": {
@@ -617,6 +617,8 @@
           2111
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.7624430683601324,
         "lo": 0.7586495572301641,
@@ -687,14 +689,28 @@
     "observed_packets": 30,
     "device": "mps",
     "forward_batch1": {
-      "mean_ms": 36.79915708838962,
-      "p50_ms": 36.705207952763885,
-      "p95_ms": 37.36424817470834,
-      "p99_ms": 37.81586070195772,
-      "min_ms": 35.72599997278303,
-      "max_ms": 48.48420794587582,
+      "mean_ms": 45.185938290087506,
+      "p50_ms": 44.96908304281533,
+      "p95_ms": 46.866732690250494,
+      "p99_ms": 56.47692379658109,
+      "min_ms": 42.16787498444319,
+      "max_ms": 70.07262494880706,
       "n_samples": 200
     },
-    "note": "Forward pass only. The end-to-end path is measured for the model in flowconx/eval/cost.py."
+    "end_to_end_batch1": {
+      "mean_ms": 51.382602447411045,
+      "p50_ms": 49.941750010475516,
+      "p95_ms": 63.4144020557869,
+      "p99_ms": 75.43106582481408,
+      "min_ms": 40.15887493733317,
+      "max_ms": 110.60408304911107,
+      "n_samples": 200
+    },
+    "throughput_batched": {
+      "flows_per_second": 3594.4198503825764,
+      "batch_size": 256,
+      "n_flows": 43200,
+      "seconds": 12.0186
+    }
   }
 }

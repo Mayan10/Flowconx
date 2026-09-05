@@ -109,10 +109,10 @@
     "config_name": "baseline_lstm_attention",
     "seed": 1,
     "git": {
-      "commit": "90bfa599c31241491d63100f54296ad3f80a617a",
+      "commit": "688402803c8447bec3d34f4154970277473cd89f",
       "branch": "main",
       "dirty": "yes",
-      "dirty_files": "?? results/baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed1/\n?? results/baseline_fsnet/fiveg_traffic/session_disjoint/seed1/"
+      "dirty_files": "M paper/figures/adversarial_tradeoff.pdf\n M paper/figures/early_classification.pdf\n M paper/figures/enrollment_curve.pdf\n M paper/figures/robustness_overhead.pdf\n M paper/tables/cost.tex\n M paper/tables/split_contrast.tex\n M results/aggregate.json\n M results/flowconx_main_baseline_deeppacket_cnn/cesnet_quic22/session_disjoint/seed0/metrics.json\n M results/flowconx_main_baseline_deeppacket_cnn/cesnet_quic22/session_disjoint/seed1/metrics.json\n M results/flowconx_main_baseline_deeppacket_cnn/cesnet_quic22/session_disjoint/seed2/metrics.json\n M results/flowconx_main_baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed0/history.json\n M results/flowconx_main_baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed0/metrics.json\n M results/flowconx_main_baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed1/history.json\n M results/flowconx_main_baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed1/metrics.json\n M results/flowconx_main_baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed2/history.json\n M results/flowconx_main_baseline_deeppacket_cnn/fiveg_traffic/session_disjoint/seed2/metrics.json\n M results/flowconx_main_baseline_fsnet/cesnet_quic22/session_disjoint/seed0/metrics.json\n M results/flowconx_main_baseline_fsnet/cesnet_quic22/session_disjoint/seed1/metrics.json\n M results/flowconx_main_baseline_fsnet/cesnet_quic22/session_disjoint/seed2/metrics.json\n M results/flowconx_main_baseline_fsnet/fiveg_traffic/session_disjoint/seed0/history.json\n M results/flowconx_main_baseline_fsnet/fiveg_traffic/session_disjoint/seed0/metrics.json\n M results/flowconx_main_baseline_fsnet/fiveg_traffic/session_disjoint/seed1/history.json\n M results/flowconx_main_baseline_fsnet/fiveg_traffic/session_disjoint/seed1/metrics.json\n M results/flowconx_main_baseline_fsnet/fiveg_traffic/session_disjoint/seed2/history.json\n M results/flowconx_main_baseline_fsnet/fiveg_traffic/session_disjoint/seed2/metrics.json\n M results/flowconx_main_baseline_lstm_attention/ce"
     },
     "libraries": {
       "numpy": "2.1.1",
@@ -140,9 +140,9 @@
       "cuda_available": false,
       "mps_available": true
     },
-    "started_at": 1788376696.045115,
-    "wall_clock_seconds": 8801.172,
-    "started_at_iso": "2026-09-02T19:18:16Z"
+    "started_at": 1788543527.5669398,
+    "wall_clock_seconds": 293.985,
+    "started_at_iso": "2026-09-04T17:38:47Z"
   },
   "data": {
     "csv": "data/processed/fiveg_traffic.csv",
@@ -175,7 +175,7 @@
     "n_parameters": 571783,
     "device": "mps",
     "epochs_run": 15,
-    "seconds": 271.79,
+    "seconds": 290.03,
     "enrollment_requires_retraining": true
   },
   "closed_set": {
@@ -257,6 +257,8 @@
           2940
         ]
       ],
+      "n_classes_scored": 6,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.5856075181583132,
         "lo": 0.5809547042202563,
@@ -327,14 +329,28 @@
     "observed_packets": 32,
     "device": "mps",
     "forward_batch1": {
-      "mean_ms": 1.5883085352834314,
-      "p50_ms": 1.5675630420446396,
-      "p95_ms": 1.769439596682787,
-      "p99_ms": 1.82520977105014,
-      "min_ms": 1.4678750885650516,
-      "max_ms": 1.8513749819248915,
+      "mean_ms": 2.0652231539133936,
+      "p50_ms": 1.8496040138415992,
+      "p95_ms": 2.938940987223759,
+      "p99_ms": 7.633306087227515,
+      "min_ms": 1.5534160193055868,
+      "max_ms": 11.817457969300449,
       "n_samples": 200
     },
-    "note": "Forward pass only. The end-to-end path is measured for the model in flowconx/eval/cost.py."
+    "end_to_end_batch1": {
+      "mean_ms": 3.8461941498098895,
+      "p50_ms": 3.693729522638023,
+      "p95_ms": 4.582389909774061,
+      "p99_ms": 5.562957037473094,
+      "min_ms": 3.258667071349919,
+      "max_ms": 14.906625030562282,
+      "n_samples": 200
+    },
+    "throughput_batched": {
+      "flows_per_second": 12439.741196670324,
+      "batch_size": 256,
+      "n_flows": 32859,
+      "seconds": 2.6415
+    }
   }
 }

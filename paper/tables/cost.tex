@@ -7,10 +7,10 @@
 Method & p50 (ms) & p95 (ms) & p99 (ms) & Flows/s & Params & Size (MB) & New class \\
 \midrule
 FlowCon-X & 6.71 & 7.91 & 9.70 & 7569 & 1\,406\,342 & 5.7 & $k$ fwd passes \\
-DeepPacket-style CNN & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 270\,918 & 1.1 & fine-tune \\
-FS-Net & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 634\,258 & 2.5 & fine-tune \\
-Bi-LSTM + attention & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 573\,331 & 2.3 & fine-tune \\
-Flow-statistics MLP & \textsc{todo} & \textsc{todo} & \textsc{todo} & \textsc{todo} & 73\,234 & 0.3 & fine-tune \\
+DeepPacket-style CNN & 3.09 & 7.23 & 7.97 & 21557 & 270\,918 & 1.1 & fine-tune \\
+FS-Net & 49.19 & 59.84 & 66.57 & 3646 & 634\,258 & 2.5 & fine-tune \\
+Bi-LSTM + attention & 5.70 & 12.44 & 14.57 & 10561 & 573\,331 & 2.3 & fine-tune \\
+Flow-statistics MLP & 1.43 & 4.72 & 6.72 & 168895 & 73\,234 & 0.3 & fine-tune \\
 \bottomrule
 \end{tabular}
 \caption{Deployment cost, measured on identical hardware. Latency percentiles are end-to-end -- stored record in, decision out, including feature construction -- at batch size 1, not a mean of the forward pass alone. The last column is the cost of adding one new application: a prototype update needs $k$ forward passes, a softmax classifier needs a fine-tuning run.}

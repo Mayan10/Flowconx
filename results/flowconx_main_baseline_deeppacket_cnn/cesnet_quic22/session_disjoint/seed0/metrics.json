@@ -109,10 +109,10 @@
     "config_name": "baseline_deeppacket_cnn",
     "seed": 0,
     "git": {
-      "commit": "014263a0e698991b47bbc0b08cf60a1ffbcfb9c5",
+      "commit": "1b44989d91840fc14209dbdcf10b60a1a292b609",
       "branch": "main",
-      "dirty": "no",
-      "dirty_files": ""
+      "dirty": "yes",
+      "dirty_files": "M flowconx/eval/cost.py\n M paper/RESULTS.md\n M results/sweep_log.json\n?? results/adv5g_0p0/\n?? results/adv5g_0p01/\n?? results/adv5g_0p1/\n?? results/adv5g_0p5/\n?? results/adv5g_1p0/\n?? results/adv5g_2p0/\n?? results/flowconx_server_disjoint/fiveg_traffic/\n?? results/flowconx_temporal/fiveg_traffic/"
     },
     "libraries": {
       "numpy": "2.1.1",
@@ -140,9 +140,9 @@
       "cuda_available": false,
       "mps_available": true
     },
-    "started_at": 1788363458.960663,
-    "wall_clock_seconds": 112.8,
-    "started_at_iso": "2026-09-02T15:37:38Z"
+    "started_at": 1788535030.155684,
+    "wall_clock_seconds": 186.375,
+    "started_at_iso": "2026-09-04T15:17:10Z"
   },
   "data": {
     "csv": "data/processed/cesnet_quic22.csv",
@@ -187,7 +187,7 @@
     "n_parameters": 270918,
     "device": "mps",
     "epochs_run": 15,
-    "seconds": 109.61,
+    "seconds": 182.08,
     "enrollment_requires_retraining": true
   },
   "closed_set": {
@@ -617,6 +617,8 @@
           1796
         ]
       ],
+      "n_classes_scored": 18,
+      "classes_without_test_support": [],
       "macro_f1_ci95": {
         "point": 0.6548841667173706,
         "lo": 0.6506060935188267,
@@ -687,14 +689,28 @@
     "observed_packets": 30,
     "device": "mps",
     "forward_batch1": {
-      "mean_ms": 0.46589433099143207,
-      "p50_ms": 0.46110397670418024,
-      "p95_ms": 0.5112643004395067,
-      "p99_ms": 0.6128875666763632,
-      "min_ms": 0.4209160106256604,
-      "max_ms": 0.6538750603795052,
+      "mean_ms": 0.4644153983099386,
+      "p50_ms": 0.459874514490366,
+      "p95_ms": 0.5125454219523817,
+      "p99_ms": 0.5391303636133671,
+      "min_ms": 0.4199170507490635,
+      "max_ms": 0.5781250074505806,
       "n_samples": 200
     },
-    "note": "Forward pass only. The end-to-end path is measured for the model in flowconx/eval/cost.py."
+    "end_to_end_batch1": {
+      "mean_ms": 6.234330819570459,
+      "p50_ms": 5.364854005165398,
+      "p95_ms": 11.565366067225114,
+      "p99_ms": 12.153301230864594,
+      "min_ms": 1.7032090108841658,
+      "max_ms": 15.133917098864913,
+      "n_samples": 200
+    },
+    "throughput_batched": {
+      "flows_per_second": 23101.87452090854,
+      "batch_size": 256,
+      "n_flows": 43200,
+      "seconds": 1.87
+    }
   }
 }

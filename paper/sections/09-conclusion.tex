@@ -2,10 +2,11 @@
 \label{sec:conclusion}
 
 The evaluation protocol, not the model, determines what an encrypted-traffic
-classification number means. On one corpus we measure a swing of 0.418 macro-F1
---- from 0.992 to 0.574 --- with nothing changed but the partition, and we show
-the mechanism directly: under the standard protocol, a decision tree on the
-server address alone scores 0.999.
+classification number means. On one corpus we measure a swing of 0.600 macro-F1
+--- from 0.991 under a random split to 0.391 under a temporal one --- with
+nothing changed but the partition, and we show the mechanism directly: under
+the standard protocol, a decision tree on the server address alone scores
+0.999.
 
 The correction is not simply ``stop splitting randomly''. On our second corpus
 random splitting costs nothing, and what costs 0.19 is holding out servers. The

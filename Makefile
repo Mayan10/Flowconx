@@ -82,7 +82,7 @@ repro-full: data audit
 
 paper:
 	$(PYTHON) scripts/make_paper_assets.py --results results --out paper
-	$(PYTHON) scripts/check_paper.py --allow-todo
+	$(PYTHON) scripts/check_paper.py
 
 # Build the PDF. Regenerates every table and figure first, so the PDF can
 # never be newer than the numbers it reports.

@@ -34,15 +34,20 @@ alone 0.983. A classifier that learned nothing except which recording a flow
 came from would score in the range published work reports for this corpus.
 Under session-disjoint splitting the capture probe falls to \textbf{exactly
 0.000} --- the grouping doing precisely what it claims --- and AppScanner falls
-from 0.996 to 0.640. Under temporal splitting every method falls below 0.31;
-these captures span five months, so a temporal split also separates application
-versions and network conditions.
+from 0.996 to 0.640, our model from 0.991 to 0.547. Temporal splitting is
+harder still: 0.255 and 0.391 respectively. These captures span five months, so
+a temporal split separates application versions and network conditions as well
+as time, and it is the protocol under which this corpus behaves least like the
+one the literature reports.
 
 \paragraph{CESNET-QUIC22: the server is the label.} Random, session-disjoint and
 temporal splitting are indistinguishable: AppScanner scores 0.768, 0.772 and
-0.762. Server-disjoint splitting takes it to 0.566, and takes the server-address
-probe from 0.772 to \textbf{0.026} --- the floor, confirming the partition does
-what it says.
+0.762. Server-disjoint splitting takes it to 0.566 and our model from 0.781 to 0.588,
+and takes the server-address probe from 0.772 to \textbf{0.026} --- the floor,
+confirming the partition does what it says. Table~\ref{tab:split-contrast}
+shows the two corpora side by side: the CESNET column is flat across three
+protocols and drops only on the fourth, while the 5G column drops on all
+three.
 
 \paragraph{The labelling ceiling.} The SNI probe reaches 0.967 on CESNET under
 every protocol except server-disjoint, where it still reaches 0.791. This is

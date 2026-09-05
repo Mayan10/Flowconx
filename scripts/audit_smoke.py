@@ -61,6 +61,10 @@ def synthetic_table(seed: int = 20240501) -> pd.DataFrame:
                         # splitting is a genuinely different partition from
                         # session-disjoint and gets covered by the smoke run.
                         "client_ip": f"198.51.100.{(index % 11) + service_id * 11}",
+                        # Two observation points, as a paired-capture corpus
+                        # has. Exercises the vantage-disjoint protocol, whose
+                        # two-group case is easy to get wrong.
+                        "vantage": "gateway" if capture % 2 else "workstation",
                         # Two apps per service, cycling across captures, so an
                         # app appears in several captures and a session-disjoint
                         # split can place some of its flows in test. Without

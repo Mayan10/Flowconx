@@ -28,6 +28,12 @@ PROVENANCE_COLUMNS: List[str] = [
     "flow_id",
     "origin",
     "capture_id",
+    # Where the capture was taken. ISCX-Tor2016 recorded the same activity
+    # simultaneously at the workstation and at the gateway, so vantage is a
+    # grouping axis that is neither temporal nor per-file -- the only such axis
+    # available across our corpora, and the reason that dataset was chosen.
+    # Empty for corpora captured from a single vantage point.
+    "vantage",
     "flow_start_ts",
     "client_ip",
     "server_ip",

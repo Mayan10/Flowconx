@@ -59,6 +59,10 @@ def synthetic_frame() -> pd.DataFrame:
                         # splitting has groups to work with and is a genuinely
                         # different partition from session-disjoint.
                         "client_ip": f"198.51.100.{(index % 7) + service_id * 7}",
+                        # Two observation points, as a paired-capture corpus
+                        # has. Exercises the vantage-disjoint protocol, whose
+                        # two-group case is easy to get wrong.
+                        "vantage": "gateway" if capture % 2 else "workstation",
                         "app": f"{service}_app{capture}",
                         "service": service,
                         "condition": infer_condition(mean_iat, std_iat, 0.0),

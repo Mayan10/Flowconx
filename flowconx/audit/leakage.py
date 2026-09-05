@@ -16,7 +16,9 @@ import pandas as pd
 
 # Columns whose value, if it appears on both sides of a split, means flows
 # from the same conversation or the same capture straddle train and test.
-IDENTITY_COLUMNS = ("flow_id", "capture_id", "five_tuple", "client_ip", "server_ip", "origin")
+IDENTITY_COLUMNS = (
+    "flow_id", "capture_id", "vantage", "five_tuple", "client_ip", "server_ip", "origin",
+)
 
 
 def _verdict(name: str, passed: Optional[bool], **details: object) -> Dict[str, object]:

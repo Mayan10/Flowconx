@@ -297,3 +297,66 @@ def test_the_sweep_configs_still_enable_the_head():
     for path in sorted(Path("configs/ablations").glob("adv_weight_*.yaml")):
         config = load_config(path)
         assert config.model.adversarial_head == (config.loss.lambda_adversarial > 0), path.name
+
+
+def test_iscx_tor_vantage_inference_handles_the_traps():
+    """Two mistakes the first implementation made, pinned so they cannot recur.
+
+    `\\btor\\b` does not match `tor_skype` because `_` is a word character, and
+    "nontor" contains "tor" so a NonTor capture whose filename mentions
+    "gateway" must not be read as the Tor vantage.
+    """
+    from flowconx.data.iscx_tor import infer_vantage
+
+    assert infer_vantage("Tor/AUDIO_tor_spotify2.pcap") == "gateway"
+    assert infer_vantage("VOIP/tor_skype_audio.pcap") == "gateway"
+    # Directory outranks a misleading filename token.
+    assert infer_vantage("NonTor/browsing_gateway_chrome.pcap") == "workstation"
+    assert infer_vantage("NonTor/AUDIO_spotify2.pcap") == "workstation"
+    assert infer_vantage("workstation/email_imap.pcapng") == "workstation"
+    # Says nothing rather than guessing.
+    assert infer_vantage("misc/unlabelled_capture.pcap") == "unknown"
+
+
+def test_iscx_tor_categories_do_not_shadow_each_other():
+    from pathlib import Path
+
+    from flowconx.data.iscx_tor import classify_path
+
+    root = Path("/x")
+    expected = {
+        "Tor/audio_spotify.pcap": "audio_streaming",
+        "Tor/video_youtube.pcap": "video_streaming",
+        "NonTor/p2p_torrent.pcap": "p2p",
+        "NonTor/email_imap.pcap": "email",
+        "Tor/voip_skype.pcap": "voip",
+        "NonTor/browsing_firefox.pcap": "browsing",
+        "Tor/file_transfer_ftp.pcap": "file_transfer",
+        "NonTor/chat_icq.pcap": "chat",
+        # Capture files are numbered, and a trailing digit must not break the
+        # token boundary: `spotify` has to match `spotify2`.
+        "Tor/AUDIO_tor_spotify2.pcap": "audio_streaming",
+        "NonTor/p2p_torrent01.pcap": "p2p",
+        "NonTor/chat1a_icq.pcap": "chat",
+        # An audio call is voip even though the app also does chat. The
+        # specific variant must be tested before the bare app name.
+        "Tor/hangouts_audio.pcap": "voip",
+        "NonTor/hangouts_chat.pcap": "chat",
+        "Tor/skype_audio2.pcap": "voip",
+        "NonTor/skype_chat.pcap": "chat",
+        # Says nothing rather than guessing.
+        "misc/nothing.pcap": "unknown",
+    }
+    for path, service in expected.items():
+        assert classify_path(root / path, root)[0] == service, path
+
+
+def test_iscx_tor_loader_fails_loudly_without_data(tmp_path):
+    """A missing corpus must raise with the reason, not return an empty list."""
+    from flowconx.data.iscx_tor import IscxTorConfig, find_captures
+
+    with pytest.raises(FileNotFoundError, match="registration form"):
+        find_captures(IscxTorConfig(root=str(tmp_path / "absent")))
+    (tmp_path / "present").mkdir()
+    with pytest.raises(FileNotFoundError, match="ARFF"):
+        find_captures(IscxTorConfig(root=str(tmp_path / "present")))

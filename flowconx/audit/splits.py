@@ -34,6 +34,7 @@ PROVENANCE_COLUMNS = {
     "flow_start_ts": "Unix timestamp (seconds) of the first packet of the flow.",
     "server_ip": "Server-side address, used only for server-disjoint splitting.",
     "client_ip": "Client-side address, used only for client-disjoint splitting.",
+    "vantage": "Observation point the capture was taken from.",
 }
 
 SPLIT_PROTOCOLS = (
@@ -42,6 +43,7 @@ SPLIT_PROTOCOLS = (
     "temporal",
     "server_disjoint",
     "client_disjoint",
+    "vantage_disjoint",
     "app_disjoint",
     "origin_disjoint",
 )
@@ -57,6 +59,9 @@ _GROUP_COLUMN = {
     # of client addresses appear on more than one day. This is the axis that
     # session-disjointness leaves uncontrolled on a backbone corpus.
     "client_disjoint": "client_ip",
+    # Neither temporal nor per-file: train on one observation point, test on
+    # another. Available only where a corpus was captured from more than one.
+    "vantage_disjoint": "vantage",
     "app_disjoint": "app",
     "origin_disjoint": "origin",
 }
@@ -226,15 +231,37 @@ def _group_disjoint(
     comparisons. Here each row's group is resolved once via `np.unique`'s
     inverse index, and assignment is a single pass over the group table.
     """
-    codes, sizes = np.unique(groups, return_inverse=True), None
-    unique_groups, inverse = codes
-    if len(unique_groups) < 3:
+    unique_groups, inverse = np.unique(groups, return_inverse=True)
+    if len(unique_groups) < 2:
         raise SplitUnavailable(
-            f"Group-disjoint splitting needs at least 3 distinct groups to fill train/val/test, "
-            f"but the grouping column has only {len(unique_groups)}: {list(unique_groups)[:5]}. "
-            "A single-origin table cannot be split by origin."
+            f"Group-disjoint splitting needs at least 2 distinct groups, but the grouping column "
+            f"has only {len(unique_groups)}: {list(unique_groups)[:5]}. A single-origin table "
+            "cannot be split by origin."
         )
     sizes = np.bincount(inverse, minlength=len(unique_groups))
+
+    if len(unique_groups) == 2:
+        # Exactly two groups is the normal case for a vantage axis: one
+        # observation point trains, the other tests. Validation is then carved
+        # out of the training side at random.
+        #
+        # This is correct rather than a compromise. The disjointness guarantee
+        # that matters is train against test; validation exists for model
+        # selection and drawing it from the training distribution is standard.
+        # Demanding a group-disjoint validation set here would reject the very
+        # protocol this axis exists for.
+        larger = int(np.argmax(sizes))
+        train_pool = np.flatnonzero(inverse == larger)
+        test_index = np.flatnonzero(inverse != larger)
+        rng.shuffle(train_pool)
+        # val_fraction is of the whole table, so scale it to the training pool.
+        n_val = int(round(len(train_pool) * val_fraction / max(1.0 - test_fraction, 1e-9)))
+        n_val = min(n_val, max(len(train_pool) - 1, 0))
+        return (
+            np.sort(train_pool[n_val:]).astype(int),
+            np.sort(train_pool[:n_val]).astype(int),
+            np.sort(test_index).astype(int),
+        )
 
     total = len(groups)
     targets = {
@@ -331,7 +358,15 @@ def build_split(
                 f"{sorted(k for k, v in describe_provenance(frame).items() if v)}."
             )
         groups = frame[group_column].astype(str).to_numpy()
+        n_groups = int(pd.Series(groups).nunique())
         notes.append(f"Whole {group_column!r} groups are assigned to exactly one side.")
+        if n_groups == 2:
+            notes.append(
+                f"Only 2 distinct {group_column!r} values, so one trains and the other tests, and "
+                "validation is drawn at random from the training side. Train and test remain fully "
+                "group-disjoint; validation is not, which is the standard arrangement and is what "
+                "this axis requires."
+            )
         train, val, test = _group_disjoint(groups, labels, val_fraction, test_fraction, rng)
 
     indices = {"train": train, "val": val, "test": test}

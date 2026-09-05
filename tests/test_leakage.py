@@ -310,3 +310,34 @@ def test_group_disjoint_scales_to_high_cardinality():
     assert elapsed < 20, f"client-disjoint split took {elapsed:.1f}s on {n} rows"
     covered = np.concatenate([indices[s] for s in ("train", "val", "test")])
     assert len(np.unique(covered)) == n
+
+
+def test_vantage_disjoint_works_with_exactly_two_groups(synthetic_frame):
+    """A paired-capture corpus has two vantages, not three.
+
+    Group-disjoint splitting originally demanded at least three groups so that
+    train, val and test could each get one. That would have rejected the very
+    protocol the ISCX-Tor loader exists to enable. The guarantee that matters
+    is train against test; validation is drawn from the training side.
+    """
+    frame = synthetic_frame.copy()
+    assert frame["vantage"].nunique() == 2
+    manifest, indices = _split(frame, "vantage_disjoint")
+
+    train_vantages = set(frame.iloc[indices["train"]]["vantage"])
+    test_vantages = set(frame.iloc[indices["test"]]["vantage"])
+    assert not (train_vantages & test_vantages), "train and test share a vantage"
+    assert len(indices["val"]) > 0, "validation set is empty"
+    # Validation comes from the training side, and the manifest says so.
+    assert set(frame.iloc[indices["val"]]["vantage"]) <= train_vantages
+    assert any("validation is drawn at random" in note for note in manifest.notes)
+
+    covered = np.concatenate([indices[s] for s in ("train", "val", "test")])
+    assert len(np.unique(covered)) == len(frame)
+
+
+def test_single_group_column_is_still_rejected(synthetic_frame):
+    frame = synthetic_frame.copy()
+    frame["vantage"] = "only-one"
+    with pytest.raises(SplitUnavailable, match="at least 2 distinct groups"):
+        _split(frame, "vantage_disjoint")

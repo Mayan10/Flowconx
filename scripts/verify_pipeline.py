@@ -73,7 +73,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         # grouping protocol must be reachable on it. A protocol that silently
         # became unavailable is exactly what this catches.
         expected = {"random_flow", "session_disjoint", "temporal", "server_disjoint",
-                    "client_disjoint", "app_disjoint", "origin_disjoint"}
+                    "client_disjoint", "vantage_disjoint", "app_disjoint", "origin_disjoint"}
         missing = expected - set(reachable)
         assert not missing, f"split protocols unreachable on a schema-complete table: {sorted(missing)}"
         print(f"  {len(reachable)} split protocols reachable: {', '.join(reachable)}")

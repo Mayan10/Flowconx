@@ -38,7 +38,38 @@ FlowCon-X raw data
    Content: 28 daily flow files over four weeks (2022-10-31 to 2022-11-27),
             with per-flow packet sequences, SNI, addresses and timestamps.
 
-3. MAWI background traffic  (optional, for mixed-condition test sets)
+3. ISCX-Tor2016  (~22 GB of captures)
+   Source:  Canadian Institute for Cybersecurity
+            https://www.unb.ca/cic/datasets/tor.html
+            Download: http://cicresearch.ca/CICDataset/ISCX-Tor-NonTor-2017/
+            (note the path says 2017; the dataset is named 2016)
+   Licence: No formal instrument. CIC terms are citation-ware: use and
+            redistribution permitted provided you cite the dataset and
+              Lashkari, Draper-Gil, Mamun, Ghorbani. "Characterization of Tor
+              Traffic Using Time Based Features." ICISSP 2017.
+   Access:  A FORM, not a directory listing. It asks for name, email,
+            organisation, job title and country, then opens a browse page.
+            No signed agreement and no approval step, but it cannot be
+            scripted, so this script will not attempt it. The endpoint
+            returns intermittent server errors -- retry rather than assume
+            the dataset moved.
+   Extract: to data/raw/ISCX-Tor-NonTor-2017/ and run
+              python -m flowconx.data.prepare --source tor
+   Why:     It is the only corpus we found offering a grouping axis that is
+            neither temporal nor per-file. The same activity was captured
+            simultaneously at the workstation and at the gateway, so `vantage`
+            becomes a split axis and the protocol comparison goes three-way.
+   Caveats: Read flowconx/data/PROTOCOL_iscx_tor.md before using it. The
+            non-Tor half is recycled from ISCX-VPN2016, so the two are NOT
+            independent corpora; Tor-side labels are inherited wholesale from
+            a majority argument taken at the other vantage; and the label is a
+            function of the filename, so grouping on capture_id is the minimum
+            honest protocol.
+   NOT used: the distribution also ships ARFF flow files. They carry no
+            addresses and no timestamps, so no grouped split is possible on
+            them. This project reads the raw captures only.
+
+4. MAWI background traffic  (optional, for mixed-condition test sets)
    Source:  MAWI Working Group Traffic Archive, samplepoint-F
             https://mawi.wide.ad.jp/mawi/
    Licence: Free for research use; see the archive's terms. Traces are

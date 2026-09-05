@@ -26,9 +26,11 @@ from .cesnet_quic22 import CesnetConfig, extract_day, filter_rare_services, iter
 from .cesnet_quic22 import ORIGIN as CESNET_ORIGIN
 from .fiveg_traffic import FiveGConfig, extract_capture, iter_captures
 from .fiveg_traffic import ORIGIN as FIVEG_ORIGIN
+from .iscx_tor import ORIGIN as TOR_ORIGIN
+from .iscx_tor import IscxTorConfig, extract_capture as extract_tor_capture, find_captures, rows_from_capture
 from .schema import CANONICAL_COLUMNS
 
-SOURCES = ("fiveg", "cesnet")
+SOURCES = ("fiveg", "cesnet", "tor")
 
 
 def git_commit() -> str:
@@ -157,6 +159,57 @@ def prepare_cesnet(config: CesnetConfig, output: Path, checksum: bool = True) ->
     }
 
 
+def prepare_tor(config: IscxTorConfig, output: Path, checksum: bool = True) -> Dict[str, object]:
+    """ISCX-Tor2016: paired workstation and gateway captures of one activity."""
+    captures = find_captures(config)
+    root = Path(config.root)
+    print(f"[iscx_tor] {len(captures)} captures under {root}")
+    rows: List[Dict[str, object]] = []
+    capture_stats: List[Dict[str, object]] = []
+    started = time.perf_counter()
+    for position, path in enumerate(captures, start=1):
+        segments, stats = extract_tor_capture(path, root, config)
+        rows.extend(rows_from_capture(segments, stats, len(rows), config))
+        capture_stats.append(stats.as_dict())
+        note = f"  ERROR: {stats.error[:70]}" if stats.error else ""
+        print(
+            f"  [{position:>3}/{len(captures)}] {path.name:<40} {stats.service:<16} "
+            f"{stats.vantage:<12} pkts={stats.packets_read:>9,} kept={stats.segments_kept:>5,} "
+            f"total={len(rows):>7,}{note}"
+        )
+    elapsed = time.perf_counter() - started
+    write_rows(rows, output)
+
+    # Report the vantage split explicitly. The layout is inferred from paths
+    # and could not be verified against the real distribution before writing
+    # this loader, so a reader must be able to sanity-check the inference
+    # rather than trust it.
+    vantages = class_counts(rows, "vantage")
+    unknown_share = vantages.get("unknown", 0) / max(len(rows), 1)
+    if unknown_share > 0.05:
+        print(
+            f"  WARNING: {unknown_share:.0%} of rows have vantage='unknown'. The vantage-disjoint "
+            "protocol will be weak or unavailable. Check that the extracted directory layout "
+            "matches what flowconx/data/PROTOCOL_iscx_tor.md assumes."
+        )
+    return {
+        "origin": TOR_ORIGIN,
+        "output": str(output),
+        "n_rows": len(rows),
+        "n_captures": len(captures),
+        "config": config.as_dict(),
+        "archive_sha256": "n/a (directory, not archive)" if not checksum else "n/a",
+        "service_counts": class_counts(rows, "service"),
+        "app_counts": class_counts(rows, "app"),
+        "vantage_counts": vantages,
+        "capture_formats": class_counts([{"f": c["capture_format"]} for c in capture_stats], "f"),
+        "captures_with_errors": [c["capture_id"] for c in capture_stats if c["error"]],
+        "capture_stats": capture_stats,
+        "wall_clock_seconds": round(elapsed, 1),
+        "environment": environment_block(),
+    }
+
+
 def _reindex(_old: object, origin: str, capture_id: str, index: int) -> str:
     from .schema import make_flow_id
 
@@ -170,6 +223,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--manifest-dir", default="results/data")
     parser.add_argument("--fiveg-archive", default="data/raw/Archive.zip")
     parser.add_argument("--cesnet-archive", default="data/raw/cesnet-quic22.zip")
+    parser.add_argument("--tor-root", default="data/raw/ISCX-Tor-NonTor-2017")
+    parser.add_argument(
+        "--tor-label",
+        default="application",
+        choices=["application", "tor"],
+        help="Label rows by application category (comparable to our other corpora) or by Tor/non-Tor.",
+    )
     parser.add_argument("--max-packets", type=int, default=128)
     parser.add_argument("--window-seconds", type=float, default=10.0, help="5G active timeout / window length.")
     parser.add_argument("--idle-seconds", type=float, default=10.0, help="5G idle timeout.")
@@ -207,6 +267,30 @@ def main(argv: Optional[List[str]] = None) -> int:
         (manifest_dir / "fiveg_traffic_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         print(f"[5g_traffic] wrote {manifest['n_rows']:,} rows -> {manifest['output']}")
         print(f"[5g_traffic] services: {manifest['service_counts']}")
+
+    if args.source in ("tor", "all"):
+        tor_config = IscxTorConfig(
+            root=args.tor_root,
+            max_packets=args.max_packets,
+            min_packets=args.min_packets,
+            idle_timeout_s=args.idle_seconds,
+            active_timeout_s=args.window_seconds,
+            max_flows_per_capture=args.max_flows_per_capture,
+            seed=args.seed,
+            label=args.tor_label,
+        )
+        try:
+            manifest = prepare_tor(tor_config, output_dir / "iscx_tor.csv", checksum=checksum)
+        except FileNotFoundError as exc:
+            if args.source == "tor":
+                raise
+            print(f"[iscx_tor] skipped: {exc}")
+            manifest = None
+        if manifest:
+            (manifest_dir / "iscx_tor_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+            print(f"[iscx_tor] wrote {manifest['n_rows']:,} rows -> {manifest['output']}")
+            print(f"[iscx_tor] services: {manifest['service_counts']}")
+            print(f"[iscx_tor] vantages: {manifest['vantage_counts']}")
 
     if args.source in ("cesnet", "all"):
         cesnet_config = CesnetConfig(

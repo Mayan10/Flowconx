@@ -86,3 +86,10 @@ jobs:
       # asserts the pipeline itself still runs and writes its artifacts.
       - name: Audit smoke run
         run: python scripts/audit_smoke.py
+
+      # The full pipeline on generated data: no download, ~2 minutes on CPU.
+      # Catches breakage that unit tests cannot -- a split protocol that
+      # silently became unreachable, an evaluation mode that stopped running,
+      # provenance that stopped being recorded.
+      - name: Verify pipeline end to end
+        run: python scripts/verify_pipeline.py

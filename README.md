@@ -114,7 +114,8 @@ the reason for each of the six pre-trained models in that position.
 ```bash
 git clone <repository-url> && cd flowconx
 make setup                    # install the package and dev dependencies
-make test                     # lint, unit tests, leakage tests (~10 s, no data needed)
+make test                     # lint, types, 168 unit and leakage tests (~15 s, no data)
+make verify                   # full pipeline on generated data (~2 min, no data)
 
 ./scripts/download_data.sh    # licences, DOIs, checksums; ~24 GB
 make data                     # build both datasets from the archives (~30 min)
@@ -122,7 +123,13 @@ make audit                    # shortcut and leakage audit (~15 min)
 make repro-small              # reduced end-to-end pipeline (<30 min on one GPU)
 ```
 
-`make test` needs no data and is the fastest way to confirm the install.
+`make test` and `make verify` both need **no data at all**. `make verify`
+generates a table in the canonical schema and runs the entire pipeline over it
+— audit, split manifests, training, every evaluation mode, seed aggregation,
+significance testing and paper-asset generation — asserting each stage produced
+what it claims. Run it before downloading 24 GB of archives; it is what
+confirms the pipeline works. It checks plumbing, not science: the generated
+data is separable by construction and its numbers mean nothing.
 
 Docker, if you prefer:
 
@@ -136,7 +143,8 @@ docker run --rm -v "$PWD/data:/work/data" -v "$PWD/results:/work/results" \
 
 | Step | Time | Hardware | Disk |
 | --- | ---: | --- | ---: |
-| `make test` | 10 s | any | — |
+| `make test` | 15 s | any | — |
+| `make verify` | 2 min | any, CPU only | — |
 | `make data` | ~30 min | 8 cores; no GPU | 24 GB raw (read-only), 420 MB output |
 | `make audit` | ~15 min | 8 cores; no GPU | 5 MB |
 | One training run | ~10 min | 1 GPU (or MPS) | 2 MB |

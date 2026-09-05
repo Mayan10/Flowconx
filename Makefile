@@ -8,6 +8,7 @@
 #   make paper        regenerate all tables and figures from results/
 #   make paper-pdf    regenerate assets, then build paper/main.pdf
 #   make test         lint, type check, unit tests, leakage tests
+#   make verify       end-to-end pipeline check on generated data, no download
 #
 # Every target writes into results/ and splits/; neither is ever hand-edited.
 
@@ -16,7 +17,7 @@ SEEDS_SMALL ?= 0 1 2
 SEEDS_FULL ?= 0 1 2 3 4 5 6 7 8 9
 DATASETS ?= cesnet_quic22 fiveg_traffic
 
-.PHONY: setup data audit test lint typecheck repro-small repro-full paper paper-pdf clean-results help
+.PHONY: setup data audit test lint typecheck verify repro-small repro-full paper paper-pdf clean-results help
 
 help:
 	@grep -E '^#   ' Makefile | sed 's/^#   //'
@@ -54,6 +55,15 @@ test: lint typecheck
 
 test-all: lint
 	$(PYTHON) -m pytest tests/ -q
+
+# Every other pipeline target needs the raw archives (3.2 GB and 21 GB, one
+# requiring registration). This one needs nothing: it generates a table in the
+# canonical schema and runs audit, splits, training, all evaluation modes,
+# aggregation, significance and asset generation over it. Run it first after
+# `make setup` -- it is what confirms the pipeline works before you spend an
+# hour downloading data.
+verify:
+	$(PYTHON) scripts/verify_pipeline.py
 
 # ---------------------------------------------------------------- runs
 # repro-small: one dataset, one split protocol, three seeds, short schedule.

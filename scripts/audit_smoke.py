@@ -57,7 +57,16 @@ def synthetic_table(seed: int = 20240501) -> pd.DataFrame:
                         "capture_id": capture_id,
                         "flow_start_ts": 1_700_000_000.0 + index * 30.0,
                         "server_ip": f"203.0.113.{service_id * 8 + capture}",
-                        "app": f"{service}_app{capture}",
+                        # Several clients per capture, so client-disjoint
+                        # splitting is a genuinely different partition from
+                        # session-disjoint and gets covered by the smoke run.
+                        "client_ip": f"198.51.100.{(index % 11) + service_id * 11}",
+                        # Two apps per service, cycling across captures, so an
+                        # app appears in several captures and a session-disjoint
+                        # split can place some of its flows in test. Without
+                        # this, holding out an app leaves nothing to reject and
+                        # the open-set mode correctly but unhelpfully skips.
+                        "app": f"{service}_app{capture % 2}",
                         "service": service,
                         "condition": infer_condition(mean_iat, std_iat, 0.0),
                         "packet_lengths": ";".join(f"{v:.2f}" for v in lengths),

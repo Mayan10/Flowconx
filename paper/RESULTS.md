@@ -1082,6 +1082,57 @@ invariance claim.
 
 ---
 
+## 2026-09-05 — All runs complete. The final split-contrast table.
+
+158 runs. Every generated table is fully populated; `scripts/check_paper.py`
+passes without `--allow-todo`, so a TODO cell reaching the paper now fails CI.
+
+| Split protocol | CESNET-QUIC22 | 5G Traffic |
+| --- | --- | --- |
+| Random flow | 0.781 ± 0.006 (n=8) | 0.991 ± 0.000 (n=3) |
+| Session-disjoint | 0.781 ± 0.007 (n=8) | 0.547 ± 0.046 (n=3) |
+| Temporal | 0.781 ± 0.005 (n=8) | 0.391 ± 0.018 (n=3) |
+| Server-disjoint | 0.588 ± 0.007 (n=8) | 0.637 ± 0.010 (n=3) |
+
+Alongside AppScanner (2016) on the identical splits: CESNET 0.768 / 0.772 /
+0.762 / 0.566; 5G 0.996 / 0.640 / 0.255 / 0.711.
+
+**The 5G swing is 0.600, not the 0.418 reported earlier.** Temporal splitting
+is harder than session-disjoint on that corpus, because the captures span five
+months and a temporal split separates application versions and network
+conditions as well as time. CESNET is flat across three protocols and moves
+only under server-disjointness.
+
+The two columns disagree on every protocol except the one where they happen to
+coincide, which is the result: **there is no protocol that is correct for both
+corpora**, and a paper adopting either one unconditionally has controlled
+nothing on the other.
+
+### Three generator bugs found while completing the tables
+
+Each was hiding something, and all three are the same class of error --- a
+representation choice that made two different situations look identical.
+
+1. **Prefix matching over an experiment namespace.** The split-contrast table
+   selected rows with `experiment.startswith("flowconx_")`. Renaming baseline
+   runs to `flowconx_main_baseline_*` made those match too; they carry a
+   `softmax` head rather than `prototype`, so the headline session-disjoint row
+   silently rendered as TODO. The protocol-to-experiment mapping is now
+   explicit.
+2. **`p = nan` rendered as TODO.** At three seeds the Wilcoxon test declines,
+   because its minimum achievable $p$ is 0.25. That is *undetermined*, not
+   *not run*, and printing TODO claimed an experiment had not happened. Those
+   cells now read `n.d.` with the reason in the caption.
+3. **"Unavailable" rendered as TODO.** A probe whose column is constant in a
+   corpus cannot be run at all. Rendering it as TODO implies a number is
+   coming.
+
+The pattern is worth naming: **a results pipeline needs distinct renderings for
+"has not run", "cannot run", and "ran and was inconclusive."** Collapsing them
+into one marker is how a table quietly misrepresents its own completeness.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

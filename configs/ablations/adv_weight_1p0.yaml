@@ -5,3 +5,5 @@ description: Adversarial weight 1.0. The sweep the invariance/accuracy trade-off
   is drawn from.
 loss:
   lambda_adversarial: 1.0
+model:
+  adversarial_head: true

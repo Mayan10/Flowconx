@@ -62,7 +62,11 @@ def test_hash_ignores_seed_but_not_content():
     a = from_dict({"seed": 0})
     b = from_dict({"seed": 99})
     assert a.hash() == b.hash(), "seed must not change the experiment identity"
-    c = from_dict({"seed": 0, "loss": {"lambda_adversarial": 0.0}})
+    # Use a weight that differs from the default. An earlier version of this
+    # test used 0.0, which silently became a no-op when the adversarial head
+    # was defaulted off -- the assertion then compared a config against itself.
+    c = from_dict({"seed": 0, "loss": {"lambda_prototype": 0.99}})
+    assert c.loss.lambda_prototype != ExperimentConfig().loss.lambda_prototype
     assert a.hash() != c.hash(), "a loss weight change must change the hash"
 
 
@@ -262,3 +266,34 @@ def test_run_dir_distinguishes_every_axis_it_should():
         {"data": {"split_protocol": "random_flow"}},
     ):
         assert from_dict({"name": "x", "seed": 0, **override}).run_dir != base.run_dir, override
+
+
+def test_adversarial_weight_without_a_head_is_rejected():
+    """A weight applied to a head that does not exist is a silent ablation.
+
+    The adversarial head defaults to off, because a sweep over two orders of
+    magnitude showed it removes nothing. That default made every
+    `adv_weight_*` config inherit `adversarial_head: false` while still setting
+    a non-zero weight -- configurations that would have run, produced numbers,
+    and been tabulated as a weight sweep while sweeping nothing.
+    """
+    with pytest.raises(ValueError, match="adversarial_head=false"):
+        from_dict({"model": {"adversarial_head": False}, "loss": {"lambda_adversarial": 0.5}})
+    # Both consistent combinations are fine.
+    from_dict({"model": {"adversarial_head": True}, "loss": {"lambda_adversarial": 0.5}}).validate()
+    from_dict({"model": {"adversarial_head": False}, "loss": {"lambda_adversarial": 0.0}}).validate()
+
+
+def test_adversarial_head_is_off_by_default():
+    """The component is inert; nobody should inherit it by accident."""
+    base = load_config("configs/base.yaml")
+    assert base.model.adversarial_head is False
+    assert base.loss.lambda_adversarial == 0.0
+
+
+def test_the_sweep_configs_still_enable_the_head():
+    from pathlib import Path
+
+    for path in sorted(Path("configs/ablations").glob("adv_weight_*.yaml")):
+        config = load_config(path)
+        assert config.model.adversarial_head == (config.loss.lambda_adversarial > 0), path.name

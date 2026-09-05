@@ -33,6 +33,7 @@ PROVENANCE_COLUMNS = {
     "capture_id": "Capture session, pcap file, or trace the row was extracted from.",
     "flow_start_ts": "Unix timestamp (seconds) of the first packet of the flow.",
     "server_ip": "Server-side address, used only for server-disjoint splitting.",
+    "client_ip": "Client-side address, used only for client-disjoint splitting.",
 }
 
 SPLIT_PROTOCOLS = (
@@ -40,6 +41,7 @@ SPLIT_PROTOCOLS = (
     "session_disjoint",
     "temporal",
     "server_disjoint",
+    "client_disjoint",
     "app_disjoint",
     "origin_disjoint",
 )
@@ -51,6 +53,10 @@ _GROUP_COLUMN = {
     "session_disjoint": "capture_id",
     "temporal": "flow_start_ts",
     "server_disjoint": "server_ip",
+    # Grouping by capture day does not separate clients: on CESNET-QUIC22, 33%
+    # of client addresses appear on more than one day. This is the axis that
+    # session-disjointness leaves uncontrolled on a backbone corpus.
+    "client_disjoint": "client_ip",
     "app_disjoint": "app",
     "origin_disjoint": "origin",
 }
@@ -207,46 +213,59 @@ def _group_disjoint(
     test_fraction: float,
     rng: np.random.Generator,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Assign whole groups to sides, greedily balancing the label mix.
+    """Assign whole groups to sides, greedily balancing the row counts.
 
     Groups are visited largest-first and each is placed on whichever side is
-    furthest below its target row count. This keeps the split sizes close to
-    the requested fractions without ever splitting a group, which is the only
+    furthest below its target row count. This keeps split sizes close to the
+    requested fractions without ever splitting a group, which is the only
     property that matters for leakage.
+
+    Vectorised over groups. A naive implementation scans the full row array
+    once per group, which is fine for 28 capture days and catastrophic for the
+    48,072 distinct client addresses in CESNET-QUIC22 -- 9.7 billion element
+    comparisons. Here each row's group is resolved once via `np.unique`'s
+    inverse index, and assignment is a single pass over the group table.
     """
-    unique_groups = np.unique(groups)
+    codes, sizes = np.unique(groups, return_inverse=True), None
+    unique_groups, inverse = codes
     if len(unique_groups) < 3:
         raise SplitUnavailable(
             f"Group-disjoint splitting needs at least 3 distinct groups to fill train/val/test, "
             f"but the grouping column has only {len(unique_groups)}: {list(unique_groups)[:5]}. "
             "A single-origin table cannot be split by origin."
         )
-    order = sorted(unique_groups, key=lambda g: (-int(np.sum(groups == g)), str(g)))
+    sizes = np.bincount(inverse, minlength=len(unique_groups))
+
     total = len(groups)
     targets = {
         "train": total * (1.0 - val_fraction - test_fraction),
         "val": total * val_fraction,
         "test": total * test_fraction,
     }
-    assigned: Dict[str, List[int]] = {"train": [], "val": [], "test": []}
-    # Break ties in a seeded but stable way so equal-size groups do not always
-    # land on the same side across seeds.
-    jitter = {str(g): float(rng.random()) for g in order}
-    for group in order:
-        idx = np.flatnonzero(groups == group)
-        deficits = {
-            side: (targets[side] - len(assigned[side])) / max(targets[side], 1.0) + 1e-6 * jitter[str(group)]
-            for side in assigned
-        }
-        side = max(deficits, key=lambda s: deficits[s])
-        if targets[side] <= 0:
-            side = "train"
-        assigned[side].extend(idx.tolist())
-    train = np.asarray(sorted(assigned["train"]), dtype=int)
-    val = np.asarray(sorted(assigned["val"]), dtype=int)
-    test = np.asarray(sorted(assigned["test"]), dtype=int)
+    filled = {side: 0.0 for side in targets}
+    # Largest group first; ties broken by a seeded permutation so that equally
+    # sized groups do not always land on the same side across seeds.
+    jitter = rng.random(len(unique_groups))
+    order = np.lexsort((jitter, -sizes))
+
+    side_names = ("train", "val", "test")
+    side_of_group = np.empty(len(unique_groups), dtype=np.int8)
+    for position in order:
+        deficits = [
+            (targets[side] - filled[side]) / max(targets[side], 1.0) if targets[side] > 0 else -np.inf
+            for side in side_names
+        ]
+        choice = int(np.argmax(deficits))
+        side_of_group[position] = choice
+        filled[side_names[choice]] += float(sizes[position])
+
+    assignment = side_of_group[inverse]
     _ = labels  # label mix is reported by the manifest, not enforced here
-    return train, val, test
+    return (
+        np.flatnonzero(assignment == 0).astype(int),
+        np.flatnonzero(assignment == 1).astype(int),
+        np.flatnonzero(assignment == 2).astype(int),
+    )
 
 
 def _temporal(

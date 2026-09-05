@@ -347,3 +347,74 @@ def test_drift_prefers_the_coarsest_usable_granularity(synthetic_frame):
     granularity, periods = _period_of(frame)
     assert granularity == "week", "several weeks are present, so week is the right axis"
     assert len(set(periods.tolist())) == 4
+
+
+# --------------------------------------------------------------------------
+# Cross-dataset transfer
+# --------------------------------------------------------------------------
+
+
+def test_shared_taxonomy_is_a_function_not_a_relation():
+    """No source label may map to two shared classes.
+
+    The mapping is a judgement call; a label appearing under two shared
+    classes would make the transfer result depend on dictionary order.
+    """
+    from flowconx.eval.transfer import SHARED_TAXONOMY
+
+    for dataset in ("fiveg_traffic", "cesnet_quic22"):
+        seen: dict = {}
+        for shared, sources in SHARED_TAXONOMY.items():
+            for name in sources.get(dataset, []):
+                assert name not in seen, f"{name} maps to both {seen[name]} and {shared}"
+                seen[name] = shared
+
+
+def test_unmapped_labels_are_dropped_not_forced():
+    from flowconx.eval.transfer import map_to_shared
+
+    mapped = map_to_shared(["mail", "streaming_media", "search"], "cesnet_quic22")
+    assert mapped[0] == -1 and mapped[2] == -1, "unmapped labels must be -1, not coerced"
+    assert mapped[1] >= 0
+
+
+def test_every_corpus_label_is_either_mapped_or_documented():
+    """A label must not be silently absent from both the mapping and the
+    unmapped list -- that is how an omission becomes invisible."""
+    from flowconx.eval.transfer import SHARED_TAXONOMY, UNMAPPED
+
+    for dataset, unmapped in UNMAPPED.items():
+        mapped = {n for sources in SHARED_TAXONOMY.values() for n in sources.get(dataset, [])}
+        assert not (mapped & set(unmapped)), f"{dataset}: a label is both mapped and listed unmapped"
+
+
+def test_transfer_skips_when_dimensions_differ():
+    from flowconx.eval.transfer import evaluate_transfer
+
+    result = evaluate_transfer(
+        np.zeros((10, 16)), ["streaming_media"] * 10, "cesnet_quic22",
+        np.zeros((10, 32)), ["live_streaming"] * 10, "fiveg_traffic",
+    )
+    assert result["status"] == "skipped"
+    assert "dimension" in result["reason"]
+
+
+def test_transfer_recovers_planted_structure():
+    """Zero-shot transfer must work when the two corpora share geometry."""
+    from flowconx.eval.transfer import evaluate_transfer
+
+    rng = np.random.default_rng(0)
+    centres = rng.normal(size=(3, 24)) * 5.0
+    src_names = ["streaming_media", "games", "videoconferencing"]
+    tgt_names = ["live_streaming", "online_game", "video_conferencing"]
+    src_idx = rng.integers(0, 3, 300)
+    tgt_idx = rng.integers(0, 3, 300)
+    result = evaluate_transfer(
+        centres[src_idx] + rng.normal(scale=0.3, size=(300, 24)),
+        [src_names[i] for i in src_idx], "cesnet_quic22",
+        centres[tgt_idx] + rng.normal(scale=0.3, size=(300, 24)),
+        [tgt_names[i] for i in tgt_idx], "fiveg_traffic",
+        shots=(0, 5), repeats=2,
+    )
+    assert result["status"] == "ok"
+    assert result["zero_shot_macro_f1"] > 0.9, "planted shared geometry must transfer"

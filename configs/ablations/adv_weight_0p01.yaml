@@ -5,3 +5,5 @@ description: Adversarial weight 0.01. The sweep the invariance/accuracy trade-of
   curve is drawn from.
 loss:
   lambda_adversarial: 0.01
+model:
+  adversarial_head: true

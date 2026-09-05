@@ -55,6 +55,10 @@ def synthetic_frame() -> pd.DataFrame:
                         "capture_id": capture_id,
                         "flow_start_ts": 1_700_000_000.0 + index * 60.0,
                         "server_ip": f"203.0.113.{service_id * 10 + capture}",
+                        # Several clients per capture, so client-disjoint
+                        # splitting has groups to work with and is a genuinely
+                        # different partition from session-disjoint.
+                        "client_ip": f"198.51.100.{(index % 7) + service_id * 7}",
                         "app": f"{service}_app{capture}",
                         "service": service,
                         "condition": infer_condition(mean_iat, std_iat, 0.0),

@@ -43,6 +43,7 @@ STAGES: Dict[str, List[str]] = {
         "configs/cesnet_random_contrast.yaml",
         "configs/cesnet_temporal.yaml",
         "configs/cesnet_server_disjoint.yaml",
+        "configs/cesnet_client_disjoint.yaml",
         "configs/fiveg_random_contrast.yaml",
         "configs/fiveg_temporal.yaml",
         "configs/fiveg_server_disjoint.yaml",

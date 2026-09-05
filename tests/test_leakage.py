@@ -269,3 +269,44 @@ def test_manifest_rejects_a_shorter_table(synthetic_frame, monkeypatch):
     manifest, _ = _split(synthetic_frame, "session_disjoint")
     with pytest.raises(ValueError, match="does not match the committed split"):
         indices_from_manifest(synthetic_frame.head(5), manifest)
+
+
+def test_no_client_ip_spans_train_and_test(synthetic_frame):
+    """Client-disjointness is a distinct axis from session-disjointness.
+
+    On CESNET-QUIC22 a third of client addresses appear on more than one
+    capture day, so grouping by day leaves clients uncontrolled. This asserts
+    the protocol that does control them actually does.
+    """
+    _, indices = _split(synthetic_frame, "client_disjoint")
+    verdict = leakage.check_column_disjoint(synthetic_frame, indices, "client_ip")
+    assert verdict["status"] == "pass", verdict
+
+
+def test_group_disjoint_scales_to_high_cardinality():
+    """A grouping column with tens of thousands of values must not be quadratic.
+
+    CESNET has 48,072 distinct client addresses. The original implementation
+    scanned the whole row array once per group, which is 9.7 billion element
+    comparisons and does not finish.
+    """
+    import time
+
+    import pandas as pd
+
+    rng = np.random.default_rng(0)
+    n = 60_000
+    frame = pd.DataFrame(
+        {
+            "flow_id": [f"f{i}" for i in range(n)],
+            "client_ip": [f"10.{i % 250}.{(i // 250) % 250}.{i % 97}" for i in range(n)],
+            "service": rng.choice(["a", "b", "c"], size=n),
+        }
+    )
+    assert frame["client_ip"].nunique() > 10_000
+    started = time.perf_counter()
+    _, indices = build_split(frame, "client_disjoint", seed=0, val_fraction=0.1, test_fraction=0.2)
+    elapsed = time.perf_counter() - started
+    assert elapsed < 20, f"client-disjoint split took {elapsed:.1f}s on {n} rows"
+    covered = np.concatenate([indices[s] for s in ("train", "val", "test")])
+    assert len(np.unique(covered)) == n

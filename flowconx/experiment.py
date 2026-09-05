@@ -76,8 +76,13 @@ class ModelConfig:
     # Minus dual encoder: one shared encoder over the concatenated inputs.
     dual_encoder: bool = True
     fusion: str = "cross_attention"
-    # Minus adversarial condition removal.
-    adversarial_head: bool = True
+    # OFF by default. The gradient-reversal head was swept over
+    # lambda in [0.01, 2.0] on the corpus where the nuisance is genuinely
+    # decodable, and leakage was flat at every weight and at or above the
+    # raw-feature control -- it removes nothing at any tuning. The code is
+    # retained rather than deleted so that negative result stays reproducible;
+    # the default is off so nobody inherits an inert component by accident.
+    adversarial_head: bool = False
     classify_from: str = "z_flow"
     # Capacity control: scale hidden widths so ablations can be matched on
     # parameter count rather than on layer count.
@@ -94,7 +99,9 @@ class LossConfig:
     lambda_app_supcon: float = 0.0
     lambda_prototype: float = 0.1
     lambda_disentangle: float = 0.25
-    lambda_adversarial: float = 0.15
+    # See ModelConfig.adversarial_head: zero by default because the sweep
+    # showed no weight works.
+    lambda_adversarial: float = 0.0
     lambda_pair_margin: float = 0.0
     lambda_flow_pair_margin: float = 1.0
     pair_negative_margin: float = 0.2
@@ -176,6 +183,13 @@ class ExperimentConfig:
             raise ValueError(
                 "data.limit and data.subsample_rows are both set. limit reads a biased prefix and "
                 "exists only for smoke tests; subsample_rows is the stratified reduction. Pick one."
+            )
+        if self.loss.lambda_adversarial > 0 and not self.model.adversarial_head:
+            raise ValueError(
+                f"loss.lambda_adversarial={self.loss.lambda_adversarial} but "
+                "model.adversarial_head=false. The weight would be applied to a head that does not "
+                "exist, so the run would silently be an ablation of itself. Set the head true, or "
+                "the weight to zero."
             )
         observed = self.data.observed_packets
         if observed is not None and observed > self.data.max_packets:

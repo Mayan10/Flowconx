@@ -1,0 +1,17 @@
+defaults: [cesnet_main.yaml]
+name: flowconx_client_disjoint
+description: >
+  Test only on flows from client hosts never seen in training.
+
+  This is the axis session-disjointness leaves uncontrolled on a backbone
+  corpus. Grouping by capture day does not separate clients: 33% of the 48,072
+  distinct client addresses in CESNET-QUIC22 appear on more than one day.
+
+  Caveat that must travel with the number: the median client contributes one
+  flow and only 241 contribute a hundred or more, so the partition is dominated
+  by a small number of heavy clients. It is a real control, not a clean one.
+data:
+  split_protocol: client_disjoint
+eval:
+  probes: false
+  early_classification: false

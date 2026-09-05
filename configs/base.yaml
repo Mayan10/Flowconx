@@ -33,7 +33,10 @@ model:
   n_transformer_layers: 1
   dual_encoder: true
   fusion: cross_attention
-  adversarial_head: true
+  # Off: swept over two orders of magnitude on 5G Traffic, where the
+  # capture-session nuisance IS decodable from the raw features, and leakage
+  # was flat at every weight. See configs/ablations_adv5g/README.md.
+  adversarial_head: false
   classify_from: z_flow
   width_multiplier: 1.0
 
@@ -44,7 +47,7 @@ loss:
   lambda_app_supcon: 0.0
   lambda_prototype: 0.1
   lambda_disentangle: 0.25
-  lambda_adversarial: 0.15
+  lambda_adversarial: 0.0
   lambda_pair_margin: 0.0
   lambda_flow_pair_margin: 1.0
   pair_negative_margin: 0.2

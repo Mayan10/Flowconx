@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "full model": {
+      "n_seeds": 3,
+      "intra_class_cosine": 0.8800383806228638,
+      "inter_class_cosine": 0.4461308717727661,
+      "separation": 0.43390751878420514,
+      "prototype_auroc": 0.918889490402444,
+      "prototype_fpr95": 0.34096861543925067,
+      "closed_set_macro_f1": 0.5048289354325465
+    },
+    "no metric objectives": {
+      "n_seeds": 3,
+      "intra_class_cosine": 0.9523837367693583,
+      "inter_class_cosine": 0.8180192907651266,
+      "separation": 0.13436444600423178,
+      "prototype_auroc": 0.9494106436729135,
+      "prototype_fpr95": 0.2515203977449283,
+      "closed_set_macro_f1": 0.476268941139575
+    },
+    "no margin term": {
+      "n_seeds": 3,
+      "intra_class_cosine": 0.9254768292109171,
+      "inter_class_cosine": 0.6288916269938151,
+      "separation": 0.29658520221710205,
+      "prototype_auroc": 0.942565209278999,
+      "prototype_fpr95": 0.34944732987082167,
+      "closed_set_macro_f1": 0.508059736590604
+    },
+    "no contrastive term": {
+      "n_seeds": 3,
+      "intra_class_cosine": 0.7901543378829956,
+      "inter_class_cosine": 0.14921901871760687,
+      "separation": 0.6409353216489156,
+      "prototype_auroc": 0.9200398067136443,
+      "prototype_fpr95": 0.4010742664358326,
+      "closed_set_macro_f1": 0.5237912660827738
+    },
+    "no adversarial head": {
+      "n_seeds": 3,
+      "intra_class_cosine": 0.8515013853708903,
+      "inter_class_cosine": 0.35099340478579205,
+      "separation": 0.5005079905192057,
+      "prototype_auroc": 0.9133213923699187,
+      "prototype_fpr95": 0.4507036001242953,
+      "closed_set_macro_f1": 0.5662207725769864
+    }
+  },
+  "separation_vs_auroc_pearson_r": -0.8759152326808298,
+  "finding": "Class separation and novelty detection trade off. The metric objectives spread the known classes apart, which helps closed-set accuracy and covers more of the embedding sphere; an unknown flow is then more likely to land near some prototype. The least separated embedding rejects unknowns best. Small n -- 5 variants -- so this is a mechanism consistent with the data, not an established law.",
+  "caveat": "Five variants. The correlation is descriptive; it is reported with its n rather than as a tested effect."
+}

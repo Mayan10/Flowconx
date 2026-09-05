@@ -125,6 +125,27 @@ encrypted-traffic embeddings, distance-based rejection substantially outperforms
 softmax thresholding for unknown-application detection.} It requires no special
 training and applies to anyone's encoder.
 
+\paragraph{Why the ablation helps, which turns the negative into a general
+observation.} We measured the embedding geometry of all five variants. Class
+separation --- mean intra-class cosine minus mean inter-class cosine ---
+correlates at Pearson $r = -0.88$ with rejection AUROC and $+0.84$ with the
+false-accept rate. The least separated embedding rejects unknowns best, the
+most separated worst.
+
+The mechanism is geometric. Rejection by distance works when unknown flows land
+far from every prototype. Spreading the known classes apart, which is precisely
+what a metric objective does and why it helps closed-set accuracy, covers more
+of the embedding sphere, so an unknown flow is more likely to land near
+\emph{some} prototype. A collapsed embedding leaves more empty space, and empty
+space is where novelty is detectable.
+
+\textbf{An objective that optimises for discriminating known classes works, other
+things equal, against detecting unknown ones.} That applies to any
+metric-learning approach used for open-set recognition. We report it with its
+$n$: five variants, correlations at $p \approx 0.05$--$0.08$, and the variants
+differ in more than geometry, so separation may be a correlate rather than the
+cause.
+
 \subsection{What did survive of the architecture}
 
 Two things. First, the fused embedding beats its parts: 0.626 $\pm$ 0.001

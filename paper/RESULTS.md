@@ -1133,6 +1133,56 @@ into one marker is how a table quietly misrepresents its own completeness.
 
 ---
 
+## 2026-09-06 — Why ablating the metric objectives improves rejection
+
+The open-set ablation showed that removing every metric objective raises
+prototype-rejection AUROC from 0.919 to 0.949. That was reported as a
+refutation and left unexplained. An unexplained result is a weaker one, so we
+measured the embedding geometry of all five variants directly from the
+committed runs — no retraining.
+
+| Variant | Intra | Inter | Separation | AUROC ↑ | FPR@95 ↓ | Closed-set |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| full model | 0.880 | 0.446 | 0.434 | 0.919 | 0.341 | 0.505 |
+| no metric objectives | 0.952 | 0.818 | 0.134 | 0.949 | 0.252 | 0.476 |
+| no margin term | 0.925 | 0.629 | 0.297 | 0.943 | 0.349 | 0.508 |
+| no contrastive term | 0.790 | 0.149 | 0.641 | 0.920 | 0.401 | 0.524 |
+| no adversarial head | 0.852 | 0.351 | 0.501 | 0.913 | 0.451 | 0.566 |
+
+**Class separation and novelty detection trade off against each other.** Across
+the five variants, separation correlates at Pearson $r = -0.88$ with rejection
+AUROC and $+0.84$ with the false-accept rate. The variant with the *least*
+separated embedding rejects unknowns best; the most separated rejects worst.
+
+### The mechanism
+
+Rejection by distance works when unknown flows land far from every prototype.
+Spreading the known classes apart — exactly what the metric objectives do, and
+why they help closed-set accuracy — covers more of the embedding sphere, so an
+unknown flow is more likely to land near *some* prototype. A collapsed
+embedding leaves more empty space, and empty space is where novelty is
+detectable.
+
+Once stated it is obvious, and it reframes the ablation from a puzzling
+negative into a general observation: **an objective that optimises for
+discriminating known classes is, other things equal, working against the
+detection of unknown ones.** That applies to any metric-learning approach used
+for open-set recognition, not only to ours.
+
+### Caveats, because this is the kind of finding that gets over-read
+
+- Five variants. The correlations sit at $p \approx 0.05$–$0.08$. This is a
+  mechanism consistent with the data, not an established law, and the script
+  says so in its own output.
+- The variants differ in more than geometry, so separation may be a correlate
+  rather than the cause.
+- The closed-set column moves in the opposite direction but only weakly
+  ($r = +0.70$), so the trade-off is not a clean frontier.
+
+Reproduce with `python scripts/analyse_openset_geometry.py`.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

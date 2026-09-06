@@ -15,9 +15,9 @@ Three tiers appear in Table~\ref{tab:main-cesnet_quic22} and the ordering is
 the result.
 
 \paragraph{Our model leads the deep tier and ties the classical tier.} FlowCon-X
-reaches 0.781 $\pm$ 0.007 over eight seeds. It beats every deep baseline by
-margins whose seed spreads do not overlap: $+0.021$ over FS-Net, $+0.076$ over
-a bi-LSTM with attention, $+0.130$ over a Deep Packet-style CNN. It does not
+reaches 0.780 $\pm$ 0.006 over eight seeds. It beats every deep baseline by
+margins whose seed spreads do not overlap: $+0.020$ over FS-Net, $+0.075$ over
+a bi-LSTM with attention, $+0.129$ over a Deep Packet-style CNN. It does not
 beat gradient-boosted trees on the first twenty signed packet sizes, which
 reach 0.790 in roughly three seconds of training against our thousand.
 AppScanner, published in 2016, is 0.009 behind us at thirteen seconds.
@@ -28,37 +28,21 @@ bounds what any result here means.
 
 \subsection{5G Traffic: it is the approach, not the architecture}
 
-The picture on 5G Traffic is different and more informative. Under
-session-disjoint splitting:
+The picture on 5G Traffic is different and more informative.
+Table~\ref{tab:main-fiveg_traffic} reports it under session-disjoint splitting.
 
-\begin{center}
-\small
-\begin{tabular}{lr}
-\toprule
-Method & Macro-F1 \\
-\midrule
-Flow-statistics MLP (10 scalars, no sequence) & 0.568 \\
-Deep Packet-style CNN & 0.575 \\
-\textbf{FlowCon-X} & \textbf{0.547 $\pm$ 0.046} \\
-FS-Net & 0.585 \\
-Bi-LSTM + attention & 0.614 \\
-AppScanner (2016) & 0.640 \\
-Packet-size histogram (XGBoost) & 0.830 \\
-\textbf{All flow scalars (XGBoost)} & \textbf{0.849} \\
-\bottomrule
-\end{tabular}
-\end{center}
+\input{tables/main_comparison_fiveg_traffic}
 
-\textbf{Every neural model lands between 0.55 and 0.62}, ours included, and a
+\textbf{Every neural model lands between 0.54 and 0.60}, ours included, and a
 plain bi-LSTM beats it. Gradient-boosted trees on thirteen flow scalars sit
-0.23 above all of them. Four independent architectures --- convolutional,
+0.25 above all of them. Four independent architectures --- convolutional,
 recurrent, transformer-based and our dual-encoder --- fail by the same margin
 on the same split with the same budget. This is not a defect of any one design.
 
 The sharpest line is the MLP. It sees the ten flow scalars and no packet
-sequence at all, scores 0.568, and matches the sequence models; XGBoost on
+sequence at all, scores 0.544, and matches the sequence models; XGBoost on
 thirteen scalars of the same kind scores 0.849. Same information, same split, a
-0.28 gap attributable purely to model class. Tree-based models outperforming
+0.31 gap attributable purely to model class. Tree-based models outperforming
 neural networks on tabular features is
 established~\cite{grinsztajn2022trees}; here it is the entire story, on a
 benchmark where it is rarely tested.
@@ -69,15 +53,29 @@ which trees read directly. \texttt{metaverse} is Zepeto and Roblox;
 \texttt{game\_streaming} is GeForce Now and KT GameBox. Packet-sequence
 structure distinguishes applications, not purposes.
 
-We tested that explanation. Changing only the label column --- identical
-architecture, split, seed and budget --- moves our model from 0.547 $\pm$ 0.046
-on the service taxonomy to \textbf{0.606 $\pm$ 0.054} identifying the
-application, and moves the best classical baseline in the opposite direction:
-XGBoost on flow scalars falls from 0.849 to 0.604, while XGBoost on twenty
-packet sizes rises from 0.703 to 0.694 and becomes the leader. The two
-families swap places exactly as the explanation predicts. Our loss narrows from
-0.30 to 0.09 --- and does not close. Destination port alone scores 0.610 on
-that task, above our model.
+We tested that explanation by changing only the label column, holding
+architecture, split and budget fixed. The classical baselines move exactly as
+it predicts: XGBoost on thirteen flow scalars, the leader on the service
+taxonomy at 0.849, falls to 0.604 on the application task, while XGBoost on
+twenty packet sizes barely moves (0.703 to 0.694) and inherits the lead. A
+volume-defined taxonomy rewards aggregate statistics; an application taxonomy
+does not. Destination port alone scores 0.610 on the application task, above
+both.
+
+Our own model's side of this test is weaker than we would like, and we report
+it as such. Two of its three seeds were run after the macro-F1 fix that
+excludes classes with no test support; the third predates it and is not
+comparable, so we exclude it rather than average across two definitions of the
+metric. Over the two comparable seeds the model reaches 0.597 $\pm$ 0.073 on
+the application task against 0.567 $\pm$ 0.038 over eight seeds on the service
+taxonomy. That is a $+0.03$ difference with overlapping spreads at $n=2$
+against $n=8$: consistent with the reframing, and nowhere near sufficient to
+establish it. Six of the fifteen applications have no test rows at all under
+this split and are excluded from the average, and \texttt{roblox} has 6{,}000
+test rows and no training rows, so its F1 of zero is correct and unimprovable.
+The application-task comparison against the classical baselines above is the
+part of this experiment we consider settled; the part concerning our own model
+needs the seed count the service-task result already has.
 
 \subsection{Deciding from few packets}
 
@@ -126,8 +124,9 @@ curve it corrects.
 \input{tables/cost}
 
 End-to-end latency is measured from stored record to decision, including
-parsing and feature construction, at batch size one: 6.1\,ms median, 8.5\,ms at
-the 99th percentile, 7{,}800 flows per second batched. We report percentiles
+parsing and feature construction, at batch size one: 6.85\,ms median, 8.70\,ms
+at the 95th and 10.34\,ms at the 99th percentile, 7{,}301 flows per second
+batched. We report percentiles
 rather than a mean because the tail decides whether a classifier can sit
 inline, and we include feature extraction because excluding it measures
 something a deployment never experiences.

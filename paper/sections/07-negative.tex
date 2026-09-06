@@ -215,9 +215,11 @@ packet-size information work, and they are the expensive ones.
 
 \subsection{What did survive of the architecture}
 
-Two things. First, the fused embedding beats its parts: 0.626 $\pm$ 0.001
-against 0.616 $\pm$ 0.002 for the sequence embedding alone and 0.613 $\pm$
-0.005 for an unlearned concatenation of both. The cross-attention fusion earns
+\input{tables/ablation}
+
+Two things. First, the fused embedding beats its parts (Table~\ref{tab:ablation}):
+0.626 $\pm$ 0.001 against 0.616 $\pm$ 0.002 for the sequence embedding alone
+and 0.613 $\pm$ 0.005 for an unlearned concatenation of both. The cross-attention fusion earns
 roughly a point of macro-F1, and --- more tellingly --- naive concatenation is
 \emph{worse} than the sequence embedding alone, so the learned fusion is doing
 something a join does not. Second, the encoder builds a genuinely better task

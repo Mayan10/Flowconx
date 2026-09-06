@@ -86,11 +86,12 @@ jobs:
       - name: Check paper source
         run: python scripts/check_paper.py
 
-      # The README quotes headline numbers in prose, where no generator can
-      # reach them, and they went stale once already. This re-derives each one
-      # from the generated tables and fails if the README disagrees.
-      - name: Check README numbers
-        run: python scripts/check_readme.py
+      # The README and the paper quote headline numbers in prose, where no
+      # generator reaches them, and both drifted once already -- including the
+      # paper drifting against itself. This re-derives each from the generated
+      # tables and fails if the prose disagrees.
+      - name: Check prose numbers
+        run: python scripts/check_numbers.py
 
       # End-to-end audit run on a generated table with the canonical schema.
       # The 87 MB training CSV is not committed, so CI cannot audit it; this

@@ -39,6 +39,9 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
+      # Without this, the first version to fail cancels the other, which hides
+      # whether a failure is version-specific or applies to both.
+      fail-fast: false
       matrix:
         python-version: ["3.10", "3.11"]
     steps:
@@ -53,8 +56,10 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Compile check
         run: python -m compileall flowconx scripts
+      # Walks the package and imports every module, so it cannot go stale
+      # across a rename the way a hand-written module list did.
       - name: Import check
-        run: python -c "from flowconx import config, datasets, features, labels, losses, memory, metrics, model, schema, evaluate, train, eval_cli"
+        run: python scripts/check_imports.py
       # The leakage tests are the gate. A split that stops being a partition,
       # a feature family that starts exposing an identifier, or a split
       # protocol that silently degrades instead of raising, fails the build.
@@ -80,6 +85,12 @@ jobs:
       # the build, because it would mean a cited number does not exist.
       - name: Check paper source
         run: python scripts/check_paper.py
+
+      # The README quotes headline numbers in prose, where no generator can
+      # reach them, and they went stale once already. This re-derives each one
+      # from the generated tables and fails if the README disagrees.
+      - name: Check README numbers
+        run: python scripts/check_readme.py
 
       # End-to-end audit run on a generated table with the canonical schema.
       # The 87 MB training CSV is not committed, so CI cannot audit it; this

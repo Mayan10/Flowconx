@@ -17,10 +17,13 @@ statistical baseline behaves identically: 0.996 and 0.640.
 
 The obvious diagnosis, that random splitting inflates results, is wrong, or at
 least incomplete. On CESNET-QUIC22, a month of QUIC traffic from a national
-backbone, random, session-disjoint and temporal splitting agree to within one
-seed's standard deviation for every method we ran. What costs 0.19 macro-F1
-there is \emph{server}-disjoint splitting: testing only on flows to servers
-never seen in training.
+backbone, we evaluated five split protocols at eight seeds each. Random,
+temporal and client-disjoint splitting are statistically indistinguishable from
+session-disjoint --- $p > 0.5$ and $|d| < 0.35$ in all three cases, which are
+powered nulls rather than absences of evidence. What costs
+\textbf{0.192 macro-F1} there is \emph{server}-disjoint splitting: testing only
+on flows to servers never seen in training ($d = 17.0$, $p = 0.0078$, surviving
+Holm-Bonferroni correction across the family).
 
 \subsection*{The axis that matters is corpus-specific}
 

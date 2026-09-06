@@ -1183,6 +1183,54 @@ Reproduce with `python scripts/analyse_openset_geometry.py`.
 
 ---
 
+## 2026-09-06 — CESNET settled at eight seeds: one axis of five matters
+
+Every protocol at **eight seeds**, prototype head, all on identical committed
+splits. Wilcoxon signed-rank against session-disjoint, Holm-Bonferroni
+corrected across the family of four.
+
+| Split protocol | Macro-F1 | Δ | Cohen's d | p |
+| --- | --- | --- | --- | --- |
+| Session-disjoint (reference) | 0.7798 ± 0.0061 | — | — | — |
+| Random flow | 0.7805 ± 0.0057 | +0.0007 | -0.12 | 0.7422 |
+| Temporal | 0.7811 ± 0.0051 | +0.0012 | -0.31 | 0.5469 |
+| Client-disjoint | 0.7791 ± 0.0055 | -0.0008 | 0.13 | 0.9453 |
+| **Server-disjoint** | 0.5881 ± 0.0068 | -0.1917 | 17.03 | 0.0078 **✓** |
+
+**Four of the five axes make no difference and one is decisive.** Random,
+temporal and client-disjoint splitting all land within 0.002 macro-F1 of
+session-disjoint, with $|d| < 0.35$ and $p > 0.5$. Server-disjoint splitting
+costs **0.192**, $d = 17.0$, $p = 0.0078$, and it is the **first comparison in
+this project to survive Holm-Bonferroni correction**.
+
+### Why this is worth the eight seeds
+
+At six seeds the Wilcoxon floor is $2^{-5} = 0.031$ and the corrected threshold
+was 0.0167, so the effect could not be certified at any size. Eight seeds
+lowers the floor to 0.0078, which clears the 0.0125 threshold at rank 1 of a
+four-comparison family — by a margin of exactly one step. Four extra runs per
+arm bought the paper's central quantitative claim.
+
+The nulls are worth as much as the positive. They are now **properly powered
+nulls** rather than absences of evidence: three protocols tested at eight seeds
+with effect sizes near zero. Previously they read `undetermined`, and
+*undetermined is not the same as null*.
+
+### The client-disjoint result specifically
+
+I added that protocol expecting it might reveal a fifth axis: a third of
+CESNET's 48,072 client addresses appear on more than one capture day, so
+grouping by day demonstrably does not separate them. It reveals nothing —
+$p = 0.945$, $d = 0.13$. Backbone flows from one client on different days are
+no more alike, for this task, than flows from different clients.
+
+That is a cleaner statement of the finding than we could make before. **On a
+backbone corpus the server is the only grouping that carries the label**, and
+we can now say the other four do not, rather than merely having failed to show
+that they do.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

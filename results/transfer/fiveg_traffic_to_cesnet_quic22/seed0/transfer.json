@@ -1,0 +1,112 @@
+{
+  "status": "ok",
+  "source": "fiveg_traffic",
+  "target": "cesnet_quic22",
+  "shared_classes": [
+    "conferencing",
+    "gaming",
+    "streaming"
+  ],
+  "n_source_rows_mapped": 76463,
+  "n_target_rows_mapped": 7200,
+  "source_rows_dropped": 38409,
+  "target_rows_dropped": 36000,
+  "unmapped_classes": {
+    "fiveg_traffic": {
+      "game_streaming": "cloud game streaming is video, not game traffic; CESNET has no equivalent",
+      "metaverse": "no CESNET category corresponds"
+    },
+    "cesnet_quic22": {
+      "advertising": "no 5G equivalent",
+      "analytics_&_telemetry": "no 5G equivalent",
+      "antivirus": "no 5G equivalent",
+      "authentication_services": "no 5G equivalent",
+      "blogs_&_news": "no 5G equivalent",
+      "default": "catch-all, not a behaviour class",
+      "e_commerce": "no 5G equivalent",
+      "file_sharing": "5G has no bulk-transfer capture",
+      "information_systems": "no 5G equivalent",
+      "instant_messaging": "no 5G equivalent",
+      "mail": "no 5G equivalent",
+      "music": "audio-only streaming; 5G captures are video, so behaviour differs",
+      "other_services_and_apis": "catch-all, not a behaviour class",
+      "search": "no 5G equivalent",
+      "social": "no 5G equivalent"
+    }
+  },
+  "zero_shot_macro_f1": 0.28641401563943575,
+  "enrollment_curve": [
+    {
+      "shots": 0,
+      "macro_f1_mean": 0.28641401563943575,
+      "macro_f1_std": 0.0,
+      "balanced_accuracy_mean": 0.36333333333333334
+    },
+    {
+      "shots": 1,
+      "macro_f1_mean": 0.3441891974624755,
+      "macro_f1_std": 0.07629179390799011,
+      "balanced_accuracy_mean": 0.3502222222222222
+    },
+    {
+      "shots": 5,
+      "macro_f1_mean": 0.4156237179756941,
+      "macro_f1_std": 0.024722952088431723,
+      "balanced_accuracy_mean": 0.41974999999999996
+    },
+    {
+      "shots": 25,
+      "macro_f1_mean": 0.5157288095664556,
+      "macro_f1_std": 0.021246880596397743,
+      "balanced_accuracy_mean": 0.5215277777777778
+    },
+    {
+      "shots": 100,
+      "macro_f1_mean": 0.5392487889285914,
+      "macro_f1_std": 0.028688007113526655,
+      "balanced_accuracy_mean": 0.5456666666666667
+    }
+  ],
+  "zero_shot_report": {
+    "accuracy": 0.36333333333333334,
+    "macro_f1": 0.28641401563943575,
+    "balanced_accuracy": 0.36333333333333334,
+    "per_class_f1": {
+      "conferencing": 0.07574133619149696,
+      "gaming": 0.2578241430700447,
+      "streaming": 0.5256765676567656
+    },
+    "support": {
+      "conferencing": 2400,
+      "gaming": 2400,
+      "streaming": 2400
+    },
+    "labels": [
+      "0",
+      "1",
+      "2"
+    ],
+    "confusion_matrix": [
+      [
+        106,
+        789,
+        1505
+      ],
+      [
+        202,
+        519,
+        1679
+      ],
+      [
+        91,
+        318,
+        1991
+      ]
+    ],
+    "n_classes_scored": 3,
+    "classes_without_test_support": []
+  },
+  "checkpoint": "results/flowconx_main/fiveg_traffic/session_disjoint/seed0/model.pt",
+  "protocol": "session_disjoint",
+  "seed": 0
+}

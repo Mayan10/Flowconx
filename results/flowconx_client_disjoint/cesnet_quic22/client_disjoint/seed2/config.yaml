@@ -1,0 +1,99 @@
+name: flowconx_client_disjoint
+description: 'Test only on flows from client hosts never seen in training.
+
+  This is the axis session-disjointness leaves uncontrolled on a backbone corpus.
+  Grouping by capture day does not separate clients: 33% of the 48,072 distinct client
+  addresses in CESNET-QUIC22 appear on more than one day.
+
+  Caveat that must travel with the number: the median client contributes one flow
+  and only 241 contribute a hundred or more, so the partition is dominated by a small
+  number of heavy clients. It is a real control, not a clean one.
+
+  '
+seed: 2
+output_root: results
+data:
+  dataset: cesnet_quic22
+  csv: data/processed/cesnet_quic22.csv
+  label_column: service
+  split_protocol: client_disjoint
+  split_seed: 42
+  val_fraction: 0.1
+  test_fraction: 0.2
+  rare_class_mode: drop
+  min_class_count: 100
+  max_packets: 30
+  observed_packets: null
+  limit: null
+  subsample_rows: null
+  unknown_apps: []
+model:
+  app_hidden_dim: 192
+  net_hidden_dim: 128
+  app_emb_dim: 256
+  net_emb_dim: 128
+  flow_emb_dim: 256
+  dropout: 0.1
+  n_conv_blocks: 3
+  n_heads: 6
+  n_transformer_layers: 1
+  dual_encoder: true
+  fusion: cross_attention
+  adversarial_head: false
+  classify_from: z_flow
+  width_multiplier: 1.0
+loss:
+  temperature: 0.07
+  lambda_service_supcon: 1.0
+  lambda_flow_supcon: 1.0
+  lambda_app_supcon: 0.0
+  lambda_prototype: 0.1
+  lambda_disentangle: 0.25
+  lambda_adversarial: 0.0
+  lambda_pair_margin: 0.0
+  lambda_flow_pair_margin: 1.0
+  pair_negative_margin: 0.2
+  pair_positive_target: 0.75
+  grl_warmup_epochs: 5
+train:
+  epochs: 15
+  batch_size: 512
+  lr: 0.0003
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  schedule: two_stage
+  stage1_epochs: 7
+  memory_per_class: 512
+  num_workers: 0
+  device: auto
+  early_stop_patience: 4
+  amp: false
+eval:
+  knn_k: 5
+  classifier_heads:
+  - knn
+  - prototype
+  - linear
+  max_reference_rows: 20000
+  bootstrap_resamples: 1000
+  open_set: false
+  few_shot: false
+  few_shot_k:
+  - 1
+  - 5
+  - 10
+  - 25
+  - 50
+  - 100
+  drift: false
+  robustness: false
+  early_classification: false
+  early_packet_budgets:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 10
+  - 20
+  cost: true
+  probes: false

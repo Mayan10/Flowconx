@@ -40,9 +40,40 @@ a temporal split separates application versions and network conditions as well
 as time, and it is the protocol under which this corpus behaves least like the
 one the literature reports.
 
-\paragraph{CESNET-QUIC22: the server is the label.} Random, session-disjoint and
-temporal splitting are indistinguishable: AppScanner scores 0.768, 0.772 and
-0.762. Server-disjoint splitting takes it to 0.566 and our model from 0.781 to 0.588,
+\paragraph{CESNET-QUIC22: the server is the label, and only the server.} We
+evaluated five protocols at eight seeds each and tested each against
+session-disjoint with a Wilcoxon signed-rank test, Holm-Bonferroni corrected
+across the family:
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Split protocol & Macro-F1 & Cohen's $d$ & $p$ \\
+\midrule
+Session-disjoint (ref.) & $0.7798 \pm 0.0061$ & --- & --- \\
+Random flow & $0.7805 \pm 0.0057$ & $-0.12$ & 0.742 \\
+Temporal & $0.7811 \pm 0.0051$ & $-0.31$ & 0.547 \\
+Client-disjoint & $0.7791 \pm 0.0055$ & $0.13$ & 0.945 \\
+\textbf{Server-disjoint} & $\mathbf{0.5881 \pm 0.0068}$ & $\mathbf{17.03}$ & $\mathbf{0.0078}^{*}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Four of five axes make no difference; the fifth costs 0.192 macro-F1.}
+The three nulls are properly powered rather than absences of evidence: eight
+seeds, effect sizes below 0.35, $p > 0.5$. Only server-disjointness survives
+the correction ($^{*}$).
+
+The client-disjoint row is worth its own sentence, because we added it
+expecting the opposite. A third of the 48{,}072 distinct client addresses in
+this corpus appear on more than one capture day, so grouping by day
+demonstrably does not separate clients --- and separating them changes nothing
+($p = 0.945$). Backbone flows from one client on different days are no more
+alike, for this task, than flows from different clients.
+
+AppScanner behaves the same way: 0.768, 0.772 and 0.762 under random,
+session-disjoint and temporal splitting. Server-disjoint splitting takes it to 0.566 and our model from 0.781 to 0.588,
 and takes the server-address probe from 0.772 to \textbf{0.026} --- the floor,
 confirming the partition does what it says. Table~\ref{tab:split-contrast}
 shows the two corpora side by side: the CESNET column is flat across three

@@ -357,6 +357,13 @@ SPLIT_CONTRASTS: List[Dict[str, str]] = [
         "member_split": "temporal",
     },
     {
+        "name": "client_disjoint_vs_session_disjoint",
+        "reference_experiment": "flowconx_main",
+        "reference_split": "session_disjoint",
+        "member_experiment": "flowconx_client_disjoint",
+        "member_split": "client_disjoint",
+    },
+    {
         "name": "server_disjoint_vs_session_disjoint",
         "reference_experiment": "flowconx_main",
         "reference_split": "session_disjoint",

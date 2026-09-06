@@ -45,9 +45,21 @@ indistinguishable.)*
 - **Why this version is better than the original.** It is more actionable — it
   tells a reader which grouping to check on their own data rather than issuing
   a blanket warning — and it is the version our evidence actually supports.
-- **Open:** three seeds cannot produce a p-value. The server-disjoint contrast
-  is the one comparison worth six seeds, about an hour of compute, purely so
-  the test reports a number rather than `undetermined`.
+- **CERTIFIED at eight seeds.** CESNET, five protocols, Wilcoxon against
+  session-disjoint with Holm-Bonferroni across the family:
+
+  | Protocol | Macro-F1 | d | p |
+  | --- | --- | --- | --- |
+  | Session-disjoint (ref.) | 0.7798 ± 0.0061 | — | — |
+  | Random flow | 0.7805 ± 0.0057 | −0.12 | 0.742 |
+  | Temporal | 0.7811 ± 0.0051 | −0.31 | 0.547 |
+  | Client-disjoint | 0.7791 ± 0.0055 | 0.13 | 0.945 |
+  | **Server-disjoint** | **0.5881 ± 0.0068** | **17.03** | **0.0078 ✓** |
+
+  Four axes null, one decisive, and the positive result **survives the
+  correction** — the first comparison in this project to do so. Six seeds could
+  not have certified it at any effect size; eight clears the 0.0125 threshold
+  by one step.
 
 ## C2 — FlowCon-X is competitive under strict protocols, not state of the art
 

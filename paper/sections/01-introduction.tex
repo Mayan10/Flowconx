@@ -75,23 +75,35 @@ useful: it applies to anyone's embedding.
 
 \begin{enumerate}
 \item A measurement of how much the split protocol determines the reported
-      result, on two corpora with opposite structure, with every method on
-      identical committed splits (\S\ref{sec:protocols}). The effect is 0.418
-      macro-F1 on one corpus and 0.002 on the other, for the same change.
+      result, on two corpora with opposite structure, every method on identical
+      committed splits and every protocol at eight seeds
+      (\S\ref{sec:protocols}). The same change is worth $0.426$ macro-F1 on one
+      corpus and $0.001$ on the other. On the second, four of five axes are
+      statistically null and the fifth costs $0.192$; the positive results
+      survive Holm-Bonferroni correction and the nulls are powered rather than
+      undetermined.
 \item Single-identifier probes as a pre-training diagnostic for which axis a
       corpus requires, with the mechanism made explicit
       (\S\ref{sec:protocols}).
 \item An evaluation of thirteen methods under strict protocols
-      (\S\ref{sec:results}), including the finding that on a
-      volume-defined taxonomy four independent neural architectures fall within
-      0.05 macro-F1 of each other while gradient-boosted trees on thirteen flow
-      statistics sit 0.25 above all of them.
+      (\S\ref{sec:results}), including the finding that on a volume-defined
+      taxonomy four independent neural architectures fall within $0.05$ macro-F1
+      of each other while gradient-boosted trees on thirteen flow statistics sit
+      $0.23$ above all of them, and an early-decision curve
+      (Figure~\ref{fig:early}) and countermeasure-overhead evaluation
+      (Figure~\ref{fig:robustness}) under the same protocols.
 \item Five negative architectural results, each with the test that produced it
-      (\S\ref{sec:negative}), including a representation-probing protocol that
-      shows an adversarial nuisance-removal component leaving the nuisance as
-      decodable as it is in the raw input.
-\item An artifact containing every split manifest, every result, and the
-      failed experiments (\S\ref{sec:threats}).
+      (\S\ref{sec:negative}), including a representation-probing protocol
+      showing an adversarial component leaving its nuisance as decodable as the
+      raw input at every weight (Figure~\ref{fig:adversarial}), and a geometric
+      explanation for why ablating our metric objectives \emph{improves}
+      open-set rejection.
+\item A sixth claim corrected rather than withdrawn: enrollment is flat within
+      a corpus and recovers 91\% of a failed zero-shot transfer across corpora
+      (\S\ref{sec:results}, Figure~\ref{fig:enrollment}).
+\item An artifact containing every split manifest, every result including the
+      failed experiments, the audit that found them, and a two-minute pipeline
+      verification requiring no data download (\S\ref{sec:threats}).
 \end{enumerate}
 
 \subsection*{What we do not claim}

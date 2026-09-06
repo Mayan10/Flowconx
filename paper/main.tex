@@ -30,8 +30,10 @@
 % is what the option is for, and removing them by hand is how a camera-ready
 % ends up shipping without authors.
 %
-% AFFILIATIONS ARE PLACEHOLDERS. Fill in before submission -- an incorrect
-% institution is worse than a missing one.
+% AFFILIATIONS ARE PLACEHOLDERS and are the last thing blocking submission.
+% Fill them in: an incorrect institution is worse than a missing one, so they
+% are left visibly unset rather than guessed. `make paper-pdf` will build with
+% them as-is, and the strings below are deliberately conspicuous in the output.
 % ---------------------------------------------------------------------------
 \author{Mayan Sharma}
 \affiliation{%
@@ -84,31 +86,45 @@
 Encrypted traffic classifiers are routinely reported at 95--99\% accuracy. We
 show that on one of two public corpora, the same model and the same code score
 macro-F1 \textbf{0.992} under the evaluation protocol standard in the
-literature and \textbf{0.574} under a protocol that keeps correlated flows
-apart. Nothing changes but the partition.
+literature and \textbf{0.567} under a protocol that keeps flows from one packet
+capture on one side of the split. Nothing changes but the partition. The gap is
+$0.426$ macro-F1 over eight seeds, $p = 0.008$ after Holm-Bonferroni
+correction.
 
 The inflation is not a property of random splitting as such. On a second
-corpus, random, session-disjoint and temporal splitting are indistinguishable,
-while \emph{server}-disjoint splitting costs 0.19 macro-F1. The axis that
-matters is whichever grouping the label is nearly a function of, and it differs
-by how the corpus was collected. Controlling the wrong axis protects nothing.
+corpus, a month of backbone QUIC traffic, we evaluate five split protocols at
+eight seeds each: random, temporal and \emph{client}-disjoint splitting are all
+statistically indistinguishable from session-disjoint, with $|d| < 0.35$ and
+$p > 0.5$. What costs $0.192$ macro-F1 there is \emph{server}-disjoint
+splitting ($d = 17.0$, $p = 0.008$). \textbf{Four of five axes are null and one
+is decisive}, and which one depends on how the corpus was collected in a way
+invisible from its label space. Controlling the wrong axis protects nothing.
 
 We give a diagnostic that identifies the right axis before any model is
 trained: single-identifier probes. On the first corpus a decision tree on the
-\emph{server address alone} reaches 0.999 under a random split; on the second,
-the \emph{SNI string alone} reaches 0.967 under every split, which is roughly
-the ceiling of the labelling process itself.
+\emph{server address alone} reaches 0.999 under a random split and the
+\emph{capture identifier alone} reaches 0.983; under session-disjoint splitting
+the latter falls to exactly 0.000. On the second, the \emph{SNI string alone}
+reaches 0.967 under every split, which is the ceiling of the labelling process
+rather than of any classifier.
 
-We then evaluate a metric-trained flow embedding under the strict protocols,
-against eight classical and four deep baselines on identical committed splits.
-It leads every deep baseline but not gradient-boosted trees on twenty packet
-sizes. Five of our own architectural claims fail their own pre-registered
-tests, including the one we expected to survive: distance-based rejection of
-unknown applications beats softmax thresholding by a wide margin, but ablating
-\emph{every} metric objective makes rejection \emph{better}, so the advantage
-belongs to the rejection rule rather than to the training.
+Evaluated this way, we compare a metric-trained flow embedding against eight
+classical and four deep baselines on identical committed splits. It leads every
+deep baseline and does not beat gradient-boosted trees on twenty packet sizes.
+Five of our own architectural claims fail their own pre-registered tests,
+including the one we expected to survive: distance-based rejection of unknown
+applications beats softmax thresholding by a wide margin, but ablating
+\emph{every} metric objective makes rejection \emph{better}. Measuring the
+embedding geometry explains why --- class separation correlates at $r = -0.88$
+with rejection quality, so an objective optimising for discrimination among
+known classes works against detecting unknown ones.
 
-All splits, results and negative findings are released.
+A sixth claim was mis-specified rather than false. Few-shot enrollment is flat
+within a corpus, where the prototypes are already correct; \emph{across}
+corpora, five labelled flows per class recover 91\% of the deficit left by
+failed zero-shot transfer.
+
+All splits, results, code and negative findings are released.
 \end{abstract}
 
 \keywords{encrypted traffic classification, evaluation methodology, QUIC,

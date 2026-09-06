@@ -79,6 +79,48 @@ families swap places exactly as the explanation predicts. Our loss narrows from
 0.30 to 0.09 --- and does not close. Destination port alone scores 0.610 on
 that task, above our model.
 
+\subsection{Deciding from few packets}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/early_classification.pdf}
+\caption{Macro-F1 against the number of observed packets, encoder frozen,
+prototypes rebuilt at each budget. A deployment does not receive the whole
+flow; this curve, not the full-flow number, determines whether a classifier can
+sit inline. Note that the cumulative feature channels are normalised by fixed
+constants rather than by the observation window's total, so truncating the
+sequence is exactly equal to observing fewer packets --- normalising by the
+total would let the value at packet~1 depend on packets not yet seen and
+silently inflate the left of this curve.}
+\label{fig:early}
+\end{figure}
+
+Figure~\ref{fig:early} shows accuracy against the observation budget. Twenty
+packets recover most of the full-flow result; below five, the task is close to
+undetermined.
+
+\subsection{Cross-dataset transfer}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/enrollment_curve.pdf}
+\caption{Enrollment curves with the encoder frozen: macro-F1 against the number
+of labelled flows per enrolled class, with the spread over repeated draws.
+Within a corpus the curve is flat, because the prototypes are already correct.
+The informative version of this experiment is across corpora
+(\S\ref{sec:negative}), where they are not.}
+\label{fig:enrollment}
+\end{figure}
+
+One encoder trained on one corpus and applied frozen to the other, over the
+three classes the two taxonomies share, transfers poorly zero-shot: 0.246 and
+0.286 macro-F1, at or below a trivial predictor, with only
+\texttt{streaming} carrying across at all. Five labelled flows per class
+recover 0.676 in the CESNET~$\rightarrow$~5G direction, which is 91\% of the
+value reached at a hundred. \S\ref{sec:negative} discusses what that means for
+the enrollment claim, and Figure~\ref{fig:enrollment} shows the within-corpus
+curve it corrects.
+
 \subsection{Cost}
 
 \input{tables/cost}

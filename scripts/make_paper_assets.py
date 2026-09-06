@@ -524,6 +524,18 @@ def _style():
     return plt
 
 
+def _savefig(figure: Any, path: Path) -> None:
+    """Write a figure without an embedded creation timestamp.
+
+    Matplotlib stamps ``/CreationDate`` into every PDF it writes, so a figure
+    regenerated from unchanged results still differs byte-for-byte from the
+    committed one and shows up as a spurious diff on each ``make paper``.
+    Suppressing the date makes figure generation reproducible in the sense
+    that matters here: identical inputs produce an identical file.
+    """
+    figure.savefig(path, metadata={"CreationDate": None})
+
+
 def _runs_with(results_root: Path, key: str) -> List[Dict[str, Any]]:
     out = []
     for path in sorted(results_root.rglob("metrics.json")):
@@ -556,7 +568,7 @@ def figure_early_classification(results_root: Path, out_dir: Path) -> Optional[P
     axis.set_xscale("log")
     axis.legend(frameon=False)
     path = out_dir / "early_classification.pdf"
-    figure.savefig(path)
+    _savefig(figure, path)
     plt.close(figure)
     return path
 
@@ -589,7 +601,7 @@ def figure_enrollment(results_root: Path, out_dir: Path) -> Optional[Path]:
     axis.set_xscale("log")
     axis.legend(frameon=False)
     path = out_dir / "enrollment_curve.pdf"
-    figure.savefig(path)
+    _savefig(figure, path)
     plt.close(figure)
     return path
 
@@ -619,7 +631,7 @@ def figure_robustness(results_root: Path, out_dir: Path) -> Optional[Path]:
     axis.set_ylabel("Macro-F1 under defence")
     axis.legend(frameon=False, ncol=2, fontsize=5.5)
     path = out_dir / "robustness_overhead.pdf"
-    figure.savefig(path)
+    _savefig(figure, path)
     plt.close(figure)
     return path
 
@@ -658,7 +670,7 @@ def figure_adversarial_tradeoff(results_root: Path, out_dir: Path) -> Optional[P
     axis.set_ylabel("Score")
     axis.legend(frameon=False)
     path = out_dir / "adversarial_tradeoff.pdf"
-    figure.savefig(path)
+    _savefig(figure, path)
     plt.close(figure)
     return path
 

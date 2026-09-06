@@ -46,6 +46,35 @@ for a world with Encrypted Client Hello~\cite{rescorla2024ech}, and one whose
 ceiling is set by how well SNI itself categorises traffic. We quantify that
 ceiling directly in \S\ref{sec:protocols}.
 
+\subsection{A third corpus, prepared but not run}
+
+Our claim that the split axis is corpus-specific rests on two datasets, which
+is enough to show the axis differs between them and not enough to establish a
+general rule. The artifact therefore includes a loader for ISCX-Tor2016,
+selected over ISCX-VPN2016, USTC-TFC2016 and CIC-IoT2023 for one reason: it is
+the only public corpus we found that offers a grouping axis which is
+\emph{neither temporal nor per-file}. Its collection captured the same activity
+simultaneously at the workstation and at the gateway and released the captures
+in pairs, so \texttt{vantage} becomes a split axis and the protocol comparison
+becomes three-way.
+
+We had not obtained it at the time of writing --- it is distributed behind a
+registration form --- so no number from it appears here. The loader is released
+with every assumption it makes about the on-disk layout marked explicitly and
+paired with the check that would falsify it, and the preparer warns if more
+than 5\% of rows fail vantage inference, which is what a wrong assumption would
+look like.
+
+The other three were rejected for reasons worth recording. CIC-IoT2023's usable
+CSV tier carries no addresses, ports or timestamps, so no grouped split is
+possible on it, and its groupable tier is 548\,GB; it is also not encrypted
+traffic. USTC-TFC2016 collected its benign classes with a traffic-simulation
+appliance and its malware classes from real networks, so any split-protocol
+result on it would be confounded with the generator. ISCX-VPN2016 offers one
+grouping key rather than two, and ISCX-Tor2016's non-Tor half is recycled from
+it, so the two are not independent corpora and must not both be used as though
+they were.
+
 \subsection{Schema and what the model may see}
 
 Both corpora are reduced to one schema separating \emph{behaviour} from

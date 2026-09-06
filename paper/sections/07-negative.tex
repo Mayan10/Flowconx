@@ -125,6 +125,17 @@ embedding still leaks capture identity more than its own input does. There is
 no weight at which this works, and the component should be deleted rather than
 retuned.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/adversarial_tradeoff.pdf}
+\caption{Nuisance leakage and task performance as the adversarial weight
+varies. The trade-off curve this figure was designed to show does not exist:
+leakage is flat across two orders of magnitude in $\lambda$ and sits at or above
+the raw-feature control throughout. The figure is included because a flat line
+here is the result.}
+\label{fig:adversarial}
+\end{figure}
+
 \paragraph{The control is the methodological point.} Had we run only the sweep
 on CESNET --- the corpus our main configuration uses, and therefore the sweep a
 reader would expect --- the leak column would read $+0.0001$, $-0.0023$,
@@ -181,6 +192,26 @@ metric-learning approach used for open-set recognition. We report it with its
 $n$: five variants, correlations at $p \approx 0.05$--$0.08$, and the variants
 differ in more than geometry, so separation may be a correlate rather than the
 cause.
+
+\subsection{Robustness: only expensive defences work}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/robustness_overhead.pdf}
+\caption{Accuracy under each countermeasure against the bandwidth overhead it
+imposes, encoder frozen, perturbations applied to test traffic only. The
+cluster at the left is the result: random padding, dummy injection and
+128-byte quantisation cost a defender 8--17\% overhead and cost the classifier
+essentially nothing. Only constant-rate padding and padding every packet to the
+MTU degrade classification meaningfully, and both cost $2.28\times$ bandwidth.}
+\label{fig:robustness}
+\end{figure}
+
+Figure~\ref{fig:robustness} reports the countermeasure evaluation as a
+defender would need to read it, with the overhead on the horizontal axis.
+Network conditions barely register: 25\,ms of added jitter costs 0.025 macro-F1
+and 5\% packet loss 0.011. Among deliberate defences, only those that destroy
+packet-size information work, and they are the expensive ones.
 
 \subsection{What did survive of the architecture}
 

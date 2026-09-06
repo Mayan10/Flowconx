@@ -57,6 +57,36 @@ def check(root: Path, main: str = "main.tex", allow_todo: bool = False) -> int:
     for missing in sorted(refs - labels):
         problems.append(f"undefined reference: \\ref{{{missing}}}")
 
+    # Every \includegraphics target must exist. A missing figure is a LaTeX
+    # error at build time and, worse, a figure that was generated but never
+    # referenced is silently absent from the paper -- which is how four
+    # generated figures sat unused here.
+    referenced_figures: Set[str] = set()
+    for target in re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", body):
+        referenced_figures.add(Path(target).name)
+        candidates = [root / target, root / (target + ".pdf"), root / (target + ".png")]
+        if not any(c.exists() for c in candidates):
+            problems.append(f"\\includegraphics target does not exist: {target}")
+    figures_dir = root / "figures"
+    if figures_dir.exists():
+        for figure in sorted(figures_dir.glob("*.pdf")):
+            if figure.name not in referenced_figures:
+                problems.append(
+                    f"note: {figure.name} was generated but is never \\includegraphics'd -- "
+                    "a figure the paper does not reference is a figure the reader never sees"
+                )
+
+    # Floats need captions and labels, or they cannot be referenced.
+    for environment in ("figure", "table"):
+        blocks = re.findall(
+            r"\\begin\{" + environment + r"\*?\}(.*?)\\end\{" + environment + r"\*?\}", body, re.S
+        )
+        for index, block in enumerate(blocks, start=1):
+            if "\\caption" not in block:
+                problems.append(f"{environment} {index} has no \\caption")
+            if "\\label" not in block:
+                problems.append(f"note: {environment} {index} has no \\label, so it cannot be referenced")
+
     cited: Set[str] = set()
     for group in re.findall(r"\\cite[tp]?\{([^}]+)\}", body):
         cited.update(key.strip() for key in group.split(","))
@@ -91,7 +121,8 @@ def check(root: Path, main: str = "main.tex", allow_todo: bool = False) -> int:
 
     words = len(re.findall(r"\b\w+\b", re.sub(r"\\[a-zA-Z]+\*?(\[[^\]]*\])?(\{[^}]*\})?", " ", body)))
     print(f"\n{len(list((root / 'sections').glob('*.tex')))} sections, ~{words:,} words, "
-          f"{len(inputted)} generated tables inlined, {len(labels)} labels, {len(cited)} citations")
+          f"{len(inputted)} generated tables inlined, {len(referenced_figures)} figures referenced, "
+          f"{len(labels)} labels, {len(cited)} citations")
     return 1 if errors else 0
 
 

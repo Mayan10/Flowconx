@@ -2,30 +2,78 @@
 \label{sec:conclusion}
 
 The evaluation protocol, not the model, determines what an encrypted-traffic
-classification number means. On one corpus we measure a swing of 0.600 macro-F1
---- from 0.991 under a random split to 0.391 under a temporal one --- with
-nothing changed but the partition, and we show the mechanism directly: under
-the standard protocol, a decision tree on the server address alone scores
-0.999.
+classification number means. On 5G Traffic we measure a swing of $0.426$
+macro-F1 --- from $0.992$ under a stratified random split to $0.567$ under a
+session-disjoint one --- with nothing changed but the partition, and the
+mechanism is direct: under the standard protocol, a decision tree on the server
+address alone scores $0.999$ and one on the capture identifier alone scores
+$0.983$.
 
-The correction is not simply ``stop splitting randomly''. On our second corpus
-random splitting costs nothing, and what costs 0.19 is holding out servers. The
-axis that matters is whichever grouping the label is nearly a function of, and
-that depends on how the corpus was collected in a way invisible from its label
-space or schema. We propose that the axis be chosen by measurement --- fit a
-single-identifier probe per identifier per candidate protocol, and adopt the
-protocol under which they all collapse --- and we release that diagnostic.
+The correction is not ``stop splitting randomly''. On CESNET-QUIC22 we tested
+five protocols at eight seeds each, and random, temporal and
+\emph{client}-disjoint splitting are all statistically indistinguishable from
+session-disjoint. What costs $0.192$ there is \emph{server}-disjoint splitting.
+Four axes null, one decisive, and which one depends on how the corpus was
+collected in a way that is invisible from its label space, its schema or its
+class balance.
 
-Evaluated this way, the field looks different. A 2016 statistical baseline sits
-within 0.01 macro-F1 of our neural model on one corpus. On the other, four
-independent neural architectures fall within 0.05 of each other while
-gradient-boosted trees on thirteen flow statistics sit 0.23 above all of them.
-Five of our own architectural claims fail their own pre-registered tests,
-including one whose result held while its explanation did not: distance-based
-rejection of unknown applications does beat softmax thresholding, but ablating
-the metric training that we introduced to produce that advantage makes it
-better, so the advantage belongs to the scoring rule and applies to any
-encoder.
+We therefore propose that the axis be chosen by measurement rather than by
+convention: fit a single-identifier probe for each identifier a corpus retains,
+under each candidate protocol, and adopt the protocol under which they all
+collapse toward the majority-class floor. It costs seconds, it is falsifiable
+--- if no protocol collapses them, the corpus cannot support the claim being
+made of it --- and we release it as a package that runs on any corpus in our
+schema.
 
-We release all splits, all results, the failed experiments, and the audit that
-found them.
+\subsection*{What the field looks like under this evaluation}
+
+Different from its published account. A 2016 statistical baseline sits within
+$0.01$ macro-F1 of a modern neural model on one corpus. On the other, four
+independent neural architectures --- convolutional, recurrent,
+transformer-based and our own --- fall within $0.05$ of each other while
+gradient-boosted trees on thirteen flow statistics sit $0.23$ above all of
+them. The identifier that supplies the labels on a widely-used corpus recovers
+them at $0.967$, which caps what any result on it can mean.
+
+\subsection*{On reporting what fails}
+
+Five of the six architectural claims we set out to make did not survive their
+own pre-registered tests, and we report them with the tests rather than
+quietly. Two are worth carrying beyond this paper.
+
+Adversarial nuisance removal removes nothing, at any weight from $0.01$ to
+$2.0$, and it took a raw-feature control to see that: on the corpus where the
+nuisance is absent the embedding also leaks nothing, and that vacuous result
+would have read as near-perfect invariance had we reported it alone.
+
+Distance-based rejection of unknown applications does beat softmax
+thresholding, and the metric training we added to produce that advantage is not
+what produces it --- ablating every metric objective makes rejection better.
+Measuring the embedding geometry explains why: class separation correlates at
+$r = -0.88$ with rejection quality. An objective optimising for discrimination
+among known classes covers more of the embedding sphere and leaves less empty
+space for novelty to fall into. That applies to any metric-learning approach
+used for open-set recognition, not only to ours.
+
+A sixth claim was mis-specified rather than false. Enrollment is flat within a
+corpus, where prototypes are already correct; across corpora, where zero-shot
+transfer fails outright, five labelled flows per class recover 91\% of the
+deficit with the encoder frozen.
+
+\subsection*{Limitations and what comes next}
+
+Our central claim rests on two corpora. Two datasets with opposite structure
+are suggestive of a general rule and do not establish one, and the honest
+statement is that we have shown the axis differs between these two rather than
+that it differs in general. The artifact includes a loader for a third,
+ISCX-Tor2016, chosen because it is the only public corpus we found offering a
+grouping axis that is neither temporal nor per-file: the same activity was
+captured simultaneously at a workstation and at a gateway, so \emph{vantage}
+becomes a split axis and the comparison becomes three-way. That corpus sits
+behind a registration form and we had not obtained it at the time of writing;
+the loader is released with every assumption it makes marked and paired with
+how to check it.
+
+We release all split manifests, all results including the failed experiments,
+the audit that found them, and a two-minute pipeline verification that requires
+no data download.

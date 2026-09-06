@@ -45,8 +45,11 @@ What survived is a **measurement** result, not a modelling one.
   on 5G. On 5G *every* neural model lands in a 0.05 band while a tree on
   thirteen flow scalars sits 0.25 above; it is not this architecture, it is the
   approach.
-- **Few-shot enrollment.** The curve is flat: +0.003 macro-F1 from one labelled
-  example to a hundred. It failed a decision rule written down before the run.
+- **Few-shot enrollment** *within* a corpus. The curve is flat: +0.003 macro-F1
+  from one labelled example to a hundred, failing a rule written before the run.
+  It turned out to be the wrong test — **across** corpora, where the prototypes
+  are genuinely wrong, five labelled flows per class recover 0.68 of a 0.25
+  zero-shot deficit. The claim was mis-specified, not false.
 - **Temporal drift.** Accuracy *rises* over the held-out days. A four-week
   corpus cannot exhibit the phenomenon, so the claim is withdrawn rather than
   supported by a flat line.

@@ -1231,6 +1231,70 @@ that they do.
 
 ---
 
+## 2026-09-06 — Cross-dataset transfer, and the enrollment claim was mis-specified
+
+One encoder trained on the source corpus, applied frozen to the target. Both
+corpora reduce to the same feature schema, so no retraining is involved. The
+three shared classes are mapped explicitly in `flowconx/eval/transfer.py`, with
+every unmapped label listed and a reason; forcing `mail` into a taxonomy with
+no such notion would manufacture a result out of a labelling decision.
+
+| Direction | Zero-shot | k=1 | k=5 | k=25 | k=100 |
+| --- | --- | --- | --- | --- | --- |
+| cesnet_quic22 → fiveg_traffic | 0.246 | 0.429 ± 0.095 | 0.676 ± 0.057 | 0.712 ± 0.042 | 0.743 ± 0.035 |
+| fiveg_traffic → cesnet_quic22 | 0.286 | 0.344 ± 0.076 | 0.416 ± 0.025 | 0.516 ± 0.021 | 0.539 ± 0.029 |
+
+Per-class macro-F1, zero-shot:
+
+| Direction | conferencing | gaming | streaming |
+| --- | --- | --- | --- |
+| cesnet_quic22 → fiveg_traffic | 0.069 | 0.033 | 0.637 |
+| fiveg_traffic → cesnet_quic22 | 0.076 | 0.258 | 0.526 |
+
+### Zero-shot transfer fails, and only one class survives
+
+At 0.246 and 0.286 macro-F1 over three classes, zero-shot transfer is at or
+below what a trivial predictor achieves. Only `streaming` carries across at all
+(0.64 and 0.53); `conferencing` and `gaming` collapse to 0.03–0.26. **A
+representation learned on one network does not describe another**, even for
+categories that name the same human activity.
+
+### But re-enrollment recovers most of it, and that matters
+
+CESNET → 5G moves from 0.246 zero-shot to **0.676 at five labelled flows per
+class** — 91% of the value reached at a hundred. 5G → CESNET moves 0.286 →
+0.416 at k=5 and 0.539 at k=100.
+
+**This is claim C5 working in the setting it was actually about.** We withdrew
+C5 because the same-corpus enrollment curve was flat: +0.003 macro-F1 from one
+labelled flow to a hundred. That was correct and it was the wrong test. Within
+a corpus, the prototypes are already right, so adding examples cannot help; the
+curve was flat because there was nothing to fix.
+
+Across corpora the prototypes are genuinely wrong, and enrollment does exactly
+what the design claims: **five labelled flows per class recover most of a
+0.43 macro-F1 deficit, with the encoder frozen.**
+
+So the claim was mis-specified rather than false. Its defensible form is:
+*prototype re-enrollment cheaply adapts a frozen encoder to a new network*, not
+*to a new class on a network it already knows*.
+
+### Caveats, which are substantial
+
+- **Three shared classes.** The taxonomies overlap thinly, and macro-F1 over
+  three classes is a coarse instrument.
+- **One seed.** The k-shot spreads come from repeated draws within a seed, not
+  across training runs.
+- **The mapping is a judgement call**, not a fact. It is written down so a
+  reader can disagree with a specific line.
+- **Large drops.** 114,000 of 136,800 CESNET rows and 38,409 of 114,872 5G rows
+  fall outside the shared taxonomy. The result speaks to those three classes
+  and nothing else.
+- Nobody has run a baseline in this setting, so we do not know whether XGBoost
+  transfers better. Given the pattern everywhere else in this project, it might.
+
+---
+
 ## Stale / not reproducible
 
 ### `outputs/flowconx_final_labeled_kpi_pass/metrics.json`

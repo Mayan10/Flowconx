@@ -24,6 +24,42 @@ converged at $k=1$}, which says the embedding places same-class flows tightly.
 The problem is where it places them. Cheap enrollment of a weak classifier is
 not a contribution.
 
+\paragraph{The claim was mis-specified, and the correct version holds.} A flat
+curve within one corpus is what should happen: the prototypes are already
+right, so extra examples have nothing to fix. The setting the design is
+actually about is a \emph{new network}, where they are wrong.
+
+We tested it. One encoder, trained on one corpus and applied frozen to the
+other, over the three classes the two taxonomies share:
+
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Direction & Zero-shot & $k=1$ & $k=5$ & $k=25$ & $k=100$ \\
+\midrule
+CESNET $\rightarrow$ 5G & 0.246 & 0.429 & \textbf{0.676} & 0.712 & 0.743 \\
+5G $\rightarrow$ CESNET & 0.286 & 0.344 & 0.416 & 0.516 & 0.539 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Zero-shot transfer fails}: at 0.25--0.29 over three classes it is at or
+below a trivial predictor, and only \texttt{streaming} carries across at all
+(0.64 and 0.53 per-class) while \texttt{conferencing} and \texttt{gaming}
+collapse. A representation learned on one network does not describe another.
+
+\textbf{Five labelled flows per class recover most of the deficit} --- 0.676 on
+CESNET $\rightarrow$ 5G, which is 91\% of the value at a hundred, with the
+encoder frozen. So the enrollment mechanism works where it was meant to: it
+adapts a frozen encoder to a new network cheaply, rather than adding a class to
+a network the encoder already knows.
+
+Caveats are substantial and we state them rather than burying them: three
+shared classes, one seed, an explicit and arguable taxonomy mapping released
+with the code, and no baseline run in this setting --- given the pattern
+elsewhere in this paper, gradient-boosted trees might transfer better too.
+
 \subsection{Temporal drift: nothing to measure}
 
 Trained on the earliest 70\% of CESNET-QUIC22 and evaluated day by day over the

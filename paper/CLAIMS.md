@@ -150,8 +150,20 @@ indistinguishable.)*
 
 - **Evidence:** `paper/figures/enrollment_curve.pdf`, `paper/tables/cost.tex`
 - **Test:** enrollment curves with spread over repeated draws
-- **Status:** **NOT SUPPORTED on 5G Traffic. The decision rule below was
-  written before the run and the run failed it.**
+- **Status:** **MIS-SPECIFIED, not false. Withdrawn in its original form;
+  supported in a narrower one.**
+- **The claim was about the wrong setting.** Within a corpus the enrollment
+  curve is flat (+0.003 from k=1 to k=100) because the prototypes are already
+  right — there is nothing for extra examples to fix. Across corpora, where
+  they are genuinely wrong, **five labelled flows per class recover 0.676 of a
+  0.246 zero-shot deficit on CESNET → 5G, which is 91% of the value reached at
+  a hundred**, with the encoder frozen.
+- **Defensible form:** *prototype re-enrollment cheaply adapts a frozen encoder
+  to a new network*, not *to a new class on a network it already knows*.
+- Caveats that must travel with it: three shared classes, one seed, an explicit
+  and arguable taxonomy mapping, and no baseline run in this setting.
+- **The original test and its verdict stand below**, because the rule was
+  pre-registered and it failed:
 - **Result (three seeds).** The enrollment curve is flat. Service macro-F1
   moves from 0.5020 ± 0.0697 at k = 1 to 0.5054 ± 0.0698 at k = 100 — +0.003,
   against a seed spread of ± 0.07. Application enrollment moves +0.005. At
